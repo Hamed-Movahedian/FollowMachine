@@ -1,0 +1,279 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using FMachine.SettingScripts;
+using FMachine.Shapes.Sockets;
+using FMachine.Utility;
+using FollowMachineDll.SettingScripts;
+using FollowMachineDll.Utility;
+using UnityEngine;
+
+namespace FMachine.Shapes.Nodes
+{
+    public abstract class Node : BoxShape
+    {
+        public string Info;
+
+        #region NodeSetting
+
+        private NodeSetting _nodeSetting = null;
+
+        public NodeSetting NodeSetting => _nodeSetting ??
+                                          (_nodeSetting = (NodeSetting)EditorTools.Instance.GetAsset("NodeSetting", typeof(NodeSetting)));
+
+        #endregion
+
+        #region Specific node setting
+
+        private SpcificNodeSetting _spcificNodeSetting;
+
+        public SpcificNodeSetting SpcificNodeSetting => _spcificNodeSetting ??
+                                          (_spcificNodeSetting = (SpcificNodeSetting)EditorTools.Instance.GetAsset(GetType().Name, typeof(SpcificNodeSetting)));
+        #endregion
+
+        public List<OutputSocket> InputSocketList = new List<OutputSocket>();
+        public List<InputSocket> OutputSocketList = new List<InputSocket>();
+        private bool _isDraging;
+        private readonly Rect _sourceRect = new Rect(0, 0, 1, 1);
+        private bool _isResizing;
+
+        public bool IsRunningNode { get { return Graph.RunningNode == this; } }
+        public bool IsLastRunningNode { get { return Graph.LastRunningNode == this; } }
+        public OutputSocket EnteredSocket { get; set; }
+
+
+        protected void AddOutputSocket<T>(string label) where T : InputSocket
+        {
+            var socket = (T)Graph.Repository.CreateSocket(this, typeof(T));
+            socket.Name = label;
+            OutputSocketList.Add(socket);
+        }
+
+        protected void AddInputSocket<T>(string success) where T : OutputSocket
+        {
+            var socket = (T)Graph.Repository.CreateSocket(this, typeof(T));
+            socket.Name = success;
+            InputSocketList.Add(socket);
+        }
+
+        public override void MouseDown(Vector2 mousePosition, Event currentEvent)
+        {
+            _isResizing = Rect.xMax - mousePosition.x < 20;
+
+            if (!IsSelected)
+            {
+                if (!currentEvent.shift)
+                    Graph.DeselectAll();
+
+                Select();
+            }
+            _isDraging = false;
+
+        }
+
+        public override void MouseDrag(Vector2 delta, Vector2 mousePosition, Event currentEvent)
+        {
+            if (_isResizing)
+            {
+                Rect.xMax = mousePosition.x;
+            }
+            else
+            {
+                _isDraging = true;
+                Graph.MoveSelectedNode(delta);
+            }
+        }
+
+        public override void MouseUp(Vector2 mousePosition, Event currentEvent)
+        {
+            if (!_isDraging)
+            {
+                if (!currentEvent.shift)
+                    Graph.DeselectAll();
+
+                if (!IsSelected)
+                    Select();
+
+            }
+        }
+
+        #region Draw
+        
+
+        public override void Draw()
+        {
+            var pos = Rect.position;
+            float headerHeight;
+            float infoHeight;
+            float bodyHeight;
+
+            // **************  Header
+            NodeSetting.Header.Style.CalcMinMaxWidth(new GUIContent(SpcificNodeSetting.Title), out var minWith,  out var headerWidth);
+            Rect.width = Mathf.Max(Rect.width, headerWidth);
+            headerHeight = DrawSection(pos, headerWidth, SpcificNodeSetting.HeaderColor, NodeSetting.Header, SpcificNodeSetting.Title, -1);
+            pos.y += headerHeight;
+
+            // **************  Info
+            infoHeight = DrawSection(pos, Rect.width, NodeSetting.InfoColor, NodeSetting.Info, Info, -1);
+            pos.y += infoHeight;
+
+            // Input Sockets
+            if (InputSocketList.Count == 1 && InputSocketList[0].Name=="")
+            {
+                InputSocketList[0].Rect.position = new Vector2(
+                    pos.x - NodeSetting.InputSocketSetting.Offset.x,
+                    pos.y - infoHeight / 2 - InputSocketList[0].Rect.height / 2);
+
+                bodyHeight = NodeSetting.Body.Style.border.vertical;
+            }
+            else
+            {
+                for (int i = 0; i < InputSocketList.Count; i++)
+                {
+                    InputSocketList[i].Rect.position = new Vector2(
+                        pos.x - NodeSetting.InputSocketSetting.Offset.x,
+                        pos.y + NodeSetting.InputSocketSetting.Space * (i + 0.5f) - InputSocketList[0].Rect.height / 2);
+                }
+
+                bodyHeight = NodeSetting.InputSocketSetting.Space * (InputSocketList.Count + 0.5f);
+            }
+
+            // Output Sockets
+            if (OutputSocketList.Count == 1 && OutputSocketList[0].Name=="")
+            {
+                OutputSocketList[0].Rect.position = new Vector2(
+                    pos.x + Rect.width + NodeSetting.OutputSocketSetting.Offset.x,
+                    pos.y - infoHeight / 2 - OutputSocketList[0].Rect.height / 2);
+
+                bodyHeight = Mathf.Max(bodyHeight, NodeSetting.Body.Style.border.vertical);
+            }
+            else
+            {
+                for (int i = 0; i < OutputSocketList.Count; i++)
+                {
+                    OutputSocketList[i].Rect.position = new Vector2(
+                        pos.x + Rect.width + NodeSetting.OutputSocketSetting.Offset.x,
+                        pos.y + NodeSetting.OutputSocketSetting.Space * (i + 0.5f) - OutputSocketList[0].Rect.height / 2);
+                }
+
+                bodyHeight = Mathf.Max(bodyHeight, NodeSetting.OutputSocketSetting.Space * (OutputSocketList.Count + 0.5f));
+            }
+
+            // *************** Body
+            Rect.yMax = pos.y + DrawSection(pos, Rect.width, NodeSetting.BodyColor, NodeSetting.Body, "", bodyHeight);
+
+            // *************** Icon
+            if (SpcificNodeSetting.Icon != null)
+            {
+                var iconRect = new Rect(NodeSetting.IconRect);
+                iconRect.position += Rect.position;
+                EditorTools.Instance.DrawTexture(iconRect, SpcificNodeSetting.Icon, SpcificNodeSetting.IconColor);
+
+            }
+        }
+
+        private float DrawSection(Vector2 pos, float with, Color fillColor, SectionSetting setting, string text,
+            float height)
+        {
+
+            var rect = new Rect(pos, Rect.size)
+            {
+                position = pos,
+                width = with,
+                height =
+                    height != -1 ?
+                        height :
+                        text == "" ?
+                            setting.Style.border.vertical :
+                            setting.Style.CalcHeight(new GUIContent(text), Rect.size.x)
+            };
+
+
+
+            EditorTools.Instance.DrawTexture(rect, setting.GlowTexture, setting.Style,
+                IsHover ? NodeSetting.GlowHover : NodeSetting.GlowNormal);
+
+            EditorTools.Instance.DrawTexture(rect, setting.LineTexture, setting.Style,
+                IsRunningNode ? NodeSetting.LineRunning :
+                IsSelected ? NodeSetting.LineSelected : NodeSetting.LineNormal);
+
+            EditorTools.Instance.DrawTexture(rect, setting.FillTexture, setting.Style, fillColor);
+
+            if (text != "")
+                GUI.Box(rect, text, setting.Style);
+
+            return rect.height;
+        }
+
+
+
+        #endregion
+
+        public override void Delete()
+        {
+            InputSocketList.ForEach(socket => socket.Delete());
+            OutputSocketList.ForEach(socket => socket.Delete());
+
+            Graph.NodeList.Remove(this);
+
+            DestroyImmediate(gameObject);
+        }
+
+        public virtual void DrawInspector()
+        {
+            if (EditorTools.Instance.PropertyField(this, "Info"))
+                name = Name + " (" + GetType().Name + ")";
+        }
+
+        public override void OnCreate(Graph graph, Vector2 position)
+        {
+            base.OnCreate(graph, position);
+
+            Rect.size = NodeSetting.Size;
+
+            Name = NodeSetting.DefaultDescription;
+
+            name = Name + " (" + GetType().Name + ")";
+
+            Initialize();
+        }
+
+        protected abstract void Initialize();
+
+
+        public virtual IEnumerator Run()
+        {
+            return null;
+        }
+
+        public virtual void OnShow()
+        {
+            Info = Name;
+
+        }
+
+        public abstract Node GetNextNode();
+
+        public Node Duplicate()
+        {
+            // duplicate node game object (with node, input/outputsockets, edges)
+            Node newNode = Instantiate(gameObject).GetComponent<Node>();
+
+            // parent new node to repository
+            newNode.transform.parent = transform.parent;
+
+            // move new node a bit
+            newNode.Move(Vector2.one * 50);
+
+            // clear output socket, delete output edges
+            newNode.OutputSocketList.ForEach(s => s.Disconnect());
+
+            // clear input sockets
+            newNode.InputSocketList.ForEach(inSocket => inSocket.EdgeList.Clear());
+
+            // Deselect source node
+            IsSelected = false;
+
+            return newNode;
+        }
+    }
+}

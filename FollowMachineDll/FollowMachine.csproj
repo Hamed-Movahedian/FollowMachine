@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1CB9F484-3464-4DE5-B9D4-1F6DB446A1BE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FollowMachineDll</RootNamespace>
+    <AssemblyName>FollowMachineDll</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MgsCommonLib, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\MgsCommonLib\MgsCommonLib\MgsCommonLib\bin\Debug\MgsCommonLib.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files\Unity 2018.1.0b13\Editor\Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FollowMachine.cs" />
+    <Compile Include="Graph.cs" />
+    <Compile Include="IMouseInteractable.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SettingScripts\BoxSetting.cs" />
+    <Compile Include="SettingScripts\FMWiondowSettings.cs" />
+    <Compile Include="SettingScripts\NodeSetting.cs" />
+    <Compile Include="SettingScripts\SocketSetting.cs" />
+    <Compile Include="ShapeRepository.cs" />
+    <Compile Include="Shapes\BoxShape.cs" />
+    <Compile Include="Shapes\Edge.cs" />
+    <Compile Include="Shapes\Nodes\ActionNode.cs" />
+    <Compile Include="Shapes\Nodes\DialogeNode.cs" />
+    <Compile Include="Shapes\Nodes\FollowMachineNode.cs" />
+    <Compile Include="Shapes\Nodes\InputNode.cs" />
+    <Compile Include="Shapes\Nodes\Node.cs" />
+    <Compile Include="Shapes\Nodes\OutputNode.cs" />
+    <Compile Include="SettingScripts\SpcificNodeSetting.cs" />
+    <Compile Include="Shapes\Nodes\StartNode.cs" />
+    <Compile Include="Shapes\Nodes\WindowNode.cs" />
+    <Compile Include="Shapes\Shape.cs" />
+    <Compile Include="Shapes\Sockets\InputSocket.cs" />
+    <Compile Include="Shapes\Sockets\OutputSocket.cs" />
+    <Compile Include="Shapes\Sockets\Socket.cs" />
+    <Compile Include="Utility\EditorTools.cs" />
+    <Compile Include="Utility\StyleExtention.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"$(SolutionDir)pdb2mdb.exe" "$(TargetPath)"
+copy "$(TargetPath)" "$(SolutionDir)..\..\Assets\FMachine"
+copy "$(TargetPath).mdb" "$(SolutionDir)..\..\Assets\FMachine"
+
+copy "$(TargetPath)" "$(SolutionDir)..\..\..\Charsoo\Assets\FMachine"
+copy "$(TargetPath).mdb" "$(SolutionDir)..\..\..\Charsoo\Assets\FMachine"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

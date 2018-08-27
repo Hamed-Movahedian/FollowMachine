@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2043
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FollowMachine", "FollowMachine.csproj", "{1CB9F484-3464-4DE5-B9D4-1F6DB446A1BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FollowMachineEditor", "..\FollowMachineEditor\FollowMachineEditor.csproj", "{2EAAE442-AE5A-45B6-AC4A-3CA0ABFBAF3C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1CB9F484-3464-4DE5-B9D4-1F6DB446A1BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CB9F484-3464-4DE5-B9D4-1F6DB446A1BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CB9F484-3464-4DE5-B9D4-1F6DB446A1BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CB9F484-3464-4DE5-B9D4-1F6DB446A1BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EAAE442-AE5A-45B6-AC4A-3CA0ABFBAF3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EAAE442-AE5A-45B6-AC4A-3CA0ABFBAF3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EAAE442-AE5A-45B6-AC4A-3CA0ABFBAF3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EAAE442-AE5A-45B6-AC4A-3CA0ABFBAF3C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1B9B097B-00B3-4F31-A0E9-753986397A6D}
+	EndGlobalSection
+EndGlobal
