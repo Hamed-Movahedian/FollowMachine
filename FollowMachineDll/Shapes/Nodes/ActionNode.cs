@@ -5,11 +5,14 @@ using System.Linq;
 using System.Reflection;
 using FMachine.SettingScripts;
 using FMachine.Shapes.Sockets;
+using FollowMachineDll;
+using FollowMachineDll.Attributes;
 using FollowMachineDll.Utility;
 using UnityEngine;
 
 namespace FMachine.Shapes.Nodes
 {
+    [Node(MenuTitle="Action")]
     public class ActionNode : Node
     {
         #region Public
@@ -37,6 +40,27 @@ namespace FMachine.Shapes.Nodes
 
         #endregion
 
+        public override bool IsEqualTo(Node node)
+        {
+            var actionNode = node as ActionNode;
+
+            if (actionNode == null)
+                return false;
+
+            if (
+                actionNode.TargetGameObject != TargetGameObject || 
+                actionNode.ComponentTypeName != ComponentTypeName ||
+                actionNode.MethodName != MethodName ||
+                actionNode.ParameterValueStrings.Count != ParameterValueStrings.Count)
+                return false;
+
+            for (int i = 0; i < ParameterValueStrings.Count; i++)
+                if (actionNode.ParameterValueStrings[i] != ParameterValueStrings[i])
+                    return false;
+
+            return true;
+        }
+
         public override void DrawInspector()
         {
             base.DrawInspector();
@@ -46,20 +70,7 @@ namespace FMachine.Shapes.Nodes
             Lables = OutputSocketList.Select(s => s.Name).ToList();
 
             if (EditorTools.Instance.PropertyField(this, "Lables"))
-            {
-                for (int i = 0; i < Lables.Count; i++)
-                    if (i < OutputSocketList.Count)
-                        OutputSocketList[i].Name = Lables[i];
-                    else
-                        AddOutputSocket<InputSocket>(Lables[i]);
-
-                while (OutputSocketList.Count > Lables.Count)
-                {
-                    var socket = OutputSocketList[OutputSocketList.Count - 1];
-                    OutputSocketList.Remove(socket);
-                    socket.Delete();
-                }
-            }
+                UpdateOutputSocketsWithLables();
 
             #endregion
 
@@ -131,7 +142,21 @@ namespace FMachine.Shapes.Nodes
                     MethodName = methodName;
                 }
 
-
+                var attributes = methodInfo.GetCustomAttributes(typeof(FollowMachineAttribute), false);
+                if (attributes.Length > 0)
+                {
+                    var machineAttribute = attributes[0] as FollowMachineAttribute;
+                    Info = machineAttribute.Info;
+                    Lables = machineAttribute.Outputs.Split(',').ToList();
+                    UpdateOutputSocketsWithLables();
+                }
+                else
+                {
+                    if (GUILayout.Button("Fill Info"))
+                    {
+                        Info = componentTypeName + " => " + methodInfo.Name;
+                    }
+                }
             }
 
             #endregion
@@ -163,12 +188,34 @@ namespace FMachine.Shapes.Nodes
 
                 for (int i = 0; i < parameters.Length; i++)
                 {
-                    ParameterValueStrings[i]=EditorTools.Instance.GetParameter(this, parameters[i], ParameterValueStrings[i]);
+                    var attributes = parameters[i].GetCustomAttributes(typeof(RefrenceAttribute), true);
+                    if (attributes.Length > 0)
+                    {
+                        GUILayout.Label("Refrence");
+                    }
+                    else
+                        ParameterValueStrings[i]=EditorTools.Instance.GetParameter(this, parameters[i], ParameterValueStrings[i]);
                 }
 
                 #endregion
             }
             #endregion
+        }
+
+        private void UpdateOutputSocketsWithLables()
+        {
+            for (int i = 0; i < Lables.Count; i++)
+                if (i < OutputSocketList.Count)
+                    OutputSocketList[i].Name = Lables[i];
+                else
+                    AddOutputSocket<InputSocket>(Lables[i]);
+
+            while (OutputSocketList.Count > Lables.Count)
+            {
+                var socket = OutputSocketList[OutputSocketList.Count - 1];
+                OutputSocketList.Remove(socket);
+                socket.Delete();
+            }
         }
 
         #region Run 
@@ -271,9 +318,34 @@ namespace FMachine.Shapes.Nodes
 
         }
 
-
-
         #endregion
+
+        public override void OnShow()
+        {
+            base.OnShow();
+
+            if (TargetGameObject == null)
+                return;
+
+            Type componentType = GetComponentType();
+
+            if (componentType == null)
+                return;
+
+            _methodInfo = GetMethodInfo(componentType);
+
+            if (_methodInfo == null)
+                return;
+
+            var attributes = _methodInfo.GetCustomAttributes(typeof(FollowMachineAttribute), false);
+            if (attributes.Length > 0)
+            {
+                var machineAttribute = attributes[0] as FollowMachineAttribute;
+                Info = machineAttribute.Info;
+                Lables = machineAttribute.Outputs.Split(',').ToList();
+                UpdateOutputSocketsWithLables();
+            }
+        }
 
         public override Node GetNextNode()
         {
@@ -342,6 +414,25 @@ namespace FMachine.Shapes.Nodes
             AddInputSocket<OutputSocket>("");
 
             AddOutputSocket<InputSocket>("");
+        }
+
+        public override void DoubleClick(Vector2 mousePosition, Event currentEvent)
+        {
+            if (TargetGameObject == null)
+                return;
+
+            Type componentType = GetComponentType();
+
+            if (componentType == null)
+                return;
+
+            _methodInfo = GetMethodInfo(componentType);
+
+            if (_methodInfo == null)
+                return;
+
+            if(componentType.IsSubclassOf(typeof(MonoBehaviour)))
+                EditorTools.Instance.OpenScript((MonoBehaviour)TargetGameObject.GetComponent(componentType));
         }
     }
 }

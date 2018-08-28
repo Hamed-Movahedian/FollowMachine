@@ -19,11 +19,13 @@ namespace FMachine.SettingScripts
         [Header("Glow")]
         public Color GlowNormal = new Color(0.5f, 0.5f, 0.5f, 0.5f);
         public Color GlowHover = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+        public Color GlowSelected = new Color(0.5f, 0.5f, 0.5f, 0.5f);
 
         [Header("Line")]
         public Color LineNormal = new Color(0.5f, 0.5f, 0.5f, 0.5f);
         public Color LineSelected = new Color(0.5f, 0.5f, 0.5f, 0.5f);
         public Color LineRunning = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+        public Color LineHover = new Color(0.5f, 0.5f, 0.5f, 0.5f);
 
         [Header("Colors")]
         public Color BodyColor;

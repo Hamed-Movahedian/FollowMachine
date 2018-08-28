@@ -31,8 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MgsCommonLib">
-      <HintPath>..\..\..\MgsCommonLib\MgsCommonLib\MgsCommonLib\bin\Debug\MgsCommonLib.dll</HintPath>
+    <Reference Include="MgsCommonLib, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MgsCommonLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -75,10 +76,9 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"$(SolutionDir)pdb2mdb.exe" "$(TargetPath)"
-copy "$(TargetPath)" "$(SolutionDir)..\..\Assets\FMachine"
-copy "$(TargetPath).mdb" "$(SolutionDir)..\..\Assets\FMachine"
 
-copy "$(TargetPath)" "$(SolutionDir)..\..\..\Charsoo\Assets\FMachine"
-copy "$(TargetPath).mdb" "$(SolutionDir)..\..\..\Charsoo\Assets\FMachine"</PostBuildEvent>
+
+copy "$(TargetPath)" "$(SolutionDir)..\..\Charsoo\Assets\FMachine"
+copy "$(TargetPath).mdb" "$(SolutionDir)..\..\Charsoo\Assets\FMachine"</PostBuildEvent>
   </PropertyGroup>
 </Project>

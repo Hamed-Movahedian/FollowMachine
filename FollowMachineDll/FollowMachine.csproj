@@ -33,7 +33,7 @@
   <ItemGroup>
     <Reference Include="MgsCommonLib, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\MgsCommonLib\MgsCommonLib\MgsCommonLib\bin\Debug\MgsCommonLib.dll</HintPath>
+      <HintPath>..\MgsCommonLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -45,7 +45,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\NodeAttribute.cs" />
+    <Compile Include="Attributes\RefrenceAttribute.cs" />
     <Compile Include="FollowMachine.cs" />
+    <Compile Include="Attributes\FollowMachineAttribute.cs" />
     <Compile Include="Graph.cs" />
     <Compile Include="IMouseInteractable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,8 +64,10 @@
     <Compile Include="Shapes\Nodes\FollowMachineNode.cs" />
     <Compile Include="Shapes\Nodes\InputNode.cs" />
     <Compile Include="Shapes\Nodes\Node.cs" />
+    <Compile Include="Shapes\Nodes\NullNode.cs" />
     <Compile Include="Shapes\Nodes\OutputNode.cs" />
     <Compile Include="SettingScripts\SpcificNodeSetting.cs" />
+    <Compile Include="Shapes\Nodes\ProgressNode.cs" />
     <Compile Include="Shapes\Nodes\StartNode.cs" />
     <Compile Include="Shapes\Nodes\WindowNode.cs" />
     <Compile Include="Shapes\Shape.cs" />
@@ -75,10 +80,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"$(SolutionDir)pdb2mdb.exe" "$(TargetPath)"
-copy "$(TargetPath)" "$(SolutionDir)..\..\Assets\FMachine"
-copy "$(TargetPath).mdb" "$(SolutionDir)..\..\Assets\FMachine"
 
-copy "$(TargetPath)" "$(SolutionDir)..\..\..\Charsoo\Assets\FMachine"
-copy "$(TargetPath).mdb" "$(SolutionDir)..\..\..\Charsoo\Assets\FMachine"</PostBuildEvent>
+copy "$(TargetPath)" "$(SolutionDir)..\..\Charsoo\Assets\FMachine"
+copy "$(TargetPath).mdb" "$(SolutionDir)..\..\Charsoo\Assets\FMachine"</PostBuildEvent>
   </PropertyGroup>
 </Project>

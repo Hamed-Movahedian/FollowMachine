@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using FMachine.Shapes.Sockets;
+using FollowMachineDll.Attributes;
 using FollowMachineDll.Utility;
 using UnityEngine;
 
@@ -8,7 +9,19 @@ namespace FMachine.Shapes.Nodes
 {
     public class FollowMachineNode : Node
     {
+        [Node(MenuTitle="Follow Machine")]
         public FollowMachine FollowMachine;
+
+        public override bool IsEqualTo(Node node)
+        {
+            var followMachineNode = node as FollowMachineNode;
+
+            if (followMachineNode==null)
+                return false;
+
+            return followMachineNode.FollowMachine == FollowMachine;
+        }
+
         public override void DrawInspector()
         {
             if (EditorTools.Instance.PropertyField(this, "Info"))

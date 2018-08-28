@@ -1,18 +1,21 @@
 ﻿using System;
-using FMachine.SettingScripts;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using FMachine.Shapes.Nodes;
 using FMachine.Shapes.Sockets;
 using FollowMachineDll.Attributes;
-using UnityEngine;
 
-namespace FMachine.Shapes.Nodes
+namespace FollowMachineDll.Shapes.Nodes
 {
-    [Node(MenuTitle="IO/Input")]
-    public class InputNode : Node
+    [Node(MenuTitle="IO/Jump")]
+    public class NullNode : Node
     {
         protected override void Initialize()
         {
+            AddInputSocket<OutputSocket>("");
+
             AddOutputSocket<InputSocket>("");
-            Info = "Input";
         }
 
         public override Node GetNextNode()

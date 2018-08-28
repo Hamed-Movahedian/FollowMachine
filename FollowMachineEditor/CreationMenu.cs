@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using FMachine.Shapes;
 using FMachine.Shapes.Nodes;
+using FollowMachineDll.Attributes;
 using FollowMachineDll.Utility;
 using UnityEditor;
 using UnityEngine;
@@ -35,7 +36,16 @@ namespace FMachine.Editor
                     .Where(type => type.IsClass && !type.IsAbstract && type.IsSubclassOf(shapeType));
 
             foreach (Type type in classesExtendingNode)
-                menuEntries.Add(type.Name, type);
+            {
+                var customAttributes = type.GetCustomAttributes(typeof(NodeAttribute), true);
+
+                if (customAttributes.Length>0)
+                    menuEntries.Add(((NodeAttribute) customAttributes[0]).MenuTitle, type);
+                else
+                {
+                    menuEntries.Add(type.Name,type);
+                }
+            }
 
             menuEntries.OrderBy(x => x.Key);
 

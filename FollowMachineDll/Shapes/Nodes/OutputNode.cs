@@ -1,7 +1,9 @@
 ﻿using FMachine.Shapes.Sockets;
+using FollowMachineDll.Attributes;
 
 namespace FMachine.Shapes.Nodes
 {
+    [Node(MenuTitle="IO/Output")]
     public class OutputNode : Node
     {
         protected override void Initialize()

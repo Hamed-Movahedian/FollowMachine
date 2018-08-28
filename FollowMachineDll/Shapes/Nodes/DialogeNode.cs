@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using FMachine.Shapes.Sockets;
+using FollowMachineDll.Attributes;
 using FollowMachineDll.Utility;
 using MgsCommonLib.Theme;
 using MgsCommonLib.UI;
@@ -9,6 +10,7 @@ using UnityEngine;
 
 namespace FMachine.Shapes.Nodes
 {
+    [Node(MenuTitle="UI/Dialoge")]
     public class DialogeNode : Node
     {
         public MgsDialougWindow Window;
@@ -35,7 +37,7 @@ namespace FMachine.Shapes.Nodes
 
             if (EditorTools.Instance.LanguageListField(this, "Buttons", Buttons))
             {
-                while (Buttons.Count<OutputSocketList.Count)
+                while (Buttons.Count < OutputSocketList.Count)
                 {
                     var socket = OutputSocketList[OutputSocketList.Count - 1];
                     socket.Delete();
@@ -53,6 +55,9 @@ namespace FMachine.Shapes.Nodes
                 }
 
             }
+            if (Message != "")
+                if (GUILayout.Button("Fill Info"))
+                    Info = Message;
 
         }
 

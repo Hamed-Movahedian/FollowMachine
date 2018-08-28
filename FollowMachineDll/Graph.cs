@@ -53,6 +53,20 @@ namespace FMachine
                     node.Move(delta);
                 }
             }
+
+        }
+
+        public void EndMove()
+        {
+            foreach (Node node in NodeList)
+            {
+                if (node.IsSelected)
+                {
+                    EditorTools.Instance.Undo_RecordObject(node, "Move Nodes");
+                    node.EndMove();
+                }
+
+            }
         }
 
         public void BringToFront(Node node)
@@ -96,5 +110,6 @@ namespace FMachine
 
             OnShow();
         }
+
     }
 }

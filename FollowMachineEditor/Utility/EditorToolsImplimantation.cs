@@ -311,8 +311,8 @@ namespace FollowMachineEditor.Utility
             {
                 var entryName = entryNameList[i];
 
-                if (LanguageField(objectToUndo, lable + " " + i, ref entryName)) ;
-                hasChanged = true;
+                if (LanguageField(objectToUndo, lable + " " + i, ref entryName))
+                    hasChanged = true;
 
                 entryNameList[i] = entryName;
             }
@@ -320,7 +320,7 @@ namespace FollowMachineEditor.Utility
             return hasChanged;
         }
 
-        public override void DrawTexture(Rect rect, Texture2D texture, Color color, string text="")
+        public override void DrawTexture(Rect rect, Texture2D texture, Color color, string text = "")
         {
             Texture2D background = GUI.skin.box.normal.background;
             Color backgroundColor = GUI.backgroundColor;
@@ -349,7 +349,7 @@ namespace FollowMachineEditor.Utility
         public override void SetVerticalResizeMouseCursor(Rect rect)
         {
             rect.xMin = rect.xMax - 10;
-            EditorGUIUtility.AddCursorRect(_window.Canvas.WindowRect,MouseCursor.ResizeVertical);
+            EditorGUIUtility.AddCursorRect(_window.Canvas.WindowRect, MouseCursor.ResizeVertical);
         }
 
         public override bool TextField(string lable, ref string field)
@@ -362,6 +362,12 @@ namespace FollowMachineEditor.Utility
             }
 
             return false;
+        }
+
+        public override void OpenScript(MonoBehaviour monoBehaviour)
+        {
+            MonoScript monoScript = MonoScript.FromMonoBehaviour(monoBehaviour);
+            AssetDatabase.OpenAsset(monoScript);
         }
 
         public override void AddFollowMachine(FollowMachine followmachine)

@@ -11,6 +11,7 @@ namespace FMachine.Shapes.Nodes
 {
     public abstract class Node : BoxShape
     {
+        [TextArea]
         public string Info;
 
         #region NodeSetting
@@ -33,11 +34,10 @@ namespace FMachine.Shapes.Nodes
         public List<OutputSocket> InputSocketList = new List<OutputSocket>();
         public List<InputSocket> OutputSocketList = new List<InputSocket>();
         private bool _isDraging;
-        private readonly Rect _sourceRect = new Rect(0, 0, 1, 1);
         private bool _isResizing;
 
-        public bool IsRunningNode { get { return Graph.RunningNode == this; } }
-        public bool IsLastRunningNode { get { return Graph.LastRunningNode == this; } }
+        public bool IsRunningNode => Graph.RunningNode == this;
+        public bool IsLastRunningNode => Graph.LastRunningNode == this;
         public OutputSocket EnteredSocket { get; set; }
 
 
@@ -59,6 +59,8 @@ namespace FMachine.Shapes.Nodes
         {
             _isResizing = Rect.xMax - mousePosition.x < 20;
 
+            if(_isResizing)
+                return;
             if (!IsSelected)
             {
                 if (!currentEvent.shift)
@@ -94,6 +96,39 @@ namespace FMachine.Shapes.Nodes
                     Select();
 
             }
+            else
+            {
+                Graph.EndMove();
+            }
+        }
+
+        #region Hover
+
+        public override void MouseEnter(Vector2 mousePosition, Event currentEvent)
+        {
+            IsHover = true;
+            foreach (var node in Graph.NodeList)
+            {
+                if (node.IsEqualTo(this))
+                    node.IsHover = true;
+            }
+        }
+
+        public override void MouseExit(Vector2 mousePosition, Event currentEvent)
+        {
+            IsHover = false;
+            foreach (var node in Graph.NodeList)
+            {
+                if (node.IsEqualTo(this))
+                    node.IsHover = false;
+            }
+        }
+
+        #endregion
+
+        public virtual bool IsEqualTo(Node node)
+        {
+            return false;
         }
 
         #region Draw
@@ -169,6 +204,8 @@ namespace FMachine.Shapes.Nodes
                 EditorTools.Instance.DrawTexture(iconRect, SpcificNodeSetting.Icon, SpcificNodeSetting.IconColor);
 
             }
+
+
         }
 
         private float DrawSection(Vector2 pos, float with, Color fillColor, SectionSetting setting, string text,
@@ -190,11 +227,20 @@ namespace FMachine.Shapes.Nodes
 
 
             EditorTools.Instance.DrawTexture(rect, setting.GlowTexture, setting.Style,
-                IsHover ? NodeSetting.GlowHover : NodeSetting.GlowNormal);
+                IsSelected ? 
+                    NodeSetting.GlowSelected :
+                        IsHover ? 
+                            NodeSetting.GlowHover : 
+                            NodeSetting.GlowNormal);
 
             EditorTools.Instance.DrawTexture(rect, setting.LineTexture, setting.Style,
-                IsRunningNode ? NodeSetting.LineRunning :
-                IsSelected ? NodeSetting.LineSelected : NodeSetting.LineNormal);
+                IsRunningNode ? 
+                    NodeSetting.LineRunning :
+                    IsSelected ? 
+                        NodeSetting.LineSelected : 
+                        IsHover ?
+                            NodeSetting.LineHover :
+                            NodeSetting.LineNormal);
 
             EditorTools.Instance.DrawTexture(rect, setting.FillTexture, setting.Style, fillColor);
 
@@ -221,7 +267,7 @@ namespace FMachine.Shapes.Nodes
         public virtual void DrawInspector()
         {
             if (EditorTools.Instance.PropertyField(this, "Info"))
-                name = Name + " (" + GetType().Name + ")";
+                name = Info + " (" + GetType().Name + ")";
         }
 
         public override void OnCreate(Graph graph, Vector2 position)
@@ -247,7 +293,6 @@ namespace FMachine.Shapes.Nodes
 
         public virtual void OnShow()
         {
-            Info = Name;
 
         }
 
@@ -262,7 +307,7 @@ namespace FMachine.Shapes.Nodes
             newNode.transform.parent = transform.parent;
 
             // move new node a bit
-            newNode.Move(Vector2.one * 50);
+            newNode.Move(Vector2.one * 150);
 
             // clear output socket, delete output edges
             newNode.OutputSocketList.ForEach(s => s.Disconnect());
@@ -274,6 +319,15 @@ namespace FMachine.Shapes.Nodes
             IsSelected = false;
 
             return newNode;
+        }
+        public virtual void Move(Vector2 delta)
+        {
+            Rect.position += delta;
+        }
+        public void EndMove()
+        {
+            Rect.position = new Vector2(Mathf.Round(Rect.position.x/10)*10, Mathf.Round(Rect.position.y/10)*10);
+
         }
     }
 }

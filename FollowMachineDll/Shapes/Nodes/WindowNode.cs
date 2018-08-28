@@ -2,12 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using FMachine.Shapes.Sockets;
+using FollowMachineDll.Attributes;
 using FollowMachineDll.Utility;
 using MgsCommonLib.UI;
 using UnityEngine;
 
 namespace FMachine.Shapes.Nodes
 {
+    [Node(MenuTitle= "UI/WindowNode")]
     public class WindowNode : Node
     {
         public MgsUIWindow Window;

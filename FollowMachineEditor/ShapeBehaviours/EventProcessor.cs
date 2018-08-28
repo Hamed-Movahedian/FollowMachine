@@ -36,7 +36,8 @@ namespace FMachine.Editor.ShapeBehaviours
             switch (currentEvent.keyCode)
             {
                 case KeyCode.Delete:
-                    _canvas.Graph.DeleteSelection();
+                    if (!EditorGUIUtility.editingTextField)
+                        _canvas.Graph.DeleteSelection();
                     break;
                 case KeyCode.D:
                     if (currentEvent.control)
@@ -60,8 +61,8 @@ namespace FMachine.Editor.ShapeBehaviours
 
                     // get interaction source
                     SetMouseInteractionSource();
-                    
-                    if(currentEvent.clickCount<2)
+
+                    if (currentEvent.clickCount < 2)
                         _interactionSource.MouseDown(_mousePosition, currentEvent);
                     else
                         _interactionSource.DoubleClick(_mousePosition, currentEvent);

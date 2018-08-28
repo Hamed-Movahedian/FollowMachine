@@ -56,7 +56,7 @@ namespace FMachine.Editor
             //return (screenCoords - _canvas.WindowRect.min) / _canvas.Zoom - _canvas.Position;
             var offset = new Vector2(
                 screenCoords.x - _canvas.WindowRect.min.x,
-                screenCoords.y - _canvas.WindowRect.min.y-8
+                screenCoords.y - _canvas.WindowRect.min.y-2
                 );
             return offset / _canvas.Zoom - _canvas.Position;
         }

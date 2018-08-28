@@ -18,10 +18,7 @@ namespace FMachine.Shapes
             Rect.position = position;
         }
 
-        public virtual void Move(Vector2 delta)
-        {
-            Rect.position += delta;
-        }
+
 
         public override IMouseInteractable IsMouseOver(Vector2 mousePosition)
         {
