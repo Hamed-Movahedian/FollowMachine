@@ -20,9 +20,9 @@ namespace FMachine.Shapes.Nodes
         {
             AddInputSocket<OutputSocket>("");
         }
-        public override void DrawInspector()
+        public override void OnInspector()
         {
-            base.DrawInspector();
+            base.OnInspector();
             if(EditorTools.Instance.PropertyField(this, "Window"))
                 UpdateOutputSockets();
             if(Window==null)

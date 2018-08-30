@@ -24,12 +24,12 @@ namespace FollowMachineDll.Shapes.Nodes
         public MgsProgressWindow Window;
         public string Message;
         public ProgressModeEnum ProgressMode;
-        
-        public override void DrawInspector()
+
+        public override void OnInspector()
         {
-            base.DrawInspector();
+            base.OnInspector();
             EditorTools.Instance.PropertyField(this, "Window");
-            if(Window==null)
+            if (Window == null)
                 return;
             EditorTools.Instance.LanguageField(this, "Message", ref Message);
             EditorTools.Instance.PropertyField(this, "ProgressMode");
@@ -37,7 +37,7 @@ namespace FollowMachineDll.Shapes.Nodes
             {
                 var camaSplit = Message.Split('/');
 
-                Info = camaSplit[camaSplit.Length-1] + " => " + ProgressMode;
+                Info = camaSplit[camaSplit.Length - 1] + " => " + ProgressMode;
             }
         }
 
@@ -50,7 +50,10 @@ namespace FollowMachineDll.Shapes.Nodes
 
         public override IEnumerator Run()
         {
-            return Window.Display(Message);
+            if (ProgressMode == ProgressModeEnum.Show)
+                return Window.Display(Message);
+            else
+                return Window.Hide();
         }
 
         public override Node GetNextNode()

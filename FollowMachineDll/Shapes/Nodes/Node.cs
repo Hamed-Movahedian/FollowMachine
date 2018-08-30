@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using FMachine.SettingScripts;
 using FMachine.Shapes.Sockets;
@@ -11,15 +12,30 @@ namespace FMachine.Shapes.Nodes
 {
     public abstract class Node : BoxShape
     {
+        #region Public fields
         [TextArea]
         public string Info;
+
+        public List<OutputSocket> InputSocketList = new List<OutputSocket>();
+        public List<InputSocket> OutputSocketList = new List<InputSocket>();
+        public InputSocket DefaultOutputSocket;
+
+
+        #endregion
+
+        #region Privates
+        private bool _isDraging;
+        private bool _isResizing;
+
+        #endregion
 
         #region NodeSetting
 
         private NodeSetting _nodeSetting = null;
 
-        public NodeSetting NodeSetting => _nodeSetting ??
-                                          (_nodeSetting = (NodeSetting)EditorTools.Instance.GetAsset("NodeSetting", typeof(NodeSetting)));
+        public NodeSetting NodeSetting =>
+            _nodeSetting ??
+                (_nodeSetting = (NodeSetting)EditorTools.Instance.GetAsset("NodeSetting", typeof(NodeSetting)));
 
         #endregion
 
@@ -31,16 +47,14 @@ namespace FMachine.Shapes.Nodes
                                           (_spcificNodeSetting = (SpcificNodeSetting)EditorTools.Instance.GetAsset(GetType().Name, typeof(SpcificNodeSetting)));
         #endregion
 
-        public List<OutputSocket> InputSocketList = new List<OutputSocket>();
-        public List<InputSocket> OutputSocketList = new List<InputSocket>();
-        private bool _isDraging;
-        private bool _isResizing;
-
+        #region Properties
         public bool IsRunningNode => Graph.RunningNode == this;
         public bool IsLastRunningNode => Graph.LastRunningNode == this;
         public OutputSocket EnteredSocket { get; set; }
+        #endregion
 
-
+        // ************************** Methods
+        #region Add Sockets
         protected void AddOutputSocket<T>(string label) where T : InputSocket
         {
             var socket = (T)Graph.Repository.CreateSocket(this, typeof(T));
@@ -55,11 +69,14 @@ namespace FMachine.Shapes.Nodes
             InputSocketList.Add(socket);
         }
 
+        #endregion
+
+        #region Mouse Events
         public override void MouseDown(Vector2 mousePosition, Event currentEvent)
         {
             _isResizing = Rect.xMax - mousePosition.x < 20;
 
-            if(_isResizing)
+            if (_isResizing)
                 return;
             if (!IsSelected)
             {
@@ -102,6 +119,8 @@ namespace FMachine.Shapes.Nodes
             }
         }
 
+        #endregion
+
         #region Hover
 
         public override void MouseEnter(Vector2 mousePosition, Event currentEvent)
@@ -124,16 +143,14 @@ namespace FMachine.Shapes.Nodes
             }
         }
 
-        #endregion
 
         public virtual bool IsEqualTo(Node node)
         {
             return false;
         }
+        #endregion
 
         #region Draw
-        
-
         public override void Draw()
         {
             var pos = Rect.position;
@@ -142,7 +159,7 @@ namespace FMachine.Shapes.Nodes
             float bodyHeight;
 
             // **************  Header
-            NodeSetting.Header.Style.CalcMinMaxWidth(new GUIContent(SpcificNodeSetting.Title), out var minWith,  out var headerWidth);
+            NodeSetting.Header.Style.CalcMinMaxWidth(new GUIContent(SpcificNodeSetting.Title), out var minWith, out var headerWidth);
             Rect.width = Mathf.Max(Rect.width, headerWidth);
             headerHeight = DrawSection(pos, headerWidth, SpcificNodeSetting.HeaderColor, NodeSetting.Header, SpcificNodeSetting.Title, -1);
             pos.y += headerHeight;
@@ -152,7 +169,7 @@ namespace FMachine.Shapes.Nodes
             pos.y += infoHeight;
 
             // Input Sockets
-            if (InputSocketList.Count == 1 && InputSocketList[0].Name=="")
+            if (InputSocketList.Count == 1 && InputSocketList[0].Name == "")
             {
                 InputSocketList[0].Rect.position = new Vector2(
                     pos.x - NodeSetting.InputSocketSetting.Offset.x,
@@ -173,7 +190,7 @@ namespace FMachine.Shapes.Nodes
             }
 
             // Output Sockets
-            if (OutputSocketList.Count == 1 && OutputSocketList[0].Name=="")
+            if (OutputSocketList.Count == 1 && OutputSocketList[0].Name == "")
             {
                 OutputSocketList[0].Rect.position = new Vector2(
                     pos.x + Rect.width + NodeSetting.OutputSocketSetting.Offset.x,
@@ -205,6 +222,14 @@ namespace FMachine.Shapes.Nodes
 
             }
 
+            if (DefaultOutputSocket==null)
+            {
+                DefaultOutputSocket = (InputSocket)Graph.Repository.CreateSocket(this, typeof(InputSocket));
+            }
+
+            DefaultOutputSocket.Rect.position = new Vector2(
+                Rect.x + NodeSetting.Body.Style.border.left - NodeSetting.OutputSocketSetting.Offset.x*2,
+                Rect.yMax + NodeSetting.OutputSocketSetting.Offset.y);
 
         }
 
@@ -227,17 +252,17 @@ namespace FMachine.Shapes.Nodes
 
 
             EditorTools.Instance.DrawTexture(rect, setting.GlowTexture, setting.Style,
-                IsSelected ? 
+                IsSelected ?
                     NodeSetting.GlowSelected :
-                        IsHover ? 
-                            NodeSetting.GlowHover : 
+                        IsHover ?
+                            NodeSetting.GlowHover :
                             NodeSetting.GlowNormal);
 
             EditorTools.Instance.DrawTexture(rect, setting.LineTexture, setting.Style,
-                IsRunningNode ? 
+                IsRunningNode ?
                     NodeSetting.LineRunning :
-                    IsSelected ? 
-                        NodeSetting.LineSelected : 
+                    IsSelected ?
+                        NodeSetting.LineSelected :
                         IsHover ?
                             NodeSetting.LineHover :
                             NodeSetting.LineNormal);
@@ -254,22 +279,15 @@ namespace FMachine.Shapes.Nodes
 
         #endregion
 
-        public override void Delete()
-        {
-            InputSocketList.ForEach(socket => socket.Delete());
-            OutputSocketList.ForEach(socket => socket.Delete());
-
-            Graph.NodeList.Remove(this);
-
-            DestroyImmediate(gameObject);
-        }
-
-        public virtual void DrawInspector()
+        #region OnInspector
+        public virtual void OnInspector()
         {
             if (EditorTools.Instance.PropertyField(this, "Info"))
                 name = Info + " (" + GetType().Name + ")";
         }
+        #endregion
 
+        #region Initialize
         public override void OnCreate(Graph graph, Vector2 position)
         {
             base.OnCreate(graph, position);
@@ -280,24 +298,46 @@ namespace FMachine.Shapes.Nodes
 
             name = Name + " (" + GetType().Name + ")";
 
+            DefaultOutputSocket = (InputSocket)Graph.Repository.CreateSocket(this, typeof(InputSocket));
+
             Initialize();
         }
 
         protected abstract void Initialize();
+        #endregion
 
+        #region Run
+        internal IEnumerator RunBase()
+        {
+            yield return Run();
 
+            if (DefaultOutputSocket.IsConnected)
+                yield return (Graph as FollowMachine).RunNode(DefaultOutputSocket.GetNextNode());
+
+            
+        }
         public virtual IEnumerator Run()
         {
             return null;
         }
+        public abstract Node GetNextNode();
 
         public virtual void OnShow()
         {
 
         }
+        #endregion
 
-        public abstract Node GetNextNode();
+        #region Delete, Duplicate
+        public override void Delete()
+        {
+            InputSocketList.ForEach(socket => socket.Delete());
+            OutputSocketList.ForEach(socket => socket.Delete());
 
+            Graph.NodeList.Remove(this);
+
+            DestroyImmediate(gameObject);
+        }
         public Node Duplicate()
         {
             // duplicate node game object (with node, input/outputsockets, edges)
@@ -320,14 +360,18 @@ namespace FMachine.Shapes.Nodes
 
             return newNode;
         }
+        #endregion
+
+        #region Move
         public virtual void Move(Vector2 delta)
         {
             Rect.position += delta;
         }
         public void EndMove()
         {
-            Rect.position = new Vector2(Mathf.Round(Rect.position.x/10)*10, Mathf.Round(Rect.position.y/10)*10);
+            Rect.position = new Vector2(Mathf.Round(Rect.position.x / 10) * 10, Mathf.Round(Rect.position.y / 10) * 10);
 
         }
+        #endregion
     }
 }

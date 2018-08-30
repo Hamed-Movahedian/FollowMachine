@@ -61,9 +61,9 @@ namespace FMachine.Shapes.Nodes
             return true;
         }
 
-        public override void DrawInspector()
+        public override void OnInspector()
         {
-            base.DrawInspector();
+            base.OnInspector();
 
             #region Output lables
 

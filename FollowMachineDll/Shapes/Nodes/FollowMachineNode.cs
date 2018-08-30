@@ -22,7 +22,7 @@ namespace FMachine.Shapes.Nodes
             return followMachineNode.FollowMachine == FollowMachine;
         }
 
-        public override void DrawInspector()
+        public override void OnInspector()
         {
             if (EditorTools.Instance.PropertyField(this, "Info"))
                 if (FollowMachine != null)

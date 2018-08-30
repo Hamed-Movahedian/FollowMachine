@@ -187,8 +187,8 @@ namespace FMachine.Editor
             //*************** Process Events
 
             if (
-                Event.current.type!=EventType.Repaint &&
-                Event.current.type!=EventType.Layout)
+                Event.current.type != EventType.Repaint &&
+                Event.current.type != EventType.Layout)
             {
                 // Zoom & pan
                 CordinationSystem.HandleZoomAndPan();
@@ -217,7 +217,7 @@ namespace FMachine.Editor
                 DrawSockets();
 
                 CordinationSystem.EndDraw();
-                
+
             }
         }
 
@@ -237,6 +237,8 @@ namespace FMachine.Editor
 
                 foreach (Socket socket in node.OutputSocketList)
                     yield return socket;
+
+                yield return node.DefaultOutputSocket;
             }
         }
 
@@ -251,9 +253,15 @@ namespace FMachine.Editor
         private void DrawEdges()
         {
             foreach (Node node in Graph.NodeList)
+            {
                 foreach (var socket in node.OutputSocketList)
                     foreach (var edge in socket.EdgeList)
                         edge.Draw();
+
+                if (node.DefaultOutputSocket != null)
+                    foreach (var edge in node.DefaultOutputSocket.EdgeList)
+                        edge.Draw();
+            }
         }
 
         public void Repaint()

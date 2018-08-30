@@ -17,12 +17,12 @@ namespace FMachine
                     StartCoroutine(RunNode(node));
         }
 
-        private IEnumerator RunNode(Node node)
+        public IEnumerator RunNode(Node node)
         {
             RunningNode = node;
             while (RunningNode != null)
             {
-                yield return RunningNode.Run();
+                yield return RunningNode.RunBase();
                 LastRunningNode = RunningNode;
                 RunningNode = RunningNode.GetNextNode();
             }

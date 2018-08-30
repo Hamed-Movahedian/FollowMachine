@@ -57,11 +57,17 @@ namespace FMachine.Shapes.Sockets
                 EditorTools.Instance.DrawBezierEdge(Rect.center, _dragPos, SocketSetting.Color, Color.gray,
                     SocketSetting.Thickness);
 
+            Color color = SocketSetting.Color;
+
+            if(EdgeList.Count>0)
+                if(EdgeList[0].IsRunning)
+                    color=Node.NodeSetting.LineRunning;
+
             EditorTools.Instance.DrawTexture(
                 Rect,
                 EdgeList.Count==0 ? SocketSetting.DisconnectedTexure : SocketSetting.ConnectedTexure,
                 SocketSetting.Style,
-                SocketSetting.Color,
+                  color,
                 FilterName(Name));
 
         }

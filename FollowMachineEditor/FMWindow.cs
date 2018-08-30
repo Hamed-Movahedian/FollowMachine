@@ -54,7 +54,7 @@ namespace FMachine.Editor
                         var selectedNode = GraphStack.CurrentGraph.SelectedNode;
 
                         if (selectedNode != null)
-                            selectedNode.DrawInspector();
+                            selectedNode.OnInspector();
                         else
                             GUILayout.Label("Select a node");
                     }

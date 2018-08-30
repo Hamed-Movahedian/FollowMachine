@@ -12,6 +12,8 @@ namespace FMachine.Shapes.Sockets
         protected int Index;
         public List<Edge> EdgeList = new List<Edge>();
 
+        public bool IsConnected { get { return EdgeList.Count > 0; } }
+
         public abstract SocketSetting SocketSetting { get; }
 
         public virtual void OnCreate(Graph graph,Node node)

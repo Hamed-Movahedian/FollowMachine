@@ -14,6 +14,8 @@ namespace FMachine.Shapes
         private int _dragIndex = -1;
         public int ClickEditpointIndex;
 
+        public bool IsRunning { get { return OutputSocket.Node.IsRunningNode && InputSocket.Node.IsLastRunningNode; } }
+
         public override IMouseInteractable IsMouseOver(Vector2 mousePosition)
         {
             return EditorTools.Instance.IsMouseOverEdge(this, mousePosition);

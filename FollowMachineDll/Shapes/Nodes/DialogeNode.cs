@@ -19,9 +19,9 @@ namespace FMachine.Shapes.Nodes
         public string Icon;
         public List<string> Buttons = new List<string>();
 
-        public override void DrawInspector()
+        public override void OnInspector()
         {
-            base.DrawInspector();
+            base.OnInspector();
 
             EditorTools.Instance.PropertyField(this, "Window");
 
