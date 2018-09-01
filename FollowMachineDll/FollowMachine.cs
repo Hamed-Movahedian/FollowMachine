@@ -19,12 +19,10 @@ namespace FMachine
 
         public IEnumerator RunNode(Node node)
         {
-            RunningNode = node;
-            while (RunningNode != null)
+            while (node != null)
             {
-                yield return RunningNode.RunBase();
-                LastRunningNode = RunningNode;
-                RunningNode = RunningNode.GetNextNode();
+                yield return node.RunBase();
+                node = node.GetNextNode();
             }
         }
 

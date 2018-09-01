@@ -13,9 +13,15 @@ namespace FMachine.Editor
         public static Rect Begin(float zoomScale, Rect screenCoordsArea)
         {
             _screenArea = screenCoordsArea;
+
             GUI.EndGroup();
-            Rect clippedArea = screenCoordsArea.ScaleSizeBy(1.0f / zoomScale, screenCoordsArea.TopLeft());
-            clippedArea.y += screenCoordsArea.y;
+
+            Rect clippedArea = new Rect(
+                screenCoordsArea.position,
+                screenCoordsArea.size / zoomScale);
+
+            clippedArea.y += GUI.skin.window.border.top;
+
             GUI.BeginGroup(clippedArea);
             _prevGuiMatrix = GUI.matrix;
             Matrix4x4 translation = Matrix4x4.TRS(clippedArea.TopLeft(), Quaternion.identity, Vector3.one);

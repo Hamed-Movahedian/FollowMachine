@@ -43,27 +43,24 @@ namespace FMachine.Editor
         {
             EditorGUILayout.BeginHorizontal();
             {
-                EditorGUILayout.BeginVertical(GUILayout.MinWidth(Settings.InspectorWith));
+
+                if (GraphStack.CurrentGraph != null)
                 {
-                    EditorGUILayout.Space();
-                    EditorGUILayout.Space();
-                    EditorGUILayout.Space();
+                    var selectedNode = GraphStack.CurrentGraph.SelectedNode;
 
-                    if (GraphStack.CurrentGraph != null)
+                    if (selectedNode != null)
                     {
-                        var selectedNode = GraphStack.CurrentGraph.SelectedNode;
-
-                        if (selectedNode != null)
-                            selectedNode.OnInspector();
-                        else
-                            GUILayout.Label("Select a node");
+                        EditorGUILayout.BeginVertical(GUILayout.MinWidth(Settings.InspectorWith));
+                        EditorGUILayout.Space();
+                        EditorGUILayout.Space();
+                        EditorGUILayout.Space();
+                        selectedNode.OnInspector();
+                        EditorGUILayout.EndVertical();
                     }
                 }
-                EditorGUILayout.EndVertical();
 
                 EditorGUILayout.BeginVertical();
                 {
-
                     GraphStack.OnGUI();
 
                     Canvas.OnGUI();

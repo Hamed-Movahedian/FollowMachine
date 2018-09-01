@@ -173,7 +173,7 @@ namespace FMachine.Editor
             // *********************** Set Rect
             var rect = EditorGUILayout.GetControlRect(GUILayout.ExpandHeight(true));
 
-            if (Event.current.type == EventType.Repaint)
+            if (Event.current.type == EventType.Repaint )
                 WindowRect = rect;
 
 
@@ -254,12 +254,8 @@ namespace FMachine.Editor
         {
             foreach (Node node in Graph.NodeList)
             {
-                foreach (var socket in node.OutputSocketList)
+                foreach (var socket in node.InputSocketList)
                     foreach (var edge in socket.EdgeList)
-                        edge.Draw();
-
-                if (node.DefaultOutputSocket != null)
-                    foreach (var edge in node.DefaultOutputSocket.EdgeList)
                         edge.Draw();
             }
         }

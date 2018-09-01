@@ -53,12 +53,11 @@ namespace FMachine.Editor
 
         public Vector2 ConvertScreenCoordsToZoomCoords(Vector2 screenCoords)
         {
-            //return (screenCoords - _canvas.WindowRect.min) / _canvas.Zoom - _canvas.Position;
-            var offset = new Vector2(
-                screenCoords.x - _canvas.WindowRect.min.x,
-                screenCoords.y - _canvas.WindowRect.min.y-2
-                );
-            return offset / _canvas.Zoom - _canvas.Position;
+            //var offset = new Vector2(
+            //    screenCoords.x ,//- _canvas.WindowRect.min.x,
+            //    screenCoords.y //- GUI.skin.window.border.top
+            //    );
+            return screenCoords / _canvas.Zoom - _canvas.Position;
         }
 
         public void HandleZoomAndPan()
@@ -85,7 +84,9 @@ namespace FMachine.Editor
         {
             EditorZoomArea.Begin(_canvas.Zoom, _canvas.WindowRect);
             Rect drawArea= 
-                new Rect(_canvas.Position.x, _canvas.Position.y, _canvas.CanvasSize, _canvas.CanvasSize);
+                new Rect(
+                    _canvas.Position-_canvas.WindowRect.position/_canvas.Zoom, 
+                    Vector2.one* _canvas.CanvasSize);
             GUILayout.BeginArea(drawArea);
 
         }

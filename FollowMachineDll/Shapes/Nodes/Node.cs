@@ -309,6 +309,7 @@ namespace FMachine.Shapes.Nodes
         #region Run
         internal IEnumerator RunBase()
         {
+            Graph.RunningNode = this;
             yield return Run();
 
             if (DefaultOutputSocket.IsConnected)
