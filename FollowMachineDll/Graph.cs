@@ -35,6 +35,9 @@ namespace FMachine
         #endregion
 
         public List<Node> NodeList = new List<Node>();
+
+        #region MyRegion
+        private Node _runningNode;
         public Node RunningNode
         {
             get { return _runningNode; }
@@ -44,8 +47,8 @@ namespace FMachine
                 _runningNode = value;
             }
         }
-        public Node LastRunningNode;
-        private Node _runningNode;
+        public Node LastRunningNode; 
+        #endregion
 
         public void DeselectAll()
         {

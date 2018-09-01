@@ -67,7 +67,7 @@ namespace FMachine.Shapes.Nodes
 
             #region Output lables
 
-            Lables = OutputSocketList.Select(s => s.Name).ToList();
+            Lables = OutputSocketList.Select(s => s.Info).ToList();
 
             if (EditorTools.Instance.PropertyField(this, "Lables"))
                 UpdateOutputSocketsWithLables();
@@ -206,7 +206,7 @@ namespace FMachine.Shapes.Nodes
         {
             for (int i = 0; i < Lables.Count; i++)
                 if (i < OutputSocketList.Count)
-                    OutputSocketList[i].Name = Lables[i];
+                    OutputSocketList[i].Info = Lables[i];
                 else
                     AddOutputSocket<InputSocket>(Lables[i]);
 
@@ -220,7 +220,7 @@ namespace FMachine.Shapes.Nodes
 
         #region Run 
 
-        public override IEnumerator Run()
+        protected override IEnumerator Run()
         {
             FollowMachine.SetOutput("");
 
@@ -229,7 +229,7 @@ namespace FMachine.Shapes.Nodes
             Type componentType = GetComponentType();
 
             if (componentType == null)
-                throw new Exception("Error in Action node " + Name);
+                throw new Exception("Error in Action node " + Info);
 
             #endregion
 
@@ -238,7 +238,7 @@ namespace FMachine.Shapes.Nodes
             _methodInfo = GetMethodInfo(componentType);
 
             if (_methodInfo == null)
-                throw new Exception("Error in Action node " + Name);
+                throw new Exception("Error in Action node " + Info);
 
             #endregion
 
@@ -249,7 +249,7 @@ namespace FMachine.Shapes.Nodes
                 _object = TargetGameObject.GetComponent(componentType);
 
                 if (_object == null)
-                    throw new Exception("Error in Action node " + Name);
+                    throw new Exception("Error in Action node " + Info);
             }
             else
                 _object = TargetGameObject;
@@ -350,7 +350,7 @@ namespace FMachine.Shapes.Nodes
         public override Node GetNextNode()
         {
             foreach (var socket in OutputSocketList)
-                if (FollowMachine.CheckOutputLable(socket.Name))
+                if (FollowMachine.CheckOutputLable(socket.Info))
                     return socket.GetNextNode();
 
             return null;
@@ -361,7 +361,6 @@ namespace FMachine.Shapes.Nodes
         private MethodInfo GetMethodInfo(Type componentType)
         {
             List<MethodInfo> methods = componentType.GetMethods()
-                .Where(mi => mi.DeclaringType == componentType)
                 .Where(mi => mi.ReturnType.Name == "Void" || mi.ReturnType.Name == "IEnumerator")
                 .ToList();
 

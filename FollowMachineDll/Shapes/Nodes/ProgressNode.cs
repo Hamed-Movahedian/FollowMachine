@@ -48,7 +48,7 @@ namespace FollowMachineDll.Shapes.Nodes
             AddOutputSocket<InputSocket>("");
         }
 
-        public override IEnumerator Run()
+        protected override IEnumerator Run()
         {
             if (ProgressMode == ProgressModeEnum.Show)
                 return Window.Display(Message);

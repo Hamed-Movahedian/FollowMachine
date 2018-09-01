@@ -6,7 +6,6 @@ namespace FMachine.SettingScripts
     [CreateAssetMenu(menuName = "Settings/NodeSetting")]
     public class NodeSetting : ScriptableObject
     {
-        public string DefaultDescription;
         public Vector2 Size=new Vector2(300,200);
         public SocketSetting InputSocketSetting;
         public SocketSetting OutputSocketSetting;

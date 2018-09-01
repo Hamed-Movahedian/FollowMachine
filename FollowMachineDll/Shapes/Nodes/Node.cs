@@ -13,7 +13,7 @@ namespace FMachine.Shapes.Nodes
     public abstract class Node : BoxShape
     {
         #region Public fields
-        public string Info;
+        //public string Info;
 
         public List<OutputSocket> InputSocketList = new List<OutputSocket>();
         public List<InputSocket> OutputSocketList = new List<InputSocket>();
@@ -57,14 +57,14 @@ namespace FMachine.Shapes.Nodes
         protected void AddOutputSocket<T>(string label) where T : InputSocket
         {
             var socket = (T)Graph.Repository.CreateSocket(this, typeof(T));
-            socket.Name = label;
+            socket.Info = label;
             OutputSocketList.Add(socket);
         }
 
         protected void AddInputSocket<T>(string success) where T : OutputSocket
         {
             var socket = (T)Graph.Repository.CreateSocket(this, typeof(T));
-            socket.Name = success;
+            socket.Info = success;
             InputSocketList.Add(socket);
         }
 
@@ -168,7 +168,7 @@ namespace FMachine.Shapes.Nodes
             pos.y += infoHeight;
 
             // Input Sockets
-            if (InputSocketList.Count == 1 && InputSocketList[0].Name == "")
+            if (InputSocketList.Count == 1 && InputSocketList[0].Info == "")
             {
                 InputSocketList[0].Rect.position = new Vector2(
                     pos.x - NodeSetting.InputSocketSetting.Offset.x,
@@ -189,7 +189,7 @@ namespace FMachine.Shapes.Nodes
             }
 
             // Output Sockets
-            if (OutputSocketList.Count == 1 && OutputSocketList[0].Name == "")
+            if (OutputSocketList.Count == 1 && OutputSocketList[0].Info == "")
             {
                 OutputSocketList[0].Rect.position = new Vector2(
                     pos.x + Rect.width + NodeSetting.OutputSocketSetting.Offset.x,
@@ -293,12 +293,10 @@ namespace FMachine.Shapes.Nodes
 
             Rect.size = NodeSetting.Size;
 
-            Name = NodeSetting.DefaultDescription;
-
-            name = Name + " (" + GetType().Name + ")";
+            name = base.Info + " (" + GetType().Name + ")";
 
             DefaultOutputSocket = (InputSocket)Graph.Repository.CreateSocket(this, typeof(InputSocket));
-
+            DefaultOutputSocket.AutoHide = true;
             Initialize();
         }
 
@@ -316,18 +314,18 @@ namespace FMachine.Shapes.Nodes
 
             
         }
-        public virtual IEnumerator Run()
+        protected virtual IEnumerator Run()
         {
             return null;
         }
         public abstract Node GetNextNode();
 
+
+        #endregion
         public virtual void OnShow()
         {
-
+            DefaultOutputSocket.AutoHide = true;
         }
-        #endregion
-
         #region Delete, Duplicate
         public override void Delete()
         {

@@ -11,6 +11,7 @@ namespace FMachine.Shapes.Sockets
     {
         private bool _showDragLine;
         private Vector2 _dragPos;
+        public bool AutoHide;
 
         public override SocketSetting SocketSetting => Node.NodeSetting.OutputSocketSetting;
 
@@ -57,6 +58,13 @@ namespace FMachine.Shapes.Sockets
                 EditorTools.Instance.DrawBezierEdge(Rect.center, _dragPos, SocketSetting.Color, Color.gray,
                     SocketSetting.Thickness);
 
+            if (
+                !_showDragLine &&
+                AutoHide &&
+                !IsConnected &&
+                !IsHover
+                )
+                return;
             Color color = SocketSetting.Color;
 
             if(EdgeList.Count>0)
@@ -68,7 +76,7 @@ namespace FMachine.Shapes.Sockets
                 EdgeList.Count==0 ? SocketSetting.DisconnectedTexure : SocketSetting.ConnectedTexure,
                 SocketSetting.Style,
                   color,
-                FilterName(Name));
+                FilterName(Info));
 
         }
         protected override string FilterName(string name)

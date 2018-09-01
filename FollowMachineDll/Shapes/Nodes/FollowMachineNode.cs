@@ -39,7 +39,7 @@ namespace FMachine.Shapes.Nodes
             if (FollowMachine == null)
                 return;
 
-            Name = FollowMachine.name;
+            Info = FollowMachine.name;
 
             #region Update outputsockets
 
@@ -48,7 +48,7 @@ namespace FMachine.Shapes.Nodes
             for (int i = 0; i < outputLables.Count; i++)
             {
                 if (i < OutputSocketList.Count)
-                    OutputSocketList[i].Name = outputLables[i];
+                    OutputSocketList[i].Info = outputLables[i];
                 else
                     AddOutputSocket<InputSocket>(outputLables[i]);
             }
@@ -69,7 +69,7 @@ namespace FMachine.Shapes.Nodes
             for (int i = 0; i < inputLables.Count; i++)
             {
                 if (i < InputSocketList.Count)
-                    InputSocketList[i].Name = inputLables[i];
+                    InputSocketList[i].Info = inputLables[i];
                 else
                     AddInputSocket<OutputSocket>(inputLables[i]);
             }
@@ -113,10 +113,10 @@ namespace FMachine.Shapes.Nodes
         {
         }
 
-        public override IEnumerator Run()
+        protected override IEnumerator Run()
         {
             if (FollowMachine != null)
-                return FollowMachine.RunInputNode(EnteredSocket.Name);
+                return FollowMachine.RunInputNode(EnteredSocket.Info);
             else
                 return null;
         }
@@ -134,11 +134,11 @@ namespace FMachine.Shapes.Nodes
         public override Node GetNextNode()
         {
             if (FollowMachine != null)
-                if (FollowMachine.LastRunningNode != null)
+                if (FollowMachine.RunningNode != null)
                 {
-                    if (FollowMachine.LastRunningNode is OutputNode)
+                    if (FollowMachine.RunningNode is OutputNode)
                         foreach (var socket in OutputSocketList)
-                            if (socket.Name == FollowMachine.LastRunningNode.Info)
+                            if (socket.Info == FollowMachine.RunningNode.Info)
                                 return socket.GetNextNode();
                 }
 

@@ -51,7 +51,7 @@ namespace FMachine.Shapes.Nodes
 
                 for (int i = 0; i < Buttons.Count; i++)
                 {
-                    OutputSocketList[i].Name = Buttons[i];
+                    OutputSocketList[i].Info = Buttons[i];
                 }
 
             }
@@ -66,7 +66,7 @@ namespace FMachine.Shapes.Nodes
             AddInputSocket<OutputSocket>("");
         }
 
-        public override IEnumerator Run()
+        protected override IEnumerator Run()
         {
             if (Window == null)
                 throw new Exception("Error in dialoge node! Window is'nt set");
@@ -77,7 +77,7 @@ namespace FMachine.Shapes.Nodes
         public override Node GetNextNode()
         {
             foreach (var socket in OutputSocketList)
-                if (socket.Name == Window.Result)
+                if (socket.Info == Window.Result)
                     return socket.GetNextNode();
             return null;
         }

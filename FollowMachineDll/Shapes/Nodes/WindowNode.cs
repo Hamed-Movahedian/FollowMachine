@@ -13,12 +13,12 @@ namespace FMachine.Shapes.Nodes
     public class WindowNode : Node
     {
         public MgsUIWindow Window;
-        public bool ShowWindow=true;
         public bool HideWindow=true;
 
         protected override void Initialize()
         {
-            AddInputSocket<OutputSocket>("");
+            AddInputSocket<OutputSocket>("Wait only");
+            AddInputSocket<OutputSocket>("Show and Wait");
         }
         public override void OnInspector()
         {
@@ -27,7 +27,6 @@ namespace FMachine.Shapes.Nodes
                 UpdateOutputSockets();
             if(Window==null)
                 return;
-            EditorTools.Instance.PropertyField(this, "ShowWindow");
             EditorTools.Instance.PropertyField(this, "HideWindow");
 
         }
@@ -44,10 +43,15 @@ namespace FMachine.Shapes.Nodes
 
         public void UpdateOutputSockets()
         {
+            if(InputSocketList.Count==1)
+            {
+                InputSocketList[0].Info = "Wait only";
+                AddInputSocket<OutputSocket>("Show and Wait");
+            }
             if (Window == null)
                 return;
 
-            Name = Window.name;
+            Info = Window.name;
 
             #region Update outputsockets
 
@@ -56,7 +60,7 @@ namespace FMachine.Shapes.Nodes
             for (int i = 0; i < outputLables.Count; i++)
             {
                 if (i < OutputSocketList.Count)
-                    OutputSocketList[i].Name = outputLables[i];
+                    OutputSocketList[i].Info = outputLables[i];
                 else
                     AddOutputSocket<InputSocket>(outputLables[i]);
             }
@@ -73,17 +77,21 @@ namespace FMachine.Shapes.Nodes
 
         #endregion
 
-        public override IEnumerator Run()
+        protected override IEnumerator Run()
         {
             if (Window == null)
                 throw new Exception("Error in window node! Window is'nt set");
-            return Window.WaitForClose(ShowWindow, HideWindow);
+
+            if(EnteredSocket==InputSocketList[0]) 
+                return Window.WaitForClose(false, HideWindow);
+            else
+                return Window.WaitForClose(true, HideWindow);
         }
 
         public override Node GetNextNode()
         {
             foreach (var socket in OutputSocketList)
-                if (socket.Name == Window.Result)
+                if (socket.Info == Window.Result)
                     return socket.GetNextNode();
             return null;
         }

@@ -80,7 +80,7 @@ namespace FMachine.Shapes.Sockets
                 EdgeList.Count==0 ? SocketSetting.DisconnectedTexure : SocketSetting.ConnectedTexure,
                 SocketSetting.Style,
                 color,
-                FilterName(Name));
+                FilterName(Info));
         }
     }
 }
