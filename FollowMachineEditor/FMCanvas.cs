@@ -173,12 +173,13 @@ namespace FMachine.Editor
             // *********************** Set Rect
             var rect = EditorGUILayout.GetControlRect(GUILayout.ExpandHeight(true));
 
-            if (Event.current.type == EventType.Repaint )
+            if (Event.current.type != EventType.Layout )
                 WindowRect = rect;
 
 
             // ********************** Draw background
-            GridBackground.Draw(this);
+            if (Event.current.type == EventType.Repaint)
+                GridBackground.Draw(this);
 
             // *************** Exit if no graph
             if (Graph == null)
@@ -199,22 +200,27 @@ namespace FMachine.Editor
                 // Process Events
                 EventProcessor.ProcessEvents();
             }
-            else
+            else 
+            if (Event.current.type == EventType.Repaint ||
+                     Event.current.type == EventType.Layout)
             {
                 // ************** Draw Shapes
 
                 CordinationSystem.BeginDraw();
 
-                BoxSelection.Draw();
+                if (Event.current.type == EventType.Repaint)
+                {
+                    BoxSelection.Draw();
 
-                // Draw Edges
-                DrawEdges();
+                    // Draw Edges
+                    DrawEdges();
 
-                // Draw Nodes
-                Graph.NodeList.ForEach(shape => shape.Draw());
+                    // Draw Nodes
+                    Graph.NodeList.ForEach(shape => shape.Draw());
 
-                // Draw Sockets
-                DrawSockets();
+                    // Draw Sockets
+                    DrawSockets();
+                }
 
                 CordinationSystem.EndDraw();
 

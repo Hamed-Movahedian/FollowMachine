@@ -90,7 +90,7 @@ namespace FMachine.Shapes.Nodes
 
             foreach (Node node in FollowMachine.NodeList)
                 if (node is InputNode)
-                    list.Add(node.Name);
+                    list.Add(node.Info);
 
             return list;
         }
@@ -101,7 +101,7 @@ namespace FMachine.Shapes.Nodes
 
             foreach (Node node in FollowMachine.NodeList)
                 if (node is OutputNode)
-                    list.Add(node.Name);
+                    list.Add(node.Info);
 
             return list;
         }
@@ -138,7 +138,7 @@ namespace FMachine.Shapes.Nodes
                 {
                     if (FollowMachine.LastRunningNode is OutputNode)
                         foreach (var socket in OutputSocketList)
-                            if (socket.Name == FollowMachine.LastRunningNode.Name)
+                            if (socket.Name == FollowMachine.LastRunningNode.Info)
                                 return socket.GetNextNode();
                 }
 

@@ -51,6 +51,9 @@ namespace FMachine.Editor.ShapeBehaviours
             // set isInCanvas, mousePos
             SetupMouseInfo();
 
+            if (!_isMouseInCanvas)
+                return;
+
             switch (currentEvent.type)
             {
                 // *********************************** Mouse Down
@@ -67,16 +70,15 @@ namespace FMachine.Editor.ShapeBehaviours
                     else
                         _interactionSource.DoubleClick(_mousePosition, currentEvent);
 
-                    Event.current.type = EventType.Layout;
+                    Event.current.Use();
                     break;
 
                 // *********************************** Mouse Drag
                 case EventType.MouseDrag:
-                    if (_interactionSource != null)
-                        _interactionSource.MouseDrag(
-                            currentEvent.delta / _canvas.Zoom,
-                            _mousePosition,
-                            currentEvent);
+                    _interactionSource?.MouseDrag(
+                        currentEvent.delta / _canvas.Zoom,
+                        _mousePosition,
+                        currentEvent);
                     break;
 
                 // *********************************** Mouse Up

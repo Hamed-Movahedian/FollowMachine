@@ -13,7 +13,6 @@ namespace FMachine.Shapes.Nodes
     public abstract class Node : BoxShape
     {
         #region Public fields
-        [TextArea]
         public string Info;
 
         public List<OutputSocket> InputSocketList = new List<OutputSocket>();

@@ -9,7 +9,7 @@ namespace FMachine.Shapes.Nodes
     {
         protected override void Initialize()
         {
-            AddOutputSocket<InputSocket>("Out");
+            AddOutputSocket<InputSocket>("");
         }
 
         public override Node GetNextNode()

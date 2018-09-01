@@ -12,7 +12,6 @@ namespace FMachine.Shapes.Nodes
         protected override void Initialize()
         {
             AddOutputSocket<InputSocket>("");
-            Info = "Input";
         }
 
         public override Node GetNextNode()

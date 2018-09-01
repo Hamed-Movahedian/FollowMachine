@@ -40,7 +40,7 @@ namespace FMachine
         {
             foreach (Node node in NodeList)
                 if (node is InputNode)
-                    if(node.Name==inputLable)
+                    if(node.Info==inputLable)
                         return RunNode(node);
             return null;
         }

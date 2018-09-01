@@ -52,7 +52,11 @@ namespace FMachine.Editor
 
             PerformOnGUI();
 
-            Repaint();
+            if (
+                Event.current.type == EventType.Layout ||
+                Event.current.isMouse ||
+                Event.current.isKey)
+                Repaint();
         }
 
         protected abstract void PerformOnGUI();

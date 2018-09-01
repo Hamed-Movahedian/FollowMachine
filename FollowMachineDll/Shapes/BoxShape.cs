@@ -10,7 +10,7 @@ namespace FMachine.Shapes
         public Rect Rect;
 
         [Header("Descriptions :")]
-        public string Name = "";
+        //public string Name = "";
 
         public virtual void OnCreate(Graph graph, Vector2 position)
         {
