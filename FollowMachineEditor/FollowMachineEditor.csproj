@@ -54,6 +54,9 @@
     <Compile Include="FMCanvas.cs" />
     <Compile Include="FMWindow.cs" />
     <Compile Include="FMWindowBase.cs" />
+    <Compile Include="FollowMachineExplorer\FollowMachineCollection.cs" />
+    <Compile Include="FollowMachineExplorer\FollowMachineTreeView.cs" />
+    <Compile Include="FollowMachineExplorer\FollowMachineTreeViewWindow.cs" />
     <Compile Include="GraphStack.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingController.cs" />

@@ -12,7 +12,7 @@ namespace FMachine.Editor
 
         private string _errorMessage = "";
 
-        [MenuItem("Window/Follow Machine Window")]
+        [MenuItem("Window/FollowMachine/Follow Machine Window")]
         private static void OnCreateWindow()
         {
             FMWindow window = GetWindow<FMWindow>();
