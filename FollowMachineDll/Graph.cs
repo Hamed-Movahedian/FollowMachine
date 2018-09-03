@@ -36,7 +36,7 @@ namespace FMachine
 
         public List<Node> NodeList = new List<Node>();
 
-        #region MyRegion
+        #region RunningNode
         private Node _runningNode;
         public Node RunningNode
         {
@@ -89,7 +89,7 @@ namespace FMachine
 
         public void DeleteSelection()
         {
-            EditorTools.Instance.Undo_RecordObject(this, "Delete Node");
+            //EditorTools.Instance.Undo_RecordObject(this, "Delete Node");
 
             var selectedNodes = new List<Node>();
 
@@ -122,6 +122,7 @@ namespace FMachine
 
             OnShow();
         }
+
 
     }
 }

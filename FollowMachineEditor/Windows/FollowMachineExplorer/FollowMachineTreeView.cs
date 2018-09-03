@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using FMachine;
+using FMachine.Editor;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace FollowMachineEditor.FollowMachineExplorer
+namespace FollowMachineEditor.Windows.FollowMachineExplorer
 {
     public class FollowMachineTreeView : TreeView
     {
@@ -17,11 +18,24 @@ namespace FollowMachineEditor.FollowMachineExplorer
             showBorder = true;
         }
 
-        protected override void DoubleClickedItem(int id)
+        protected override void SingleClickedItem(int id)
         {
+            base.SingleClickedItem(id);
             FollowMachine machine = (FollowMachine)EditorUtility.InstanceIDToObject(id);
             if (machine)
                 Selection.activeGameObject = machine.gameObject;
+        }
+
+        protected override void DoubleClickedItem(int id)
+        {
+            FollowMachine machine = (FollowMachine)EditorUtility.InstanceIDToObject(id);
+
+            if (machine)
+                Selection.activeGameObject = machine.gameObject;
+
+            var fmWindow = EditorWindow.GetWindow<FMWindow>();
+            if(fmWindow!=null)
+                fmWindow.Canvas.CordinationSystem.Focus(false, true);
         }
 
         #region Rename

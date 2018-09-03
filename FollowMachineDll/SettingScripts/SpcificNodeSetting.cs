@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace FollowMachineDll.SettingScripts
 {
-    [CreateAssetMenu(menuName = "Settings/SpcificNodeSetting")]
+    [CreateAssetMenu(menuName = "FollowMachine/SpcificNodeSetting")]
     public class SpcificNodeSetting: ScriptableObject
     {
         public Color HeaderColor=Color.white;

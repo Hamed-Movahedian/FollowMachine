@@ -270,5 +270,6 @@ namespace FMachine.Editor
         {
             _window.Repaint();
         }
+
     }
 }

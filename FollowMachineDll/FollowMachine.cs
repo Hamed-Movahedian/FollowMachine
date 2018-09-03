@@ -9,14 +9,6 @@ namespace FMachine
     {
         private static string _outputLable;
 
-
-        private void Start()
-        {
-            foreach (Node node in NodeList)
-                if (node is StartNode)
-                    StartCoroutine(RunNode(node));
-        }
-
         public IEnumerator RunNode(Node node)
         {
             while (node != null)

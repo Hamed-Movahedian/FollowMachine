@@ -42,40 +42,14 @@ namespace FMachine.Editor
 
         protected override void PerformOnGUI()
         {
-            Node selectedNode = null;
+            EditorGUILayout.BeginVertical();
 
-            if (GraphStack.CurrentGraph != null)
-                selectedNode = GraphStack.CurrentGraph.SelectedNode;
+            GraphStack.OnGUI();
 
-            EditorGUILayout.BeginHorizontal();
-            {
-                EditorGUILayout.BeginVertical();
-                {
-                    GraphStack.OnGUI();
+            Canvas.OnGUI();
 
-                    Canvas.OnGUI();
-                }
-                EditorGUILayout.EndVertical();
+            EditorGUILayout.EndVertical();
 
-                EditorGUILayout.BeginVertical(GUILayout.MinWidth(selectedNode == null ? 10 : Settings.InspectorWith));
-                
-                if (selectedNode != null)
-                {
-                    EditorGUILayout.Space();
-                    EditorGUILayout.Space();
-                    EditorGUILayout.Space();
-                    selectedNode.OnInspector();
-                }
-                else
-                {
-                    GUILayout.Label("");
-                }
-
-                EditorGUILayout.EndVertical();
-
- 
-            }
-            EditorGUILayout.EndHorizontal();
         }
     }
 }

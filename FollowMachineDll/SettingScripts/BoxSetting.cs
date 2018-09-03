@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace FMachine.SettingScripts
 {
-    [CreateAssetMenu(menuName = "Settings/BoxSetting")]
+    [CreateAssetMenu(menuName = "FollowMachine/BoxSetting")]
     public class BoxSetting : ScriptableObject
     {
         public GUIStyle Style;

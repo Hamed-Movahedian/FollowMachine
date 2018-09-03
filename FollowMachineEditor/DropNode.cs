@@ -44,6 +44,16 @@ namespace FMachine.Editor
                     Event.current.Use();
                     return;
                 }
+                else if(o is FollowMachine)
+                {
+                    _dragGameObject = (o as FollowMachine).gameObject;
+                    CreateDragMenu();
+
+                    _dragMenu.ShowAsContext();
+
+                    Event.current.Use();
+                    return;
+                }
         }
         private void CreateDragMenu()
         {

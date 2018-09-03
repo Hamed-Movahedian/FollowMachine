@@ -33,17 +33,24 @@ namespace FMachine.Editor.ShapeBehaviours
 
         private void ProcessKeyboardEvents(Event currentEvent)
         {
-            switch (currentEvent.keyCode)
-            {
-                case KeyCode.Delete:
-                    if (!EditorGUIUtility.editingTextField)
-                        _canvas.Graph.DeleteSelection();
-                    break;
-                case KeyCode.D:
-                    if (currentEvent.control)
-                        _canvas.Graph.DuplicateSelection();
-                    break;
-            }
+            if (currentEvent.type == EventType.KeyDown)
+                switch (currentEvent.keyCode)
+                {
+                    case KeyCode.Delete:
+                        if (!EditorGUIUtility.editingTextField)
+                            _canvas.Graph.DeleteSelection();
+                        break;
+                    case KeyCode.D:
+                        if (currentEvent.control)
+                            _canvas.Graph.DuplicateSelection();
+                        break;
+                    case KeyCode.F:
+                        if (_canvas.Graph.SelectedNode == null)
+                            _canvas.CordinationSystem.Focus(false, true);
+                        else
+                            _canvas.CordinationSystem.Focus(true, true);
+                        break;
+                }
         }
 
         private void ProcessMouseEvents(Event currentEvent)

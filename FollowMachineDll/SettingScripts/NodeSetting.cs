@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace FMachine.SettingScripts
 {
-    [CreateAssetMenu(menuName = "Settings/NodeSetting")]
+    [CreateAssetMenu(menuName = "FollowMachine/NodeSetting")]
     public class NodeSetting : ScriptableObject
     {
         public Vector2 Size=new Vector2(300,200);

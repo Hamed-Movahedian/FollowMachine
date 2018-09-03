@@ -41,6 +41,7 @@ namespace FMachine.Shapes.Nodes
         #region Specific node setting
 
         private SpcificNodeSetting _spcificNodeSetting;
+        public bool Enable = true;
 
         public SpcificNodeSetting SpcificNodeSetting => _spcificNodeSetting ??
                                           (_spcificNodeSetting = (SpcificNodeSetting)EditorTools.Instance.GetAsset(GetType().Name, typeof(SpcificNodeSetting)));

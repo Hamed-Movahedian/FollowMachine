@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace FMachine.SettingScripts
 {
-    [CreateAssetMenu(menuName = "Settings/SocketSetting")]
+    [CreateAssetMenu(menuName = "FollowMachine/SocketSetting")]
     public class SocketSetting : ScriptableObject
     {
         public GUIStyle Style;

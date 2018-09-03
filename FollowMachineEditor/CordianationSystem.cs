@@ -23,15 +23,15 @@ namespace FMachine.Editor
             Vector2 newzoomCoordsMousePos = ConvertScreenCoordsToZoomCoords(Event.current.mousePosition);
 
 
-            _canvas.Position+= newzoomCoordsMousePos - zoomCoordsMousePos;
-/*
-            var nextTranlationPosition = _canvas.Position + newzoomCoordsMousePos - zoomCoordsMousePos;
+            _canvas.Position += newzoomCoordsMousePos - zoomCoordsMousePos;
+            /*
+                        var nextTranlationPosition = _canvas.Position + newzoomCoordsMousePos - zoomCoordsMousePos;
 
-            if (nextTranlationPosition.x >= 0) nextTranlationPosition.x = 0;
-            if (nextTranlationPosition.y >= 0) nextTranlationPosition.y = 0;
+                        if (nextTranlationPosition.x >= 0) nextTranlationPosition.x = 0;
+                        if (nextTranlationPosition.y >= 0) nextTranlationPosition.y = 0;
 
-            _canvas.Position = nextTranlationPosition;
-*/
+                        _canvas.Position = nextTranlationPosition;
+            */
         }
 
         private void Pan()
@@ -41,14 +41,14 @@ namespace FMachine.Editor
 
             _canvas.Position += delta;
 
-/*
-            var nextTranlationPosition = _canvas.Position + delta;
+            /*
+                        var nextTranlationPosition = _canvas.Position + delta;
 
-            if (nextTranlationPosition.x >= 0) nextTranlationPosition.x = 0;
-            if (nextTranlationPosition.y >= 0) nextTranlationPosition.y = 0;
+                        if (nextTranlationPosition.x >= 0) nextTranlationPosition.x = 0;
+                        if (nextTranlationPosition.y >= 0) nextTranlationPosition.y = 0;
 
-            _canvas.Position = nextTranlationPosition;
-*/
+                        _canvas.Position = nextTranlationPosition;
+            */
         }
 
         public Vector2 ConvertScreenCoordsToZoomCoords(Vector2 screenCoords)
@@ -66,7 +66,7 @@ namespace FMachine.Editor
             if (Event.current.type == EventType.ScrollWheel)
             {
                 Zoom(-Event.current.delta.y / 150.0f);
-                
+
                 Event.current.Use();
             }
 
@@ -83,10 +83,10 @@ namespace FMachine.Editor
         public void BeginDraw()
         {
             EditorZoomArea.Begin(_canvas.Zoom, _canvas.WindowRect);
-            Rect drawArea= 
+            Rect drawArea =
                 new Rect(
-                    _canvas.Position-_canvas.WindowRect.position/_canvas.Zoom, 
-                    Vector2.one* _canvas.CanvasSize);
+                    _canvas.Position - _canvas.WindowRect.position / _canvas.Zoom,
+                    Vector2.one * _canvas.CanvasSize);
             GUILayout.BeginArea(drawArea);
 
         }
@@ -95,6 +95,39 @@ namespace FMachine.Editor
         {
             GUILayout.EndArea();
             EditorZoomArea.End();
+        }
+
+        public void Focus(bool toSelection, bool zooming)
+        {
+            if (_canvas.Graph == null)
+                return;
+
+            Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
+
+            foreach (var node in _canvas.Graph.NodeList)
+                if (!toSelection || node.IsSelected)
+                    if (bounds.center == Vector3.zero)
+                        bounds = new Bounds(node.Rect.center, node.Rect.size);
+                    else
+                    {
+                        bounds.Encapsulate(node.Rect.min);
+                        bounds.Encapsulate(node.Rect.max);
+                    }
+
+            if (bounds.center == Vector3.zero)
+                return;
+
+
+            if (zooming)
+            {
+                _canvas.Zoom = Mathf.Min(
+                    _canvas.WindowRect.height / bounds.size.y,
+                    _canvas.WindowRect.width / bounds.size.x);
+
+                _canvas.Zoom = Mathf.Max(MinZoom, _canvas.Zoom);
+                _canvas.Zoom = Mathf.Min(MaxZoom, _canvas.Zoom);
+            }
+            _canvas.Position = -(Vector2)bounds.center+_canvas.WindowRect.size*0.5f/_canvas.Zoom;
         }
     }
 }
