@@ -58,7 +58,6 @@ namespace FMachine.Shapes.Sockets
 
         public override void Draw()
         {
-            base.Draw();
             if (_showDragLine)
             {
                 if(_selectedInputSocket!=null)
@@ -69,18 +68,8 @@ namespace FMachine.Shapes.Sockets
                     Color.gray,
                     SocketSetting.Thickness);
             }
-            Color color = SocketSetting.Color;
 
-            foreach (var edge in EdgeList)            
-                if (edge.IsRunning)
-                    color = Node.NodeSetting.LineRunning;
-
-            EditorTools.Instance.DrawTexture(
-                Rect,
-                EdgeList.Count==0 ? SocketSetting.DisconnectedTexure : SocketSetting.ConnectedTexure,
-                SocketSetting.Style,
-                color,
-                FilterName(Info));
+            base.Draw();
         }
     }
 }

@@ -13,6 +13,7 @@ namespace FMachine.SettingScripts
 
         [Header("Icon")]
         public Rect IconRect;
+        public Texture2D ShowIcon;
 
 
         [Header("Glow")]

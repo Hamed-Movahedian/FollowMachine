@@ -21,8 +21,19 @@ namespace FMachine.Editor
         {
             get
             {
-                return GraphList == null ? null :
-              GraphList.Count == 0 ? null : (Graph)EditorUtility.InstanceIDToObject(GraphList[GraphList.Count - 1]);
+                if (GraphList == null)
+                    return null;
+                if (GraphList.Count == 0)
+                    return null;
+
+                var graph = EditorUtility.InstanceIDToObject(GraphList[GraphList.Count - 1]) as Graph;
+                if (graph == null)
+                {
+                    GraphList.Clear();
+                    return null;
+                }
+
+                return graph;
             }
         }
 

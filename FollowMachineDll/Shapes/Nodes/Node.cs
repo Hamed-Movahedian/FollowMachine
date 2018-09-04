@@ -41,7 +41,7 @@ namespace FMachine.Shapes.Nodes
         #region Specific node setting
 
         private SpcificNodeSetting _spcificNodeSetting;
-        public bool Enable = true;
+        public bool Active = true;
 
         public SpcificNodeSetting SpcificNodeSetting => _spcificNodeSetting ??
                                           (_spcificNodeSetting = (SpcificNodeSetting)EditorTools.Instance.GetAsset(GetType().Name, typeof(SpcificNodeSetting)));
@@ -254,9 +254,9 @@ namespace FMachine.Shapes.Nodes
             EditorTools.Instance.DrawTexture(rect, setting.GlowTexture, setting.Style,
                 IsSelected ?
                     NodeSetting.GlowSelected :
-                        IsHover ?
-                            NodeSetting.GlowHover :
-                            NodeSetting.GlowNormal);
+                    IsHover ?
+                        NodeSetting.GlowHover :
+                        NodeSetting.GlowNormal);
 
             EditorTools.Instance.DrawTexture(rect, setting.LineTexture, setting.Style,
                 IsRunningNode ?

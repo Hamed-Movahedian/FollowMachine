@@ -62,11 +62,11 @@ namespace FollowMachineEditor.Windows.EntryPoints
                 }
 
 
-                var toggle = GUILayout.Toggle(entryPointNode.Enable, "");
-                if (toggle != entryPointNode.Enable)
+                var toggle = GUILayout.Toggle(entryPointNode.Active, "");
+                if (toggle != entryPointNode.Active)
                 {
                     Undo.RecordObject(entryPointNode, "Change in entry point");
-                    entryPointNode.Enable = toggle;
+                    entryPointNode.Active = toggle;
                 }
 
                 if (GUILayout.Button(new GUIContent(_setting.FindIcon), EditorStyles.miniButton))

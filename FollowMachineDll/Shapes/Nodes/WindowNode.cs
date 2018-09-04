@@ -9,11 +9,12 @@ using UnityEngine;
 
 namespace FMachine.Shapes.Nodes
 {
-    [Node(MenuTitle= "UI/WindowNode")]
+    [Node(MenuTitle = "UI/WindowNode")]
     public class WindowNode : Node
     {
         public MgsUIWindow Window;
-        public bool HideWindow=true;
+        public bool Refresh = true;
+        public List<bool> HideList = new List<bool>();
 
         protected override void Initialize()
         {
@@ -23,18 +24,51 @@ namespace FMachine.Shapes.Nodes
         public override void OnInspector()
         {
             base.OnInspector();
-            if(EditorTools.Instance.PropertyField(this, "Window"))
+            if (EditorTools.Instance.PropertyField(this, "Window"))
                 UpdateOutputSockets();
-            if(Window==null)
+            if (Window == null)
                 return;
-            EditorTools.Instance.PropertyField(this, "HideWindow");
+            EditorTools.Instance.PropertyField(this, "Refresh");
 
+            // ****************************** Hide list
+            
+            SetHideListFromWindowActionList();
+            
+            // Hide all
+            if (GUILayout.Button("Hide all"))
+                for (int i = 0; i < HideList.Count; i++)
+                    HideList[i] = true;
+
+            // Show all
+            if (GUILayout.Button("Show all"))
+                for (int i = 0; i < HideList.Count; i++)
+                    HideList[i] = false;
+
+            // display Hide list
+            GUILayout.Label("Hide window by outputs:");
+            for (int i = 0; i < HideList.Count; i++)
+                HideList[i] = GUILayout.Toggle(HideList[i], Window.ActionList[i]);
+            UpdateOutputSockets();
         }
+
+        private void SetHideListFromWindowActionList()
+        {
+            // remove extra hidelist elements
+            while (HideList.Count > Window.ActionList.Count)
+                HideList.RemoveAt(HideList.Count - 1);
+
+            // add shortcoming elements
+            while (HideList.Count < Window.ActionList.Count)
+            {
+                HideList.Add(true);
+            }
+        }
+
         public override void OnShow()
         {
             base.OnShow();
             UpdateOutputSockets();
-            if(Window!=null)
+            if (Window != null)
                 Window.OnChange += UpdateOutputSockets;
 
         }
@@ -43,7 +77,7 @@ namespace FMachine.Shapes.Nodes
 
         public void UpdateOutputSockets()
         {
-            if(InputSocketList.Count==1)
+            if (InputSocketList.Count == 1)
             {
                 InputSocketList[0].Info = "Wait only";
                 AddInputSocket<OutputSocket>("Show and Wait");
@@ -63,6 +97,8 @@ namespace FMachine.Shapes.Nodes
                     OutputSocketList[i].Info = outputLables[i];
                 else
                     AddOutputSocket<InputSocket>(outputLables[i]);
+
+                OutputSocketList[i].Icon = !HideList[i] ? NodeSetting.ShowIcon : null;
             }
 
             while (OutputSocketList.Count > outputLables.Count)
@@ -82,10 +118,19 @@ namespace FMachine.Shapes.Nodes
             if (Window == null)
                 throw new Exception("Error in window node! Window is'nt set");
 
-            if(EnteredSocket==InputSocketList[0]) 
-                return Window.WaitForClose(false, HideWindow);
+            if (Refresh)
+                Window.Refresh();
+
+            if (EnteredSocket == InputSocketList[0])
+                yield return  Window.WaitForClose(false, false);
             else
-                return Window.WaitForClose(true, HideWindow);
+                yield return Window.WaitForClose(true, false);
+
+
+            for (var i = 0; i < OutputSocketList.Count; i++)
+                if (OutputSocketList[i].Info == Window.Result)
+                    if (HideList[i])
+                        yield return Window.Hide();
         }
 
         public override Node GetNextNode()
@@ -94,6 +139,12 @@ namespace FMachine.Shapes.Nodes
                 if (socket.Info == Window.Result)
                     return socket.GetNextNode();
             return null;
+        }
+        public override void DoubleClick(Vector2 mousePosition, Event currentEvent)
+        {
+            
+            if (Window!=null)
+                EditorTools.Instance.OpenScript(Window);
         }
     }
 }

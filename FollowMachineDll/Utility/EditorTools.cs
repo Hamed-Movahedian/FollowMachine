@@ -32,7 +32,7 @@ namespace FollowMachineDll.Utility
         public abstract void Space();
         public abstract bool LanguageListField(Object objectToUndo, string lable, List<string> entryNameList);
         public abstract void DrawTexture(Rect rect, Texture2D texture, Color color, string text="");
-        public abstract void DrawTexture(Rect rect, Texture2D texture, GUIStyle style, Color color, string text="");
+        public abstract void DrawTexture(Rect rect, Texture2D texture, GUIStyle style, Color color, string text = "");
         public abstract void SetVerticalResizeMouseCursor(Rect rect);
         public abstract bool TextField(string lable, ref string field);
         public abstract void OpenScript(MonoBehaviour monoBehaviour);

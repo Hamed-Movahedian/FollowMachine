@@ -340,6 +340,7 @@ namespace FollowMachineEditor.Utility
 
             GUI.backgroundColor = color;
             style.normal.background = texture;
+
             GUI.Box(rect, text, style);
 
             style.normal.background = background;

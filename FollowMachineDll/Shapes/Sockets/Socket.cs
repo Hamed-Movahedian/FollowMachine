@@ -11,6 +11,7 @@ namespace FMachine.Shapes.Sockets
         public Node Node;
         protected int Index;
         public List<Edge> EdgeList = new List<Edge>();
+        public Texture2D Icon; 
 
         public bool IsConnected { get { return EdgeList.Count > 0; } }
 
@@ -25,7 +26,32 @@ namespace FMachine.Shapes.Sockets
         public override void Draw()
         {
             base.Draw();
+
             Rect.size = SocketSetting.Size;
+
+            Color color = SocketSetting.Color;
+
+            if (EdgeList.Count > 0)
+                if (EdgeList[0].IsRunning)
+                    color = Node.NodeSetting.LineRunning;
+
+            if (Icon != null)
+            {
+                SocketSetting.Style.CalcMinMaxWidth(new GUIContent(FilterName(Info)),out var min,out var max);
+
+                var iconRect = Rect;
+
+                iconRect.x -= max;
+
+                GUI.DrawTexture(iconRect,Icon);
+            }
+            EditorTools.Instance.DrawTexture(
+                Rect,
+                EdgeList.Count == 0 ? SocketSetting.DisconnectedTexure : SocketSetting.ConnectedTexure,
+                SocketSetting.Style,
+                color,
+                FilterName(Info));
+
         }
 
 

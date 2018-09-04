@@ -36,8 +36,6 @@ namespace FMachine
 
             var shape = go.AddComponent(type) as Shape;
 
-            if (shape != null)
-                shape.enabled = false;
 
             return shape;
         }

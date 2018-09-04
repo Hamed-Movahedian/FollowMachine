@@ -53,7 +53,6 @@ namespace FMachine.Shapes.Sockets
 
         public override void Draw()
         {
-            base.Draw();
             if (_showDragLine)
                 EditorTools.Instance.DrawBezierEdge(Rect.center, _dragPos, SocketSetting.Color, Color.gray,
                     SocketSetting.Thickness);
@@ -65,19 +64,7 @@ namespace FMachine.Shapes.Sockets
                 !IsHover
                 )
                 return;
-            Color color = SocketSetting.Color;
-
-            if(EdgeList.Count>0)
-                if(EdgeList[0].IsRunning)
-                    color=Node.NodeSetting.LineRunning;
-
-            EditorTools.Instance.DrawTexture(
-                Rect,
-                EdgeList.Count==0 ? SocketSetting.DisconnectedTexure : SocketSetting.ConnectedTexure,
-                SocketSetting.Style,
-                  color,
-                FilterName(Info));
-
+            base.Draw();
         }
         protected override string FilterName(string name)
         {
