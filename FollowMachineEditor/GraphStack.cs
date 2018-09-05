@@ -56,7 +56,7 @@ namespace FMachine.Editor
                 for (var i = 0; i < GraphList.Count; i++)
                 {
                     Object o = EditorUtility.InstanceIDToObject(GraphList[i]);
-                    Graph graph = (Graph) o;
+                    Graph graph = o as Graph;
 
                     if (graph == null)
                         continue;
