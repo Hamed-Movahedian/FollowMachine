@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using FMachine;
 using FMachine.Editor;
@@ -8,6 +9,7 @@ using FMachine.Shapes;
 using FollowMachineDll.Utility;
 using MgsCommonLib.Theme;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -376,5 +378,12 @@ namespace FollowMachineEditor.Utility
             _window.GraphStack.Add(followmachine);
         }
 
+        public override string[] GetAnimationStates(Animator animator)
+        {
+            var controller=animator.runtimeAnimatorController as AnimatorController;
+            return controller.layers[0].stateMachine.states.Select(s => s.state.name).ToArray();
+        }
+
+        
     }
 }

@@ -21,6 +21,7 @@ namespace FollowMachineDll.Utility
         public abstract string GetParameter(Object objectToUndo, ParameterInfo parameterInfo, string valueString);
         public abstract GUIStyle TintStyle(GUIStyle style, Color tintColor);
         public abstract void DrawBox(GUIStyle style, Rect rect, GUIContent guiContent, bool b, bool b1, bool b2, bool b3);
+        public abstract string[] GetAnimationStates(Animator animator);
         public abstract ScriptableObject GetAsset(string name, Type type);
         public abstract void AddFollowMachine(FollowMachine followmachine);
         public abstract void DrawBezierEdge(Vector2 p1, Vector2 p2, Color forgroundColor, Color backColor, float thickness);

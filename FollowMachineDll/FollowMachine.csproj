@@ -66,6 +66,7 @@
     <Compile Include="Shapes\BoxShape.cs" />
     <Compile Include="Shapes\Edge.cs" />
     <Compile Include="Shapes\Nodes\ActionNode.cs" />
+    <Compile Include="Shapes\Nodes\AnimationNode.cs" />
     <Compile Include="Shapes\Nodes\DialogeNode.cs" />
     <Compile Include="Shapes\Nodes\EventNode.cs" />
     <Compile Include="Shapes\Nodes\FollowMachineNode.cs" />
