@@ -42,6 +42,9 @@
     <Reference Include="UnityEngine">
       <HintPath>..\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\MgsCommonLib\MgsCommonLib\MgsCommonLib\bin\Debug\UnityEngine.UI.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\NodeAttribute.cs" />
@@ -64,6 +67,7 @@
     <Compile Include="Shapes\Edge.cs" />
     <Compile Include="Shapes\Nodes\ActionNode.cs" />
     <Compile Include="Shapes\Nodes\DialogeNode.cs" />
+    <Compile Include="Shapes\Nodes\EventNode.cs" />
     <Compile Include="Shapes\Nodes\FollowMachineNode.cs" />
     <Compile Include="Shapes\Nodes\InputNode.cs" />
     <Compile Include="Shapes\Nodes\Node.cs" />

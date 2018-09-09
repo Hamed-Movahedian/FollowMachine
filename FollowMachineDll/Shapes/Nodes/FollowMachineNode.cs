@@ -115,10 +115,14 @@ namespace FMachine.Shapes.Nodes
 
         protected override IEnumerator Run()
         {
-            if (FollowMachine != null)
-                return FollowMachine.RunInputNode(EnteredSocket.Info);
-            else
-                return null;
+            if (FollowMachine == null)
+                yield break;
+
+            FollowMachine.IsRunning = true;
+
+            StartCoroutine(FollowMachine.RunInputNode(EnteredSocket.Info));
+
+            yield return new WaitWhile(()=> FollowMachine.IsRunning);
         }
 
         public override void OnShow()

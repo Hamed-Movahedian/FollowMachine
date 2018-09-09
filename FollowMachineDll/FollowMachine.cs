@@ -8,6 +8,7 @@ namespace FMachine
     public class FollowMachine : Graph
     {
         private static string _outputLable;
+        public bool IsRunning;
 
         public IEnumerator RunNode(Node node)
         {
