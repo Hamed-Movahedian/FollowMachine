@@ -17,6 +17,9 @@ namespace FollowMachineDll.Shapes.Nodes
     {
         public Animator Animator;
 
+        public string StartState;
+        public string EndState;
+
         public override Node GetNextNode()
         {
             return OutputSocketList[0].GetNextNode();
@@ -32,10 +35,40 @@ namespace FollowMachineDll.Shapes.Nodes
             {
                 return;
             }
-            string[] animationStates = EditorTools.Instance.GetAnimationStates(Animator);
+            List<string> animationStates = EditorTools.Instance.GetAnimationStates(Animator).ToList();
 
-            EditorTools.Instance.Popup("States", 0,
-                animationStates);
+
+            // *************** Start state
+            int startStateIndex = animationStates.IndexOf(StartState);
+
+            if (startStateIndex == -1)
+                startStateIndex = 0;
+
+            string index =
+                animationStates[EditorTools.Instance.Popup("Start State", startStateIndex, animationStates.ToArray())];
+
+            if (StartState != index)
+            {
+                EditorTools.Instance.Undo_RecordObject(this, "Change Start State");
+                StartState = index;
+
+            }
+
+            // *************** End state
+            int endStateIndex = animationStates.IndexOf(EndState);
+
+            if (endStateIndex == -1)
+                endStateIndex = 0;
+
+            index =
+                animationStates[EditorTools.Instance.Popup("End State", endStateIndex, animationStates.ToArray())];
+
+            if (EndState != index)
+            {
+                EditorTools.Instance.Undo_RecordObject(this, "Change End State");
+                EndState = index;
+
+            }
         }
 
         protected override void Initialize()
@@ -47,7 +80,17 @@ namespace FollowMachineDll.Shapes.Nodes
 
         protected override IEnumerator Run()
         {
-            return base.Run();
+            if (Animator == null)
+                throw new Exception("Animator is not set in " + Info);
+
+            Animator.Play(StartState);
+
+            yield return new WaitWhile(() =>
+                    !Animator.GetCurrentAnimatorStateInfo(0).IsName(StartState));
+
+            yield return new WaitWhile(() =>
+                    !Animator.GetCurrentAnimatorStateInfo(0).IsName(EndState));
+
         }
     }
 }
