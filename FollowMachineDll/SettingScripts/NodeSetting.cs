@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace FMachine.SettingScripts
+namespace FollowMachineDll.SettingScripts
 {
     [CreateAssetMenu(menuName = "FollowMachine/NodeSetting")]
     public class NodeSetting : ScriptableObject

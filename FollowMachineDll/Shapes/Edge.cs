@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using FMachine.SettingScripts;
 using FMachine.Shapes.Sockets;
 using FollowMachineDll.Utility;
 using UnityEngine;

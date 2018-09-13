@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace FMachine.SettingScripts
+namespace FollowMachineDll.SettingScripts
 {
     [CreateAssetMenu(menuName = "FollowMachine/BoxSetting")]
     public class BoxSetting : ScriptableObject

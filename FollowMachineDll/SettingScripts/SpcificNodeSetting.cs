@@ -1,5 +1,4 @@
-﻿using FMachine.SettingScripts;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace FollowMachineDll.SettingScripts
 {

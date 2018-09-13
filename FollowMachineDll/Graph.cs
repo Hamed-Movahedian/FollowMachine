@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FMachine.Shapes;
 using FMachine.Shapes.Nodes;
+using FollowMachineDll.Shapes;
 using FollowMachineDll.Utility;
 using UnityEngine;
 
@@ -35,6 +37,7 @@ namespace FMachine
         #endregion
 
         public List<Node> NodeList = new List<Node>();
+        public List<Group> GroupList = new List<Group>();
 
         #region RunningNode
         private Node _runningNode;
@@ -47,15 +50,21 @@ namespace FMachine
                 _runningNode = value;
             }
         }
-        public Node LastRunningNode; 
+        public Node LastRunningNode;
+
         #endregion
 
-        public void DeselectAll()
+        public void DeselectAllNodes()
         {
-            NodeList.ForEach(s => s.Deselect());
+            NodeList.ForEach(node => node.Deselect());
+        }
+        public void DeselectAllGroups()
+        {
+            GroupList.ForEach(g => g.Deselect());
         }
 
-        public void MoveSelectedNode(Vector2 delta)
+
+        public void MoveSelectedNodes(Vector2 delta)
         {
             foreach (Node node in NodeList)
             {
@@ -67,8 +76,30 @@ namespace FMachine
             }
 
         }
+        public void MoveSelectedGroups(Vector2 delta)
+        {
+            foreach (var @group in GroupList)
+            {
+                if (@group.IsSelected)
+                {
+                    EditorTools.Instance.Undo_RecordObject(@group, "Move Nodes");
+                    @group.Move(delta);
+                }
+            }
 
-        public void EndMove()
+        }
+
+        public void MoveNodes(List<Node> nodes, Vector2 delta)
+        {
+            foreach (Node node in nodes)
+            {
+                EditorTools.Instance.Undo_RecordObject(node, "Move Group");
+                node.Move(delta);
+            }
+        }
+
+
+        public void EndNodeMove()
         {
             foreach (Node node in NodeList)
             {
@@ -79,6 +110,19 @@ namespace FMachine
                 }
 
             }
+        }
+        public void EndGroupMove()
+        {
+            foreach (var @group in GroupList)
+            {
+                if (@group.IsSelected)
+                {
+                    EditorTools.Instance.Undo_RecordObject(@group, "Move Group");
+                    @group.EndMove();
+                }
+
+            }
+
         }
 
         public void BringToFront(Node node)
@@ -124,5 +168,16 @@ namespace FMachine
         }
 
 
+        public void GroupSelection()
+        {
+            var selectedNodes = new List<Node>();
+
+            foreach (var node in NodeList)
+                if (node.IsSelected)
+                    selectedNodes.Add(node);
+
+            if (selectedNodes.Count>0)
+                Repository.CreateGroup(selectedNodes);
+        }
     }
 }

@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace FMachine.SettingScripts
+namespace FollowMachineDll.SettingScripts
 {
     [CreateAssetMenu(menuName = "FollowMachine/SocketSetting")]
     public class SocketSetting : ScriptableObject

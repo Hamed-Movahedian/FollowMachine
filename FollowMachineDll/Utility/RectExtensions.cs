@@ -1,11 +1,10 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 /**
 		This class extends the funcitonality of a rectangle.
 		Based on http://martinecker.com/martincodes/unity-editor-window-zooming/
 **/
-namespace Assets.Editor.Bon
+namespace FollowMachineDll.Utility
 {
 	public static class RectExtensions
 	{
@@ -18,7 +17,7 @@ namespace Assets.Editor.Bon
 			return _tmpTopLeft;
 		}
 
-		public static Rect ScaleSizeBy(this Rect rect, float scale)
+        public static Rect ScaleSizeBy(this Rect rect, float scale)
 		{
 			return rect.ScaleSizeBy(scale, rect.center);
 		}

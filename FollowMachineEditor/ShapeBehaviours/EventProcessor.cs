@@ -45,6 +45,11 @@ namespace FMachine.Editor.ShapeBehaviours
                     if (currentEvent.control)
                         _canvas.Graph.DuplicateSelection();
                     break;
+                case KeyCode.G:
+                    if (currentEvent.type == EventType.KeyDown)
+                        if (currentEvent.control)
+                        _canvas.Graph.GroupSelection();
+                    break;
                 case KeyCode.F:
                     if (currentEvent.type == EventType.KeyDown)
                         if (_canvas.Graph.SelectedNode == null)
@@ -158,15 +163,20 @@ namespace FMachine.Editor.ShapeBehaviours
                     return source;
             }
 
+            foreach (var @group in _canvas.Graph.GroupList)
+            {
+                source = @group.IsMouseOver(mousePosition);
+                if (source != null)
+                    return source;
+            }
 
             return null;
         }
 
         private void SetMouseInteractionSource()
         {
-            _interactionSource = GetMouseInteractionSource(_mousePosition);
-            if (_interactionSource == null)
-                _interactionSource = _canvas.BoxSelection;
+            _interactionSource = GetMouseInteractionSource(_mousePosition) ?? 
+                                 _canvas.BoxSelection;
         }
 
         private void SetupMouseInfo()

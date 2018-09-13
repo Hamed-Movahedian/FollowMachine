@@ -1,4 +1,5 @@
 ﻿using FMachine.SettingScripts;
+using FollowMachineDll.SettingScripts;
 using UnityEditor;
 using UnityEngine;
 
@@ -32,6 +33,7 @@ namespace FMachine.Editor
             _isInitialized = false;
 
             wantsMouseMove = true;
+
 
             SettingController.Instance.Reset();
             Settings = (FMWiondowSettings) SettingController.Instance.GetAsset("WindowSetting", typeof(FMWiondowSettings));

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using FMachine.SettingScripts;
 using FMachine.Shapes.Sockets;
 using FMachine.Utility;
 using FollowMachineDll.SettingScripts;
@@ -13,7 +12,6 @@ namespace FMachine.Shapes.Nodes
     public abstract class Node : BoxShape
     {
         #region Public fields
-        //public string Info;
 
         public List<OutputSocket> InputSocketList = new List<OutputSocket>();
         public List<InputSocket> OutputSocketList = new List<InputSocket>();
@@ -81,7 +79,7 @@ namespace FMachine.Shapes.Nodes
             if (!IsSelected)
             {
                 if (!currentEvent.shift)
-                    Graph.DeselectAll();
+                    Graph.DeselectAllNodes();
 
                 Select();
             }
@@ -98,7 +96,7 @@ namespace FMachine.Shapes.Nodes
             else
             {
                 _isDraging = true;
-                Graph.MoveSelectedNode(delta);
+                Graph.MoveSelectedNodes(delta);
             }
         }
 
@@ -107,7 +105,7 @@ namespace FMachine.Shapes.Nodes
             if (!_isDraging)
             {
                 if (!currentEvent.shift)
-                    Graph.DeselectAll();
+                    Graph.DeselectAllNodes();
 
                 if (!IsSelected)
                     Select();
@@ -115,7 +113,7 @@ namespace FMachine.Shapes.Nodes
             }
             else
             {
-                Graph.EndMove();
+                Graph.EndNodeMove();
             }
         }
 
@@ -279,13 +277,6 @@ namespace FMachine.Shapes.Nodes
 
         #endregion
 
-        #region OnInspector
-        public virtual void OnInspector()
-        {
-            if (EditorTools.Instance.PropertyField(this, "Info"))
-                name = Info + " (" + GetType().Name + ")";
-        }
-        #endregion
 
         #region Initialize
         public override void OnCreate(Graph graph, Vector2 position)
@@ -327,6 +318,7 @@ namespace FMachine.Shapes.Nodes
         {
             DefaultOutputSocket.AutoHide = true;
         }
+
         #region Delete, Duplicate
         public override void Delete()
         {
@@ -334,6 +326,10 @@ namespace FMachine.Shapes.Nodes
             OutputSocketList.ForEach(socket => socket.Delete());
 
             Graph.NodeList.Remove(this);
+            
+            // remove from groups
+            foreach (var @group in Graph.GroupList)
+                group.RemoveNode(this);
 
             DestroyImmediate(gameObject);
         }
@@ -358,18 +354,6 @@ namespace FMachine.Shapes.Nodes
             IsSelected = false;
 
             return newNode;
-        }
-        #endregion
-
-        #region Move
-        public virtual void Move(Vector2 delta)
-        {
-            Rect.position += delta;
-        }
-        public void EndMove()
-        {
-            Rect.position = new Vector2(Mathf.Round(Rect.position.x / 10) * 10, Mathf.Round(Rect.position.y / 10) * 10);
-
         }
         #endregion
     }

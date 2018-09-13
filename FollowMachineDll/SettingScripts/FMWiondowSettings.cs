@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace FMachine.SettingScripts
+namespace FollowMachineDll.SettingScripts
 {
     [CreateAssetMenu(fileName = "FMWiondowSettings", menuName = "FollowMachine/WindowSettings", order = 1)]
     public class FMWiondowSettings : ScriptableObject

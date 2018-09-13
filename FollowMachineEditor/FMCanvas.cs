@@ -210,13 +210,17 @@ namespace FMachine.Editor
 
                 if (Event.current.type == EventType.Repaint)
                 {
+                    // Draw Groups
+                    Graph.GroupList.ForEach(@group=>@group.Draw());
+
+                    // Draw Box selection
                     BoxSelection.Draw();
 
                     // Draw Edges
                     DrawEdges();
 
                     // Draw Nodes
-                    Graph.NodeList.ForEach(shape => shape.Draw());
+                    Graph.NodeList.ForEach(node => node.Draw());
 
                     // Draw Sockets
                     DrawSockets();

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using FMachine.SettingScripts;
 using FollowMachineDll.Utility;
 using UnityEngine;
 
@@ -36,6 +35,23 @@ namespace FMachine.Shapes
         public override bool IsInBox(Rect rect)
         {
             return rect.Contains(Rect.min) && rect.Contains(Rect.max);
+        }
+
+        public virtual void Move(Vector2 delta)
+        {
+            Rect.position += delta;
+        }
+
+        public virtual void EndMove()
+        {
+            Rect.position = new Vector2(Mathf.Round(Rect.position.x / 10) * 10, Mathf.Round(Rect.position.y / 10) * 10);
+
+        }
+
+        public virtual void OnInspector()
+        {
+            if (EditorTools.Instance.PropertyField(this, "Info"))
+                name = Info + " (" + GetType().Name + ")";
         }
     }
 }

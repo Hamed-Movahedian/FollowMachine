@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using FMachine.SettingScripts;
 using FollowMachineDll.Utility;
 using UnityEngine;
 

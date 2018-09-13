@@ -67,7 +67,6 @@
     <Compile Include="Utility\EditorToolsImplimantation.cs" />
     <Compile Include="Utility\EditorZoomArea.cs" />
     <Compile Include="Utility\GridBackground.cs" />
-    <Compile Include="Utility\RectExtensions.cs" />
     <Compile Include="Windows\WindowExplorer\WindowTreeView.cs" />
     <Compile Include="Windows\WindowExplorer\WindowExplorer.cs" />
   </ItemGroup>

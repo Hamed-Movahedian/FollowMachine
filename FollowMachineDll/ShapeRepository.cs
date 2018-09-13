@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using FMachine.Shapes;
 using FMachine.Shapes.Nodes;
 using FMachine.Shapes.Sockets;
+using FollowMachineDll.Shapes;
 using UnityEngine;
 
 namespace FMachine
@@ -49,6 +51,16 @@ namespace FMachine
             node.OnCreate(_graph, position);
 
             return node;
+        }
+        public Group CreateGroup(List<Node> nodes)
+        {
+            Group @group = (Group)Create(typeof(Group));
+
+            _graph.GroupList.Add(@group);
+
+            @group.OnCreate(_graph,nodes);
+
+            return @group;
         }
 
         public Socket CreateSocket(Node node, Type type)
