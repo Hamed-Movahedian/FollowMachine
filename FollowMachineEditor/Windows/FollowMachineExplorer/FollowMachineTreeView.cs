@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FMachine;
 using FMachine.Editor;
+using FollowMachineDll;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -110,11 +111,13 @@ namespace FollowMachineEditor.Windows.FollowMachineExplorer
                 {
                     case DragAndDropPosition.UponItem:
                     case DragAndDropPosition.BetweenItems:
-                        FollowMachine parent = args.parentItem != null ? GetFollowMachine(args.parentItem.id) : null;
+                        var parent = 
+                            args.parentItem != null && args.parentItem.id!=0 ? 
+                                    GetFollowMachine(args.parentItem.id).transform : FindCommonRoot();
 
 
                         foreach (var machine in followMachines)
-                            machine.transform.SetParent(parent.transform);
+                            machine.transform.SetParent(parent);
 
                         if (args.dragAndDropPosition == DragAndDropPosition.BetweenItems)
                         {
@@ -129,11 +132,9 @@ namespace FollowMachineEditor.Windows.FollowMachineExplorer
                         break;
 
                     case DragAndDropPosition.OutsideItems:
-                        var followMachineCollections = Object.FindObjectsOfType<FollowMachineCollection>().ToList();
-                        if(followMachineCollections.Count>0)
                         foreach (var machine in followMachines)
                         {
-                            machine.transform.SetParent(followMachineCollections[0].transform); // make root when dragged to empty space in treeview
+                            machine.transform.SetParent(FindCommonRoot()); // make root when dragged to empty space in treeview
                         }
                         break;
                     default:
@@ -147,9 +148,50 @@ namespace FollowMachineEditor.Windows.FollowMachineExplorer
             return DragAndDropVisualMode.Move;
         }
 
-        private int GetAdjustedInsertIndex(FollowMachine parent, FollowMachine machine, int insertIndex)
+        private Transform FindCommonRoot()
         {
-            if (machine.transform.parent == parent.transform && machine.transform.GetSiblingIndex() < insertIndex)
+            var followMachines = Object.FindObjectsOfType<FollowMachine>();
+
+            if (followMachines.Length == 0)
+                return null;
+
+            var commonRoot = followMachines[0].transform.parent;
+
+            while (commonRoot!=null)
+            {
+                var find = false;
+
+                foreach (var followMachine in followMachines)
+                    if (!HasParent(followMachine.transform, commonRoot))
+                    {
+                        find = true;
+                        break;
+                    }
+
+                if (find)
+                    commonRoot = commonRoot.parent;
+                else
+                    return commonRoot;
+            }
+
+            return null;
+        }
+
+        private bool HasParent(Transform transform, Transform parent)
+        {
+            while (transform.parent!=null)
+            {
+                if (transform.parent == parent)
+                    return true;
+                transform = transform.parent;
+            }
+
+            return false;
+        }
+
+        private int GetAdjustedInsertIndex(Transform parent, FollowMachine machine, int insertIndex)
+        {
+            if (machine.transform.parent == parent && machine.transform.GetSiblingIndex() < insertIndex)
                 return --insertIndex;
             return insertIndex;
         }
@@ -171,38 +213,38 @@ namespace FollowMachineEditor.Windows.FollowMachineExplorer
 
         protected override TreeViewItem BuildRoot()
         {
-            var followMachineCollections = Object.FindObjectsOfType<FollowMachineCollection>().ToList();
-
-            if(followMachineCollections.Count>1)
-                throw new Exception("More than one Follow Machine Collection!!!");
-
-            if (followMachineCollections.Count==0)
-            {
-                var gameObject = new GameObject("Follow Machine Collection");
-                followMachineCollections.Add(gameObject.AddComponent<FollowMachineCollection>());
-            }
-
-            var followMachines = followMachineCollections[0].GetComponentsInChildren<FollowMachine>();
-
-            var items = new List<TreeViewItem>();
+            
+            var followMachines = Object.FindObjectsOfType<FollowMachine>()
+                .OrderBy(fm=>fm.transform.GetSiblingIndex())
+                .ToArray();
 
             var root = new TreeViewItem(0, -1, "Root");
-            foreach (var machine in followMachines)
+
+            if (followMachines.Length == 0)
             {
-                items.Add(new TreeViewItem { id = machine.GetInstanceID(), displayName = machine.name, });
+                root.AddChild(new TreeViewItem{id=1,displayName="Follow machine not found!"});
             }
-
-            for (int i = 0; i < followMachines.Length; i++)
+            else
             {
-                FollowMachine parentFollowMachine = null;
-                if (followMachines[i].transform.parent)
-                    parentFollowMachine = followMachines[i].transform.parent.GetComponentInParent<FollowMachine>();
+                var items = new List<TreeViewItem>();
 
-                if (parentFollowMachine == null)
-                    root.AddChild(items[i]);
-                else
+                foreach (var machine in followMachines)
                 {
-                    items.Find(item => item.id == parentFollowMachine.GetInstanceID()).AddChild(items[i]);
+                    items.Add(new TreeViewItem { id = machine.GetInstanceID(), displayName = machine.name, });
+                }
+
+                for (int i = 0; i < followMachines.Length; i++)
+                {
+                    FollowMachine parentFollowMachine = null;
+                    if (followMachines[i].transform.parent)
+                        parentFollowMachine = followMachines[i].transform.parent.GetComponentInParent<FollowMachine>();
+
+                    if (parentFollowMachine == null)
+                        root.AddChild(items[i]);
+                    else
+                    {
+                        items.Find(item => item.id == parentFollowMachine.GetInstanceID()).AddChild(items[i]);
+                    }
                 }
             }
 

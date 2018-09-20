@@ -72,7 +72,7 @@ namespace FollowMachineEditor.Windows.EntryPoints
                 if (GUILayout.Button(new GUIContent(_setting.FindIcon), EditorStyles.miniButton))
                 {
                     Selection.activeGameObject = entryPointNode.Graph.gameObject;
-                    entryPointNode.Graph.DeselectAllNodes();
+                    entryPointNode.Graph.DeselectAll();
                     entryPointNode.Select();
                     var fmWindow = EditorWindow.GetWindow<FMWindow>();
                     if (fmWindow != null)
@@ -85,7 +85,7 @@ namespace FollowMachineEditor.Windows.EntryPoints
 
                 if (GUILayout.Button(new GUIContent(_setting.DeleteIcon),EditorStyles.miniButton))
                 {
-                    entryPointNode.Graph.DeselectAllNodes();
+                    entryPointNode.Graph.DeselectAll();
                     entryPointNode.Select();
                     entryPointNode.Graph.DeleteSelection();
                 }

@@ -43,18 +43,27 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
 
             var graph = _fmWindow.GraphStack.CurrentGraph;
 
-            if (graph)
-                selectedNode = graph.SelectedNode;
+            if (!graph)
+                return;
 
+            selectedNode = graph.SelectedNode;
+
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+
+            _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
             if (selectedNode)
             {
-                EditorGUILayout.Space();
-                EditorGUILayout.Space();
-                _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
                 selectedNode.OnInspector();
-                EditorGUILayout.EndScrollView();
+            }
+            else
+            {
+                var selectedGroup = graph.SelectedGroup;
+                if(selectedGroup)
+                    selectedGroup.OnInspector();
             }
 
+            EditorGUILayout.EndScrollView();
         }
 
     }

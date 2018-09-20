@@ -7,6 +7,7 @@ using FMachine.Editor;
 using FMachine.SettingScripts;
 using FMachine.Shapes;
 using FollowMachineDll.Utility;
+using FollowMachineEditor.Windows.FollowMachineInspector;
 using MgsCommonLib.Theme;
 using UnityEditor;
 using UnityEditor.Animations;
@@ -371,6 +372,79 @@ namespace FollowMachineEditor.Utility
         {
             MonoScript monoScript = MonoScript.FromMonoBehaviour(monoBehaviour);
             AssetDatabase.OpenAsset(monoScript);
+        }
+
+        public override void FocusOnInspector()
+        {
+            var window = EditorWindow.GetWindow<FollowMachineInspector>();
+            if(window!=null)
+                window.Focus();
+        }
+
+        public override Type GetComponentType(GameObject gameObject, ref string componentTypeName)
+        {
+            List<Type> componentsTypes =
+                gameObject
+                    .GetComponents<Component>()
+                    .Select(c => c.GetType()).ToList();
+
+            // add game object
+            componentsTypes.Insert(0, typeof(GameObject));
+
+
+            List<string> componentTypeNames = componentsTypes.Select(ct => ct.Name).ToList();
+
+            int currentTypeIndex = componentTypeNames.IndexOf(componentTypeName);
+
+            if (currentTypeIndex == -1)
+                currentTypeIndex = 0;
+
+
+            string typeName =
+                componentTypeNames[Popup("Component", currentTypeIndex, componentTypeNames.ToArray())];
+
+            if (componentTypeName != typeName)
+            {
+                Undo_RecordObject(gameObject, "Change Component type");
+                componentTypeName = typeName;
+
+            }
+
+            return componentsTypes[currentTypeIndex];
+        }
+
+        public override MethodInfo GetMethodInfo(GameObject gameObject, Type componentType, ref string methodName)
+        {
+            List<MethodInfo> methods = componentType.GetMethods()
+                //.Where(mi => mi.DeclaringType == componentType)
+                .Where(mi => mi.ReturnType.Name == "Void" || mi.ReturnType.Name == "IEnumerator")
+                .ToList();
+
+
+            if (methods.Count == 0)
+                return null;
+
+            List<string> methodNames = methods.Select(mi => mi.ToString()).ToList();
+
+            int selectedMethodIndex = methodNames.IndexOf(methodName);
+
+            if (selectedMethodIndex == -1)
+                selectedMethodIndex = 0;
+
+            var menuItems = methods.Select(mi => mi.DeclaringType.Name+"/"+mi.ToString()).ToArray();
+
+            selectedMethodIndex = EditorTools.Instance
+                .Popup("Method", selectedMethodIndex, menuItems);
+
+            string name = methodNames[selectedMethodIndex];
+
+            if (name != methodName)
+            {
+                EditorTools.Instance.Undo_RecordObject(gameObject, "Change method in eventNode");
+                methodName = name;
+            }
+
+            return methods[selectedMethodIndex];
         }
 
         public override void AddFollowMachine(FollowMachine followmachine)

@@ -69,7 +69,17 @@ namespace FollowMachineDll.Shapes
                 Rect.size=Vector2.one*200;
             }
 
-            GUI.Box(Rect, Info, GroupSetting.Style);
+            var backgroundColor = GUI.backgroundColor;
+            var contentColor = GUI.contentColor;
+
+            GUI.backgroundColor = Color;
+            GUI.contentColor = IsSelected ? Color.red : Color;
+
+            GroupSetting.SetupZoom(Graph.Zoom);
+            GUI.Box(Rect, Info, GroupSetting.TempStyle);
+
+            GUI.contentColor = contentColor;
+            GUI.backgroundColor = backgroundColor;
         }
 
         #endregion
@@ -87,7 +97,7 @@ namespace FollowMachineDll.Shapes
 
         public override IMouseInteractable IsMouseOver(Vector2 mousePosition)
         {
-            var height = Mathf.Abs(GroupSetting.Style.padding.top);
+            var height = Mathf.Abs(GroupSetting.TempStyle.padding.top);
 
             if (Rect.xMin<mousePosition.x && mousePosition.x<Rect.xMax)
                 if (Rect.y - height < mousePosition.y && mousePosition.y < Rect.y)
@@ -100,7 +110,7 @@ namespace FollowMachineDll.Shapes
         {
             if (!IsSelected)
             {
-                Graph.DeselectAllNodes();
+                Graph.DeselectAll();
 
                 if (!currentEvent.shift)
                     Graph.DeselectAllGroups();
@@ -158,6 +168,7 @@ namespace FollowMachineDll.Shapes
             Info = "Group";
             NodeList = nodes;
             name = base.Info + " (" + GetType().Name + ")";
+            IsSelected = true;
         }
 
         #endregion
@@ -169,7 +180,13 @@ namespace FollowMachineDll.Shapes
             if (NodeList.Contains(node))
                 NodeList.Remove(node);
         }
-        #endregion
 
+        public void AddNode(Node node)
+        {
+            if (!NodeList.Contains(node))
+                NodeList.Add(node);
+        }
+
+        #endregion
     }
 }

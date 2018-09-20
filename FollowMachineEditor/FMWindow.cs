@@ -18,21 +18,24 @@ namespace FMachine.Editor
             get { return _canvas ?? (_canvas = new FMCanvas(this)); }
         }
 
-        public GraphStack GraphStack;
 
         #endregion
 
+        #region GraphStack
+
+        [SerializeField]
+        private GraphStack _graphStack;
+
+        public GraphStack GraphStack => _graphStack ?? (_graphStack = new GraphStack(this));
+
+        #endregion
 
         protected override void Initialize()
         {
             if (EditorTools.Instance == null)
                 EditorTools.Instance = new EditorToolsImplimantation(this);
 
-            //EditorToolsImplimantation.SetInstance();
-
             EditorApplication.playmodeStateChanged += Repaint;
-            if (GraphStack == null)
-                GraphStack = new GraphStack(this);
         }
 
         private void OnSelectionChange()

@@ -55,7 +55,6 @@
     <Compile Include="FMWindow.cs" />
     <Compile Include="FMWindowBase.cs" />
     <Compile Include="Windows\EntryPoints\EntryPointsWindow.cs" />
-    <Compile Include="Windows\FollowMachineExplorer\FollowMachineCollection.cs" />
     <Compile Include="Windows\FollowMachineExplorer\FollowMachineTreeView.cs" />
     <Compile Include="Windows\FollowMachineExplorer\FollowMachineTreeViewWindow.cs" />
     <Compile Include="Windows\FollowMachineInspector\FollowMachineInspector.cs" />
@@ -81,7 +80,7 @@
     <PostBuildEvent>"$(SolutionDir)pdb2mdb.exe" "$(TargetPath)"
 
 
-copy "$(TargetPath)" "$(SolutionDir)..\..\Charsoo\Assets\FMachine"
-copy "$(TargetPath).mdb" "$(SolutionDir)..\..\Charsoo\Assets\FMachine"</PostBuildEvent>
+copy "$(TargetPath)" "$(SolutionDir)..\..\Charsoo\Assets\FMachine\Editor"
+copy "$(TargetPath).mdb" "$(SolutionDir)..\..\Charsoo\Assets\FMachine\Editor"</PostBuildEvent>
   </PropertyGroup>
 </Project>

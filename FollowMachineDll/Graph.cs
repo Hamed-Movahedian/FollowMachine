@@ -23,6 +23,9 @@ namespace FMachine
             get { return _repository ?? (_repository = new ShapeRepository(this)); }
         }
 
+        #endregion
+
+        #region Selected Node/Graph
         public Node SelectedNode
         {
             get
@@ -33,7 +36,16 @@ namespace FMachine
                 return null;
             }
         }
-
+        public Group SelectedGroup
+        {
+            get
+            {
+                foreach (var @group in GroupList)
+                    if (@group.IsSelected)
+                        return @group;
+                return null;
+            }
+        } 
         #endregion
 
         public List<Node> NodeList = new List<Node>();
@@ -50,13 +62,16 @@ namespace FMachine
                 _runningNode = value;
             }
         }
+
+
         public Node LastRunningNode;
 
         #endregion
 
-        public void DeselectAllNodes()
+        public void DeselectAll()
         {
             NodeList.ForEach(node => node.Deselect());
+            DeselectAllGroups();
         }
         public void DeselectAllGroups()
         {
@@ -133,15 +148,16 @@ namespace FMachine
 
         public void DeleteSelection()
         {
-            //EditorTools.Instance.Undo_RecordObject(this, "Delete Node");
+            var selectedNodes = GetSelectedNodes();
 
-            var selectedNodes = new List<Node>();
-
-            foreach (Node node in NodeList)
-                if (node.IsSelected)
-                    selectedNodes.Add(node);
-
-            selectedNodes.ForEach(node => node.Delete());
+            if(selectedNodes.Count>0)
+                selectedNodes.ForEach(node => node.Delete());
+            else
+            {
+                var selectedGroup = SelectedGroup;
+                if (selectedGroup)
+                    selectedGroup.Delete();
+            }
         }
 
         public void OnShow()
@@ -170,14 +186,61 @@ namespace FMachine
 
         public void GroupSelection()
         {
+            var selectedNodes = GetSelectedNodes();
+            if (selectedNodes.Count > 0)
+            {
+                DeselectAll();
+                Repository.CreateGroup(selectedNodes);
+                EditorTools.Instance.FocusOnInspector();
+            }
+        }
+
+        public List<Node> GetSelectedNodes()
+        {
             var selectedNodes = new List<Node>();
 
             foreach (var node in NodeList)
                 if (node.IsSelected)
                     selectedNodes.Add(node);
 
-            if (selectedNodes.Count>0)
-                Repository.CreateGroup(selectedNodes);
+            return selectedNodes;
         }
+
+        public void RemoveNode(Node node)
+        {
+            NodeList.Remove(node);
+
+            RemoveFromGroups(node);
+
+        }
+
+        public void RemoveFromGroups(Node node)
+        {
+            // remove from groups
+            foreach (var @group in GroupList)
+                group.RemoveNode(node);
+        }
+
+        public void RemoveSelectedNodesFromAllGroups()
+        {
+            var selectedNodes = GetSelectedNodes();
+
+            foreach (var selectedNode in selectedNodes)
+            {
+                RemoveFromGroups(selectedNode);
+            }
+        }
+
+        public void AddSelectedNodeToGroups(Vector2 position)
+        {
+            var selectedNodes = GetSelectedNodes();
+
+            foreach (var @group in GroupList)
+                if (group.Rect.Contains(position))
+                    foreach (var selectedNode in selectedNodes)
+                        group.AddNode(selectedNode);
+        }
+
+       
     }
 }

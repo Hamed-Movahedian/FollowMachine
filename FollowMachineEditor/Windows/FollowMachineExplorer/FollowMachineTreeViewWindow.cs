@@ -8,27 +8,40 @@ namespace FollowMachineEditor.Windows.FollowMachineExplorer
 {
     public class FollowMachineTreeViewWindow : EditorWindow
     {
-        [SerializeField] TreeViewState _treeViewState;
+        #region FollowMachineTreeView
 
         private FollowMachineTreeView _followMachineTreeView;
-        private static FMExpelorerSetting _setting;
+
+        public FollowMachineTreeView FollowMachineTreeView =>
+            _followMachineTreeView ?? (_followMachineTreeView = new FollowMachineTreeView(TreeViewState));
+
+        #endregion
+
+        #region TreeViewState
+
+        [SerializeField]
+        private TreeViewState _treeViewState;
+
+        public TreeViewState TreeViewState =>
+            _treeViewState ?? (_treeViewState = new TreeViewState());
+
+        #endregion
 
         void OnEnable()
         {
-            if(_treeViewState==null)
-                _treeViewState=new TreeViewState();
+            var setting = (FMExpelorerSetting) SettingController.Instance.GetAsset("ExpelorerSetting", typeof(FMExpelorerSetting));
 
-            _followMachineTreeView=new FollowMachineTreeView(_treeViewState);
-            if (_setting == null)
-                _setting = (FMExpelorerSetting)SettingController.Instance.GetAsset("ExpelorerSetting", typeof(FMExpelorerSetting));
-            titleContent = new GUIContent("Explorer", _setting.Icon);
+            titleContent = new GUIContent("Explorer", setting.Icon);
         }
 
         void OnGUI()
         {
-            _followMachineTreeView.OnGUI(new Rect(0,0,position.width,position.height));
+            FollowMachineTreeView.OnGUI(new Rect(0,0,position.width,position.height));
         }
-
+        void OnInspectorUpdate()
+        {
+            Repaint();
+        }
         [MenuItem("Window/FollowMachine/Explorer")]
         static void ShowWindow()
         {

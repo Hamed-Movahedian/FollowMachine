@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace FMachine.Shapes.Nodes
 {
-    [Node(MenuTitle="Action")]
+    [Node(MenuTitle = "Action")]
     public class ActionNode : Node
     {
         #region Public
@@ -47,7 +47,7 @@ namespace FMachine.Shapes.Nodes
                 return false;
 
             if (
-                actionNode.TargetGameObject != TargetGameObject || 
+                actionNode.TargetGameObject != TargetGameObject ||
                 actionNode.ComponentTypeName != ComponentTypeName ||
                 actionNode.MethodName != MethodName ||
                 actionNode.ParameterValueStrings.Count != ParameterValueStrings.Count)
@@ -73,99 +73,26 @@ namespace FMachine.Shapes.Nodes
 
             #endregion
 
+            // Get GameObject
             EditorTools.Instance.PropertyField(this, "TargetGameObject");
 
             if (TargetGameObject == null)
                 return;
 
-            #region Get ComponentType
+            // Get Type
+            Type componentType = EditorTools.Instance
+                .GetComponentType(TargetGameObject, ref ComponentTypeName);
 
-            List<Type> componentsTypes =
-                TargetGameObject
-                    .GetComponents<Component>()
-                    .Select(c => c.GetType()).ToList();
+            // Get Method
+            _methodInfo = EditorTools.Instance
+                .GetMethodInfo(TargetGameObject, componentType, ref MethodName);
 
-            // add game object
-            componentsTypes.Insert(0, typeof(GameObject));
-
-
-            List<string> componentTypeNames = componentsTypes.Select(ct => ct.Name).ToList();
-
-            int currentTypeIndex = componentTypeNames.IndexOf(ComponentTypeName);
-
-            if (currentTypeIndex == -1)
-                currentTypeIndex = 0;
-
-
-            string componentTypeName =
-                componentTypeNames[EditorTools.Instance.Popup("Component", currentTypeIndex, componentTypeNames.ToArray())];
-
-            if (ComponentTypeName != componentTypeName)
-            {
-                EditorTools.Instance.Undo_RecordObject(this, "Change Component type");
-                ComponentTypeName = componentTypeName;
-
-            }
-
-            Type componentType = componentsTypes[currentTypeIndex];
-
-            #endregion
-
-            #region get ComponentMethodInfo
-
-            List<MethodInfo> methods = componentType.GetMethods()
-                //.Where(mi => mi.DeclaringType == componentType)
-                .Where(mi => mi.ReturnType.Name == "Void" || mi.ReturnType.Name == "IEnumerator")
-                .ToList();
-
-            MethodInfo methodInfo = null;
-
-            if (methods.Count > 0)
-            {
-                List<string> methodNames = methods.Select(mi => mi.ToString()).ToList();
-
-                int selectedMethodIndex = methodNames.IndexOf(MethodName);
-
-                if (selectedMethodIndex == -1)
-                    selectedMethodIndex = 0;
-
-
-                selectedMethodIndex = EditorTools.Instance.Popup("Method", selectedMethodIndex, methodNames.ToArray());
-
-                string methodName = methodNames[selectedMethodIndex];
-                methodInfo = methods[selectedMethodIndex];
-
-                if (methodName != MethodName)
-                {
-                    EditorTools.Instance.Undo_RecordObject(this, "Change method in eventNode");
-                    MethodName = methodName;
-                }
-
-                var attributes = methodInfo.GetCustomAttributes(typeof(FollowMachineAttribute), false);
-                if (attributes.Length > 0)
-                {
-                    var machineAttribute = attributes[0] as FollowMachineAttribute;
-                    Info = machineAttribute.Info;
-                    Lables = machineAttribute.Outputs.Split(',').ToList();
-                    UpdateOutputSocketsWithLables();
-                }
-                else
-                {
-                    if (GUILayout.Button("Fill Info"))
-                    {
-                        Info = componentTypeName + " => " + methodInfo.Name;
-                    }
-                }
-            }
-
-            #endregion
+            if (_methodInfo == null)
+                return;
 
             #region Get Parameters
 
-            if (methodInfo == null)
-                return;
-
-            ParameterInfo[] parameters = methodInfo.GetParameters();
+            ParameterInfo[] parameters = _methodInfo.GetParameters();
 
             if (parameters.Length > 0)
             {
@@ -187,18 +114,39 @@ namespace FMachine.Shapes.Nodes
 
                 for (int i = 0; i < parameters.Length; i++)
                 {
-                    var attributes = parameters[i].GetCustomAttributes(typeof(RefrenceAttribute), true);
-                    if (attributes.Length > 0)
+                    var customAttributes = parameters[i].GetCustomAttributes(typeof(RefrenceAttribute), true);
+                    if (customAttributes.Length > 0)
                     {
                         GUILayout.Label("Refrence");
                     }
                     else
-                        ParameterValueStrings[i]=EditorTools.Instance.GetParameter(this, parameters[i], ParameterValueStrings[i]);
+                        ParameterValueStrings[i] =
+                            EditorTools.Instance.GetParameter(this, parameters[i], ParameterValueStrings[i]);
                 }
 
                 #endregion
             }
+
             #endregion
+
+            #region Check follow machine attributes
+            var attributes = _methodInfo.GetCustomAttributes(typeof(FollowMachineAttribute), false);
+            if (attributes.Length > 0)
+            {
+                var machineAttribute = attributes[0] as FollowMachineAttribute;
+                Info = machineAttribute.Info;
+                Lables = machineAttribute.Outputs.Split(',').ToList();
+                UpdateOutputSocketsWithLables();
+            }
+            else
+            {
+                if (GUILayout.Button("Fill Info"))
+                {
+                    Info = _methodInfo.DeclaringType.Name + " => " + _methodInfo.Name;
+                }
+            } 
+            #endregion
+
         }
 
         private void UpdateOutputSocketsWithLables()
@@ -268,24 +216,21 @@ namespace FMachine.Shapes.Nodes
 
                 if (parameterInfo.ParameterType == typeof(int)) //*** int
                 {
-                    int value;
-                    if (!int.TryParse(valueString, out value))
+                    if (!int.TryParse(valueString, out var value))
                         value = 0;
 
                     _parameters[i] = value;
                 }
                 else if (parameterInfo.ParameterType == typeof(float)) //*** float
                 {
-                    float value;
-                    if (!float.TryParse(valueString, out value))
+                    if (!float.TryParse(valueString, out var value))
                         value = 0;
 
                     _parameters[i] = value;
                 }
                 else if (parameterInfo.ParameterType == typeof(bool)) //*** bool
                 {
-                    bool value;
-                    if (!bool.TryParse(valueString, out value))
+                    if (!bool.TryParse(valueString, out var value))
                         value = false;
 
                     _parameters[i] = value;
@@ -424,12 +369,7 @@ namespace FMachine.Shapes.Nodes
             if (componentType == null)
                 return;
 
-            _methodInfo = GetMethodInfo(componentType);
-
-            if (_methodInfo == null)
-                return;
-
-            if(componentType.IsSubclassOf(typeof(MonoBehaviour)))
+            if (componentType.IsSubclassOf(typeof(MonoBehaviour)))
                 EditorTools.Instance.OpenScript((MonoBehaviour)TargetGameObject.GetComponent(componentType));
         }
     }

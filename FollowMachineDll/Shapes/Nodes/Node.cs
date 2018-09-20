@@ -76,10 +76,11 @@ namespace FMachine.Shapes.Nodes
 
             if (_isResizing)
                 return;
+
             if (!IsSelected)
             {
                 if (!currentEvent.shift)
-                    Graph.DeselectAllNodes();
+                    Graph.DeselectAll();
 
                 Select();
             }
@@ -95,7 +96,11 @@ namespace FMachine.Shapes.Nodes
             }
             else
             {
+                if (!_isDraging && currentEvent.alt && currentEvent.shift)
+                    Graph.RemoveSelectedNodesFromAllGroups();
+
                 _isDraging = true;
+
                 Graph.MoveSelectedNodes(delta);
             }
         }
@@ -105,15 +110,16 @@ namespace FMachine.Shapes.Nodes
             if (!_isDraging)
             {
                 if (!currentEvent.shift)
-                    Graph.DeselectAllNodes();
+                    Graph.DeselectAll();
 
                 if (!IsSelected)
                     Select();
-
             }
             else
             {
                 Graph.EndNodeMove();
+                if (currentEvent.alt && currentEvent.shift)
+                Graph.AddSelectedNodeToGroups(mousePosition);
             }
         }
 
@@ -325,11 +331,7 @@ namespace FMachine.Shapes.Nodes
             InputSocketList.ForEach(socket => socket.Delete());
             OutputSocketList.ForEach(socket => socket.Delete());
 
-            Graph.NodeList.Remove(this);
-            
-            // remove from groups
-            foreach (var @group in Graph.GroupList)
-                group.RemoveNode(this);
+            Graph.RemoveNode(this);
 
             DestroyImmediate(gameObject);
         }

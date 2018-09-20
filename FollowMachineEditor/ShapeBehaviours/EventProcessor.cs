@@ -48,7 +48,10 @@ namespace FMachine.Editor.ShapeBehaviours
                 case KeyCode.G:
                     if (currentEvent.type == EventType.KeyDown)
                         if (currentEvent.control)
-                        _canvas.Graph.GroupSelection();
+                        {
+                            _canvas.Graph.GroupSelection();
+
+                        }
                     break;
                 case KeyCode.F:
                     if (currentEvent.type == EventType.KeyDown)

@@ -24,6 +24,7 @@ namespace FMachine.Editor.ShapeBehaviours
         public void MouseDown(Vector2 mousePosition, Event currentEvent)
         {
             _startPos = mousePosition;
+            _canvas.Graph.DeselectAllGroups();
             MouseDrag(Vector2.zero,mousePosition,currentEvent);
         }
 

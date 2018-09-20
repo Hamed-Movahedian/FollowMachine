@@ -268,5 +268,19 @@ namespace FollowMachineDll.Shapes.Nodes
 
         #endregion
 
+        public override void DoubleClick(Vector2 mousePosition, Event currentEvent)
+        {
+            if (TargetGameObject == null)
+                return;
+
+            Type componentType = GetComponentType();
+
+            if (componentType == null)
+                return;
+
+            if (componentType.IsSubclassOf(typeof(MonoBehaviour)))
+                EditorTools.Instance.OpenScript((MonoBehaviour)TargetGameObject.GetComponent(componentType));
+
+        }
     }
 }

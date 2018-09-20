@@ -151,7 +151,6 @@ namespace FMachine.Shapes.Nodes
 
         public override void DoubleClick(Vector2 mousePosition, Event currentEvent)
         {
-            base.DoubleClick(mousePosition, currentEvent);
             EditorTools.Instance.AddFollowMachine(FollowMachine);
         }
     }
