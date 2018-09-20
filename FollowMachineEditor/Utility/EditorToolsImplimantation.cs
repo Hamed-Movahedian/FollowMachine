@@ -377,11 +377,11 @@ namespace FollowMachineEditor.Utility
         public override void FocusOnInspector()
         {
             var window = EditorWindow.GetWindow<FollowMachineInspector>();
-            if(window!=null)
+            if (window != null)
                 window.Focus();
         }
 
-        public override Type GetComponentType(GameObject gameObject, ref string componentTypeName)
+        public override MethodInfo GetMethodInfo(GameObject gameObject, ref string componentName, ref string methodName)
         {
             List<Type> componentsTypes =
                 gameObject
@@ -391,60 +391,48 @@ namespace FollowMachineEditor.Utility
             // add game object
             componentsTypes.Insert(0, typeof(GameObject));
 
-
-            List<string> componentTypeNames = componentsTypes.Select(ct => ct.Name).ToList();
-
-            int currentTypeIndex = componentTypeNames.IndexOf(componentTypeName);
-
-            if (currentTypeIndex == -1)
-                currentTypeIndex = 0;
-
-
-            string typeName =
-                componentTypeNames[Popup("Component", currentTypeIndex, componentTypeNames.ToArray())];
-
-            if (componentTypeName != typeName)
-            {
-                Undo_RecordObject(gameObject, "Change Component type");
-                componentTypeName = typeName;
-
-            }
-
-            return componentsTypes[currentTypeIndex];
-        }
-
-        public override MethodInfo GetMethodInfo(GameObject gameObject, Type componentType, ref string methodName)
-        {
-            List<MethodInfo> methods = componentType.GetMethods()
-                //.Where(mi => mi.DeclaringType == componentType)
-                .Where(mi => mi.ReturnType.Name == "Void" || mi.ReturnType.Name == "IEnumerator")
+            // get method info list
+            var mInfoList = componentsTypes
+                .SelectMany(cType => cType
+                    .GetMethods()
+                    .Where(mi => mi.ReturnType.Name == "Void" || mi.ReturnType.Name == "IEnumerator")
+                    .Select(mInfo => new { cType, mInfo })
+                    .ToList())
                 .ToList();
 
+            // Create Menu list
+            var menuList = mInfoList
+                .Select(mi =>
+                    mi.cType.Name + "/" +
+                    mi.mInfo.DeclaringType.Name + " => " +
+                    mi.mInfo.ToString())
+                .ToArray();
 
-            if (methods.Count == 0)
-                return null;
+            // Get selected method index
+            var cName = componentName;
+            var mName = methodName;
 
-            List<string> methodNames = methods.Select(mi => mi.ToString()).ToList();
+            var selectedMethodInfo = mInfoList
+                .FirstOrDefault(mi =>
+                    mi.cType.Name == cName &&
+                    mi.mInfo.ToString() == mName);
 
-            int selectedMethodIndex = methodNames.IndexOf(methodName);
+            int selectedMethodIndex = 0;
 
-            if (selectedMethodIndex == -1)
-                selectedMethodIndex = 0;
+            if (selectedMethodInfo != null)
+                selectedMethodIndex = mInfoList.IndexOf(selectedMethodInfo);
 
-            var menuItems = methods.Select(mi => mi.DeclaringType.Name+"/"+mi.ToString()).ToArray();
 
-            selectedMethodIndex = EditorTools.Instance
-                .Popup("Method", selectedMethodIndex, menuItems);
+            var index = Popup("", selectedMethodIndex, menuList);
 
-            string name = methodNames[selectedMethodIndex];
-
-            if (name != methodName)
+            if (index != selectedMethodIndex)
             {
-                EditorTools.Instance.Undo_RecordObject(gameObject, "Change method in eventNode");
-                methodName = name;
+                Undo_RecordObject(gameObject, "Change method");
+                componentName = mInfoList[index].cType.Name;
+                methodName = mInfoList[index].mInfo.ToString();
             }
 
-            return methods[selectedMethodIndex];
+            return mInfoList[index].mInfo;
         }
 
         public override void AddFollowMachine(FollowMachine followmachine)
@@ -454,10 +442,10 @@ namespace FollowMachineEditor.Utility
 
         public override string[] GetAnimationStates(Animator animator)
         {
-            var controller=animator.runtimeAnimatorController as AnimatorController;
+            var controller = animator.runtimeAnimatorController as AnimatorController;
             return controller.layers[0].stateMachine.states.Select(s => s.state.name).ToArray();
         }
 
-        
+
     }
 }

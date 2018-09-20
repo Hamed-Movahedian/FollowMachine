@@ -38,7 +38,6 @@ namespace FollowMachineDll.Utility
         public abstract bool TextField(string lable, ref string field);
         public abstract void OpenScript(MonoBehaviour monoBehaviour);
         public abstract void FocusOnInspector();
-        public abstract Type GetComponentType(GameObject gameObject, ref string componentTypeName);
-        public abstract MethodInfo GetMethodInfo(GameObject gameObject, Type componentType, ref string methodName);
+        public abstract MethodInfo GetMethodInfo(GameObject gameObject, ref string componentName, ref string methodName);
     }
 }

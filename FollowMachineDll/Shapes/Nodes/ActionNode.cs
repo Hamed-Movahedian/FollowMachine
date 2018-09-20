@@ -73,20 +73,16 @@ namespace FMachine.Shapes.Nodes
 
             #endregion
 
+
             // Get GameObject
             EditorTools.Instance.PropertyField(this, "TargetGameObject");
 
             if (TargetGameObject == null)
                 return;
 
-            // Get Type
-            Type componentType = EditorTools.Instance
-                .GetComponentType(TargetGameObject, ref ComponentTypeName);
-
-            // Get Method
-            _methodInfo = EditorTools.Instance
-                .GetMethodInfo(TargetGameObject, componentType, ref MethodName);
-
+            _methodInfo = EditorTools.Instance.GetMethodInfo(
+                TargetGameObject, ref ComponentTypeName, ref MethodName);
+            
             if (_methodInfo == null)
                 return;
 
