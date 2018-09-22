@@ -62,27 +62,27 @@ namespace FollowMachineEditor.Utility
 
         #region GetParameter
 
-        public override string GetParameter(Object objectToUndo, ParameterInfo parameterInfo, string valueString)
+        public override string GetParameter(Object objectToUndo, string lable, ParameterInfo parameterInfo,string valueString)
         {
             if (parameterInfo.ParameterType == typeof(int))
             {
-                return IntFieldAsString(objectToUndo, parameterInfo.Name, valueString);
+                return IntFieldAsString(objectToUndo, lable, valueString);
             }
             else if (parameterInfo.ParameterType == typeof(float))
             {
-                return FloatFieldAsString(objectToUndo, parameterInfo.Name, valueString);
+                return FloatFieldAsString(objectToUndo, lable, valueString);
             }
             else if (parameterInfo.ParameterType == typeof(bool))
             {
-                return BoolFieldAsString(objectToUndo, parameterInfo.Name, valueString);
+                return BoolFieldAsString(objectToUndo, lable, valueString);
             }
             else if (parameterInfo.ParameterType == typeof(string))
             {
-                return StringField(objectToUndo, parameterInfo.Name, valueString);
+                return StringField(objectToUndo, lable, valueString);
             }
             else
             {
-                EditorGUILayout.LabelField(parameterInfo.Name, "Not supported type");
+                EditorGUILayout.LabelField(lable, "Not supported type");
                 return null;
             }
         }
@@ -433,6 +433,89 @@ namespace FollowMachineEditor.Utility
             }
 
             return mInfoList[index].mInfo;
+        }
+
+        public override void GetDynamicParameter(GameObject gameObject, ref GameObject pGameObject, ref string pText, Type parameterType)
+        {
+            // Get game object
+            GameObject go = (GameObject) EditorGUILayout.ObjectField("Game Object",pGameObject, typeof(GameObject), true);
+
+            if (go != pGameObject)
+            {
+                Undo.RecordObject(gameObject,"Change Parameter");
+                pGameObject = go;
+            }
+
+            if (pGameObject == null)
+                return;
+
+            // Extract component and property names
+            string cName = "", pName = "";
+
+            if (pText == null)
+                pText = "";
+
+            var tList = pText.Split('.').ToList();
+
+            if (tList.Count == 2)
+            {
+                cName = tList[0];
+                pName = tList[1];
+            }
+
+            // Get component types
+            List<Type> componentsTypes =
+                pGameObject
+                    .GetComponents<Component>()
+                    .Select(c => c.GetType()).ToList();
+
+            // add game object
+            componentsTypes.Insert(0, typeof(GameObject));
+
+            // get property info list
+            var pInfoList = componentsTypes
+                .SelectMany(cType => cType
+                    .GetProperties()
+                    .Where(pi=>pi.PropertyType==parameterType || pi.PropertyType.IsSubclassOf(parameterType))
+                    .Select(pInfo => new { cType, pInfo })
+                    .ToList())
+                .ToList();
+
+            // Create Menu list
+            var menuList = pInfoList
+                .Select(mi =>
+                    mi.cType.Name + "/" +
+                    mi.pInfo.PropertyType.Name + "  " +
+                    mi.pInfo.Name)
+                .ToArray();
+
+
+            var selectedPropertyInfo = pInfoList
+                .FirstOrDefault(mi =>
+                    mi.cType.Name == cName &&
+                    mi.pInfo.Name == pName);
+
+            int selectedPropertyIndex = 0;
+
+            if (selectedPropertyInfo != null)
+                selectedPropertyIndex = pInfoList.IndexOf(selectedPropertyInfo);
+
+
+            var index = Popup("", selectedPropertyIndex, menuList);
+
+            if (index != selectedPropertyIndex)
+            {
+                Undo.RecordObject(gameObject,"Change Parameter");
+                pText = pInfoList[index].cType.Name + "." + pInfoList[index].pInfo.Name;
+            }
+
+
+
+        }
+
+        public override void BoldLabel(string text)
+        {
+            GUILayout.Label(text,EditorStyles.boldLabel);
         }
 
         public override void AddFollowMachine(FollowMachine followmachine)

@@ -7,19 +7,18 @@ using FMachine.Shapes.Sockets;
 using FollowMachineDll;
 using FollowMachineDll.Attributes;
 using FollowMachineDll.Utility;
+using MgsCommonLib.Utilities;
 using UnityEngine;
 
 namespace FMachine.Shapes.Nodes
 {
-    [Node(MenuTitle = "Action")]
+    [Node(MenuTitle = "Action/Action (static parameters)")]
     public class ActionNode : Node
     {
         #region Public
 
-        [Header("Output Lables:")]
         public List<string> Lables = new List<string>();
 
-        [Header("Action Settings:")]
         public GameObject TargetGameObject;
 
         public string ComponentTypeName;
@@ -32,7 +31,7 @@ namespace FMachine.Shapes.Nodes
 
         #region Private
 
-        private MethodInfo _methodInfo;
+        protected MethodInfo _methodInfo;
         private object _object;
         private object[] _parameters;
 
@@ -64,16 +63,16 @@ namespace FMachine.Shapes.Nodes
         {
             base.OnInspector();
 
-            #region Output lables
+/*            #region Output lables
 
             Lables = OutputSocketList.Select(s => s.Info).ToList();
 
             if (EditorTools.Instance.PropertyField(this, "Lables"))
                 UpdateOutputSocketsWithLables();
 
-            #endregion
+            #endregion*/
 
-
+            EditorTools.Instance.BoldLabel("Method:");
             // Get GameObject
             EditorTools.Instance.PropertyField(this, "TargetGameObject");
 
@@ -82,48 +81,12 @@ namespace FMachine.Shapes.Nodes
 
             _methodInfo = EditorTools.Instance.GetMethodInfo(
                 TargetGameObject, ref ComponentTypeName, ref MethodName);
-            
+
             if (_methodInfo == null)
                 return;
 
-            #region Get Parameters
-
-            ParameterInfo[] parameters = _methodInfo.GetParameters();
-
-            if (parameters.Length > 0)
-            {
-                #region Remove extra parameters
-
-                while (ParameterValueStrings.Count > parameters.Length)
-                    ParameterValueStrings.RemoveAt(ParameterValueStrings.Count - 1);
-
-                #endregion
-
-                #region Add shortcoming parameters
-
-                while (ParameterValueStrings.Count < parameters.Length)
-                    ParameterValueStrings.Add("");
-
-                #endregion
-
-                #region Get parameters
-
-                for (int i = 0; i < parameters.Length; i++)
-                {
-                    var customAttributes = parameters[i].GetCustomAttributes(typeof(RefrenceAttribute), true);
-                    if (customAttributes.Length > 0)
-                    {
-                        GUILayout.Label("Refrence");
-                    }
-                    else
-                        ParameterValueStrings[i] =
-                            EditorTools.Instance.GetParameter(this, parameters[i], ParameterValueStrings[i]);
-                }
-
-                #endregion
-            }
-
-            #endregion
+            // Get parameters
+            GetParameters();
 
             #region Check follow machine attributes
             var attributes = _methodInfo.GetCustomAttributes(typeof(FollowMachineAttribute), false);
@@ -136,13 +99,30 @@ namespace FMachine.Shapes.Nodes
             }
             else
             {
+                GUILayout.Space(10);
                 if (GUILayout.Button("Fill Info"))
                 {
                     Info = _methodInfo.DeclaringType.Name + " => " + _methodInfo.Name;
                 }
-            } 
+            }
             #endregion
 
+        }
+
+        protected virtual void GetParameters()
+        {
+            ParameterInfo[] parameters = _methodInfo.GetParameters();
+
+            if (parameters.Length > 0)
+            {
+                ParameterValueStrings.Resize(parameters.Length);
+
+                for (int i = 0; i < parameters.Length; i++)
+                {
+                    ParameterValueStrings[i] =
+                        EditorTools.Instance.GetParameter(this,parameters[i].Name, parameters[i], ParameterValueStrings[i]);
+                }
+            }
         }
 
         private void UpdateOutputSocketsWithLables()
@@ -199,8 +179,25 @@ namespace FMachine.Shapes.Nodes
 
             #endregion
 
-            #region Get parameters
+            GetParametersObjects();
 
+            #region Invoke
+
+
+            if (_methodInfo.ReturnType.Name == "IEnumerator")
+                return (IEnumerator)_methodInfo.Invoke(_object, _parameters);
+            else
+            {
+                _methodInfo.Invoke(_object, _parameters);
+                return null;
+            }
+
+            #endregion
+
+        }
+
+        protected virtual void GetParametersObjects()
+        {
             ParameterInfo[] parameterInfos = _methodInfo.GetParameters();
 
             _parameters = new object[parameterInfos.Length];
@@ -240,22 +237,6 @@ namespace FMachine.Shapes.Nodes
                     _parameters[i] = null;
                 }
             }
-
-            #endregion
-
-            #region Invoke
-
-
-            if (_methodInfo.ReturnType.Name == "IEnumerator")
-                return (IEnumerator)_methodInfo.Invoke(_object, _parameters);
-            else
-            {
-                _methodInfo.Invoke(_object, _parameters);
-                return null;
-            }
-
-            #endregion
-
         }
 
         #endregion

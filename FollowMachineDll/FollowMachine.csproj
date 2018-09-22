@@ -70,6 +70,7 @@
     <Compile Include="Shapes\Nodes\ActionNode.cs" />
     <Compile Include="Shapes\Nodes\AnimationNode.cs" />
     <Compile Include="Shapes\Nodes\DialogeNode.cs" />
+    <Compile Include="Shapes\Nodes\DynamicActionNode.cs" />
     <Compile Include="Shapes\Nodes\EventNode.cs" />
     <Compile Include="Shapes\Nodes\FollowMachineNode.cs" />
     <Compile Include="Shapes\Nodes\InputNode.cs" />
