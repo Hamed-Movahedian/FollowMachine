@@ -21,27 +21,27 @@ namespace FollowMachineDll.Shapes.Nodes
 
         protected override void GetParameters()
         {
-            ParameterInfo[] pInfos = _methodInfo.GetParameters();
+            _parameterInfos = _methodInfo.GetParameters();
 
-            if (pInfos.Length == 0)
+            if (_parameterInfos.Length == 0)
                 return;
 
             // Resize parameter lists
-            ParameterValueStrings.Resize(pInfos.Length);
-            ParameterGameObjects.Resize(pInfos.Length);
-            DynamicParameter.Resize(pInfos.Length);
+            ParameterValueStrings.Resize(_parameterInfos.Length);
+            ParameterGameObjects.Resize(_parameterInfos.Length);
+            DynamicParameter.Resize(_parameterInfos.Length);
 
             // Bold label for parameters
             //GUILayout.Label("Parameters:");
 
-            for (int i = 0; i < pInfos.Length; i++)
+            for (int i = 0; i < _parameterInfos.Length; i++)
             {
                 GUILayout.Space(10);
 
                 // Parameter Name and dynamic toggle
                 GUILayout.BeginHorizontal();
                 // parameter name
-                EditorTools.Instance.BoldLabel(pInfos[i].Name.ToFristLetterUpperCase()+" ("+pInfos[i].ParameterType.Name+")");
+                EditorTools.Instance.BoldLabel(_parameterInfos[i].Name.ToFristLetterUpperCase() + " (" + _parameterInfos[i].ParameterType.Name + ")");
                 GUILayout.FlexibleSpace();
                 // Dynamic toggle
                 var toggle = GUILayout.Toggle(DynamicParameter[i], "Dynamic");
@@ -64,7 +64,7 @@ namespace FollowMachineDll.Shapes.Nodes
                             var pGameObject = ParameterGameObjects[i];
                             var pText = ParameterValueStrings[i];
                             EditorTools.Instance.GetDynamicParameter(gameObject, ref pGameObject, ref pText,
-                                pInfos[i].ParameterType);
+                                _parameterInfos[i].ParameterType);
                             ParameterGameObjects[i] = pGameObject;
                             ParameterValueStrings[i] = pText;
                         }
@@ -72,7 +72,7 @@ namespace FollowMachineDll.Shapes.Nodes
                         {
                             GUILayout.Space(5);
                             ParameterValueStrings[i] =
-                                EditorTools.Instance.GetParameter(this,"", pInfos[i], ParameterValueStrings[i]);
+                                EditorTools.Instance.GetParameter(this, "", _parameterInfos[i].ParameterType, ParameterValueStrings[i]);
 
                         }
                     }
@@ -83,5 +83,77 @@ namespace FollowMachineDll.Shapes.Nodes
             }
         }
 
+        protected override void GetParametersObjects()
+        {
+            _parameterInfos = _methodInfo.GetParameters();
+
+            if (_parameterInfos.Length == 0)
+                return;
+
+            // Resize parameter lists
+            ParameterValueStrings.Resize(_parameterInfos.Length);
+            ParameterGameObjects.Resize(_parameterInfos.Length);
+            DynamicParameter.Resize(_parameterInfos.Length);
+
+            _parameters = new object[_parameterInfos.Length];
+
+            for (int i = 0; i < _parameters.Length; i++)
+                if (DynamicParameter[i])
+                    _parameters[i]=SetDynamicParameterObject(ParameterGameObjects[i],ParameterValueStrings[i]);
+                else
+                    SetStaticParamerterObject(i);
+
+        }
+
+        private  object SetDynamicParameterObject(GameObject pGameObject, string pText)
+        {
+            // check game object isn't empty
+            if (pGameObject == null)
+                return null;
+
+            // Extract component and property name
+            if (pText == null) pText = "";
+
+            var tList = pText.Split('.').ToList();
+
+            if (tList.Count != 2)
+                return null;
+
+            var cName = tList[0];
+            var pName = tList[1];
+
+            // Get component
+            var componentType = GetComponentType(cName, pGameObject);
+
+            if (componentType == null)
+                return null;
+
+            // Get property
+            var propertyInfo = componentType
+                .GetProperties()
+                .FirstOrDefault(pi => pi.Name == pName);
+
+            if (propertyInfo == null)
+                return null;
+
+            // get property object
+            object pObject = null;
+
+            if (componentType == typeof(GameObject))
+                pObject = pGameObject;
+            else
+                pObject = pGameObject.GetComponent(componentType);
+
+            if (pObject == null)
+                return null;
+
+            // get value object
+            return propertyInfo.GetValue(pObject,null);
+        }
+
+        private void SetDynamicParameterObject(int i)
+        {
+            
+        }
     }
 }

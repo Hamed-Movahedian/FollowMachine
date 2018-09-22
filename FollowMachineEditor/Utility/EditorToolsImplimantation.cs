@@ -62,23 +62,24 @@ namespace FollowMachineEditor.Utility
 
         #region GetParameter
 
-        public override string GetParameter(Object objectToUndo, string lable, ParameterInfo parameterInfo,string valueString)
+        public override string GetParameter(Object objectToUndo, string lable, Type type,string valueString)
         {
-            if (parameterInfo.ParameterType == typeof(int))
+            if (type == typeof(int))
             {
                 return IntFieldAsString(objectToUndo, lable, valueString);
             }
-            else if (parameterInfo.ParameterType == typeof(float))
+            else if (type == typeof(float))
             {
                 return FloatFieldAsString(objectToUndo, lable, valueString);
             }
-            else if (parameterInfo.ParameterType == typeof(bool))
+            else if (type == typeof(bool))
             {
                 return BoolFieldAsString(objectToUndo, lable, valueString);
             }
-            else if (parameterInfo.ParameterType == typeof(string))
+            else if (type == typeof(string))
             {
-                return StringField(objectToUndo, lable, valueString);
+                LanguageField(objectToUndo, lable, ref valueString);
+                return valueString;
             }
             else
             {
@@ -435,7 +436,8 @@ namespace FollowMachineEditor.Utility
             return mInfoList[index].mInfo;
         }
 
-        public override void GetDynamicParameter(GameObject gameObject, ref GameObject pGameObject, ref string pText, Type parameterType)
+        public override PropertyInfo GetDynamicParameter(GameObject gameObject, ref GameObject pGameObject,
+            ref string pText, Type parameterType)
         {
             // Get game object
             GameObject go = (GameObject) EditorGUILayout.ObjectField("Game Object",pGameObject, typeof(GameObject), true);
@@ -447,7 +449,7 @@ namespace FollowMachineEditor.Utility
             }
 
             if (pGameObject == null)
-                return;
+                return null;
 
             // Extract component and property names
             string cName = "", pName = "";
@@ -468,7 +470,7 @@ namespace FollowMachineEditor.Utility
                 pGameObject
                     .GetComponents<Component>()
                     .Select(c => c.GetType()).ToList();
-
+            
             // add game object
             componentsTypes.Insert(0, typeof(GameObject));
 
@@ -476,7 +478,7 @@ namespace FollowMachineEditor.Utility
             var pInfoList = componentsTypes
                 .SelectMany(cType => cType
                     .GetProperties()
-                    .Where(pi=>pi.PropertyType==parameterType || pi.PropertyType.IsSubclassOf(parameterType))
+                    .Where(pi=>parameterType==null || pi.PropertyType==parameterType || pi.PropertyType.IsSubclassOf(parameterType))
                     .Select(pInfo => new { cType, pInfo })
                     .ToList())
                 .ToList();
@@ -509,7 +511,7 @@ namespace FollowMachineEditor.Utility
                 pText = pInfoList[index].cType.Name + "." + pInfoList[index].pInfo.Name;
             }
 
-
+            return pInfoList[index].pInfo;
 
         }
 

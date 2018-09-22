@@ -33,8 +33,8 @@ namespace FMachine.Shapes.Nodes
 
         protected MethodInfo _methodInfo;
         private object _object;
-        private object[] _parameters;
-
+        protected object[] _parameters;
+        protected ParameterInfo[] _parameterInfos;
 
         #endregion
 
@@ -120,7 +120,7 @@ namespace FMachine.Shapes.Nodes
                 for (int i = 0; i < parameters.Length; i++)
                 {
                     ParameterValueStrings[i] =
-                        EditorTools.Instance.GetParameter(this,parameters[i].Name, parameters[i], ParameterValueStrings[i]);
+                        EditorTools.Instance.GetParameter(this,parameters[i].Name, parameters[i].ParameterType, ParameterValueStrings[i]);
                 }
             }
         }
@@ -149,7 +149,7 @@ namespace FMachine.Shapes.Nodes
 
             #region Get componentType
 
-            Type componentType = GetComponentType();
+            Type componentType = GetComponentType(ComponentTypeName,TargetGameObject);
 
             if (componentType == null)
                 throw new Exception("Error in Action node " + Info);
@@ -198,44 +198,47 @@ namespace FMachine.Shapes.Nodes
 
         protected virtual void GetParametersObjects()
         {
-            ParameterInfo[] parameterInfos = _methodInfo.GetParameters();
+            _parameterInfos = _methodInfo.GetParameters();
 
-            _parameters = new object[parameterInfos.Length];
+            _parameters = new object[_parameterInfos.Length];
 
             for (int i = 0; i < _parameters.Length; i++)
+                SetStaticParamerterObject(i);
+        }
+
+        protected void SetStaticParamerterObject(int i)
+        {
+            ParameterInfo parameterInfo = _parameterInfos[i];
+            string valueString = ParameterValueStrings[i];
+
+            if (parameterInfo.ParameterType == typeof(int)) //*** int
             {
-                ParameterInfo parameterInfo = parameterInfos[i];
-                string valueString = ParameterValueStrings[i];
+                if (!int.TryParse(valueString, out var value))
+                    value = 0;
 
-                if (parameterInfo.ParameterType == typeof(int)) //*** int
-                {
-                    if (!int.TryParse(valueString, out var value))
-                        value = 0;
+                _parameters[i] = value;
+            }
+            else if (parameterInfo.ParameterType == typeof(float)) //*** float
+            {
+                if (!float.TryParse(valueString, out var value))
+                    value = 0;
 
-                    _parameters[i] = value;
-                }
-                else if (parameterInfo.ParameterType == typeof(float)) //*** float
-                {
-                    if (!float.TryParse(valueString, out var value))
-                        value = 0;
+                _parameters[i] = value;
+            }
+            else if (parameterInfo.ParameterType == typeof(bool)) //*** bool
+            {
+                if (!bool.TryParse(valueString, out var value))
+                    value = false;
 
-                    _parameters[i] = value;
-                }
-                else if (parameterInfo.ParameterType == typeof(bool)) //*** bool
-                {
-                    if (!bool.TryParse(valueString, out var value))
-                        value = false;
-
-                    _parameters[i] = value;
-                }
-                else if (parameterInfo.ParameterType == typeof(string)) //*** string
-                {
-                    _parameters[i] = valueString;
-                }
-                else //*** Others
-                {
-                    _parameters[i] = null;
-                }
+                _parameters[i] = value;
+            }
+            else if (parameterInfo.ParameterType == typeof(string)) //*** string
+            {
+                _parameters[i] = valueString;
+            }
+            else //*** Others
+            {
+                _parameters[i] = null;
             }
         }
 
@@ -248,7 +251,7 @@ namespace FMachine.Shapes.Nodes
             if (TargetGameObject == null)
                 return;
 
-            Type componentType = GetComponentType();
+            Type componentType = GetComponentType(ComponentTypeName,TargetGameObject);
 
             if (componentType == null)
                 return;
@@ -301,23 +304,23 @@ namespace FMachine.Shapes.Nodes
 
         #region GetComponentType
 
-        private Type GetComponentType()
+        protected  Type GetComponentType(string cName, GameObject tGameObject)
         {
             Type _componentType = null;
 
-            if (TargetGameObject != null)
+            if (tGameObject != null)
             {
-                if (ComponentTypeName == "GameObject")
+                if (cName == "GameObject")
                     return typeof(GameObject);
 
                 List<Type> componentsTypes =
-                    TargetGameObject
+                    tGameObject
                         .GetComponents<Component>()
                         .Select(c => c.GetType()).ToList();
 
                 List<string> componentTypeNames = componentsTypes.Select(ct => ct.Name).ToList();
 
-                int currentTypeIndex = componentTypeNames.IndexOf(ComponentTypeName);
+                int currentTypeIndex = componentTypeNames.IndexOf(cName);
 
                 if (currentTypeIndex != -1)
                     _componentType = componentsTypes[currentTypeIndex];
@@ -341,7 +344,7 @@ namespace FMachine.Shapes.Nodes
             if (TargetGameObject == null)
                 return;
 
-            Type componentType = GetComponentType();
+            Type componentType = GetComponentType(ComponentTypeName,TargetGameObject);
 
             if (componentType == null)
                 return;

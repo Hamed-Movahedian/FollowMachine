@@ -44,16 +44,16 @@ namespace FMachine.SettingScripts
                 .FindAssets(name)
                 .Select(AssetDatabase.GUIDToAssetPath)
                 .Select(path=>AssetDatabase.LoadAssetAtPath(path,type))
-                .Where(a => a != null)
+                .Where(a => a != null && a.name==name)
                 .ToList();
 
             if (assets.Count == 0)
                 throw new Exception(
-                    string.Format("Can't find {0} Settings of type {1} !!!", name, type.Name));
+                    $"Can't find {name} Settings of type {type.Name} !!!");
 
             if (assets.Count > 1)
                 throw new Exception(
-                    string.Format("More than one {0} Settings of type {1} !!!", name, type.Name));
+                    $"More than one {name} Settings of type {type.Name} !!!");
 
             return (ScriptableObject) assets[0];
         }

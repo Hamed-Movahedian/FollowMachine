@@ -19,7 +19,7 @@ namespace FollowMachineDll.Utility
         public abstract int Popup(string label, int index, string[] displayedOptions);
         public abstract void Undo_RecordObject(Object objectToUndo, string name);
         public abstract string GetParameter(Object objectToUndo,
-            string lable, ParameterInfo parameterInfo, string valueString);
+            string lable, Type type, string valueString);
         public abstract GUIStyle TintStyle(GUIStyle style, Color tintColor);
         public abstract void DrawBox(GUIStyle style, Rect rect, GUIContent guiContent, bool b, bool b1, bool b2, bool b3);
         public abstract string[] GetAnimationStates(Animator animator);
@@ -40,7 +40,8 @@ namespace FollowMachineDll.Utility
         public abstract void OpenScript(MonoBehaviour monoBehaviour);
         public abstract void FocusOnInspector();
         public abstract MethodInfo GetMethodInfo(GameObject gameObject, ref string componentName, ref string methodName);
-        public abstract void GetDynamicParameter(GameObject gameObject, ref GameObject pGameObject, ref string pText, Type parameterType);
+        public abstract PropertyInfo GetDynamicParameter(GameObject gameObject, ref GameObject pGameObject,
+            ref string pText, Type parameterType);
         public abstract void BoldLabel(string text);
     }
 }
