@@ -403,10 +403,7 @@ namespace FollowMachineEditor.Utility
 
             // Create Menu list
             var menuList = mInfoList
-                .Select(mi =>
-                    mi.cType.Name + "/" +
-                    mi.mInfo.DeclaringType.Name + " => " +
-                    mi.mInfo.ToString())
+                .Select(mi => $"{mi.cType.Name}/{mi.mInfo.DeclaringType.Name} => {mi.mInfo.ToString().Split(' ')[1]} ({mi.mInfo.ReturnType.Name})")
                 .ToArray();
 
             // Get selected method index
