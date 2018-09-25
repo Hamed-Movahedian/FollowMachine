@@ -6,6 +6,11 @@ namespace FMachine.Shapes.Nodes
     [Node(MenuTitle="IO/Output")]
     public class OutputNode : Node
     {
+        public override bool IsEqualTo(Node node)
+        {
+            return Info == node.Info;
+        }
+
         protected override void Initialize()
         {
             AddInputSocket<OutputSocket>("");

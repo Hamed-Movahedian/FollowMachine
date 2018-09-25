@@ -7,6 +7,7 @@ using FMachine.Shapes.Sockets;
 using FollowMachineDll;
 using FollowMachineDll.Attributes;
 using FollowMachineDll.Utility;
+using MgsCommonLib.UI;
 using MgsCommonLib.Utilities;
 using UnityEngine;
 
@@ -27,6 +28,10 @@ namespace FMachine.Shapes.Nodes
 
         public List<string> ParameterValueStrings = new List<string>();
 
+        public MgsProgressWindow ProgressbarWindow;
+        public string ProgressbarMessage;
+        public bool ProgressbarShow = true;
+        public bool ProgressbarHide = true;
         #endregion
 
         #region Private
@@ -63,15 +68,6 @@ namespace FMachine.Shapes.Nodes
         {
             base.OnInspector();
 
-/*            #region Output lables
-
-            Lables = OutputSocketList.Select(s => s.Info).ToList();
-
-            if (EditorTools.Instance.PropertyField(this, "Lables"))
-                UpdateOutputSocketsWithLables();
-
-            #endregion*/
-
             EditorTools.Instance.BoldLabel("Method:");
             // Get GameObject
             EditorTools.Instance.PropertyField(this, "TargetGameObject");
@@ -107,6 +103,25 @@ namespace FMachine.Shapes.Nodes
             }
             #endregion
 
+            // if not coroutine don't show progress bar
+            if (_methodInfo.ReturnType != typeof(IEnumerator))
+                return;
+
+            // Get Progress bar 
+            GUILayout.Space(10);
+
+            EditorTools.Instance.PropertyField(this, "ProgressbarWindow");
+
+            if (ProgressbarWindow == null)
+                return;
+
+            EditorTools.Instance.LanguageField(this, "Progressbar Message", ref ProgressbarMessage);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Display method:");
+            ProgressbarShow = GUILayout.Toggle(ProgressbarShow, "Show");
+            ProgressbarHide = GUILayout.Toggle(ProgressbarHide, "Hide");
+            GUILayout.EndHorizontal();
         }
 
         protected virtual void GetParameters()
@@ -120,7 +135,7 @@ namespace FMachine.Shapes.Nodes
                 for (int i = 0; i < parameters.Length; i++)
                 {
                     ParameterValueStrings[i] =
-                        EditorTools.Instance.GetParameter(this,parameters[i].Name, parameters[i].ParameterType, ParameterValueStrings[i]);
+                        EditorTools.Instance.GetParameter(this, parameters[i].Name, parameters[i].ParameterType, ParameterValueStrings[i]);
                 }
             }
         }
@@ -149,7 +164,7 @@ namespace FMachine.Shapes.Nodes
 
             #region Get componentType
 
-            Type componentType = GetComponentType(ComponentTypeName,TargetGameObject);
+            Type componentType = GetComponentType(ComponentTypeName, TargetGameObject);
 
             if (componentType == null)
                 throw new Exception("Error in Action node " + Info);
@@ -185,11 +200,19 @@ namespace FMachine.Shapes.Nodes
 
 
             if (_methodInfo.ReturnType.Name == "IEnumerator")
-                return (IEnumerator)_methodInfo.Invoke(_object, _parameters);
+            {
+                if (ProgressbarWindow)
+                    yield return ProgressbarWindow.Display(ProgressbarMessage, ProgressbarShow);
+
+                yield return (IEnumerator)_methodInfo.Invoke(_object, _parameters);
+
+                if (ProgressbarWindow && ProgressbarHide)
+                    yield return ProgressbarWindow.Hide();
+            }
             else
             {
                 _methodInfo.Invoke(_object, _parameters);
-                return null;
+                yield return null;
             }
 
             #endregion
@@ -251,7 +274,7 @@ namespace FMachine.Shapes.Nodes
             if (TargetGameObject == null)
                 return;
 
-            Type componentType = GetComponentType(ComponentTypeName,TargetGameObject);
+            Type componentType = GetComponentType(ComponentTypeName, TargetGameObject);
 
             if (componentType == null)
                 return;
@@ -304,7 +327,7 @@ namespace FMachine.Shapes.Nodes
 
         #region GetComponentType
 
-        protected  Type GetComponentType(string cName, GameObject tGameObject)
+        protected Type GetComponentType(string cName, GameObject tGameObject)
         {
             Type _componentType = null;
 
@@ -344,7 +367,7 @@ namespace FMachine.Shapes.Nodes
             if (TargetGameObject == null)
                 return;
 
-            Type componentType = GetComponentType(ComponentTypeName,TargetGameObject);
+            Type componentType = GetComponentType(ComponentTypeName, TargetGameObject);
 
             if (componentType == null)
                 return;

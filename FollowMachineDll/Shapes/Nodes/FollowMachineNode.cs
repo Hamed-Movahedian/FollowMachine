@@ -9,14 +9,14 @@ namespace FMachine.Shapes.Nodes
 {
     public class FollowMachineNode : Node
     {
-        [Node(MenuTitle="Follow Machine")]
+        [Node(MenuTitle = "Follow Machine")]
         public FollowMachine FollowMachine;
 
         public override bool IsEqualTo(Node node)
         {
             var followMachineNode = node as FollowMachineNode;
 
-            if (followMachineNode==null)
+            if (followMachineNode == null)
                 return false;
 
             return followMachineNode.FollowMachine == FollowMachine;
@@ -101,7 +101,8 @@ namespace FMachine.Shapes.Nodes
 
             foreach (Node node in FollowMachine.NodeList)
                 if (node is OutputNode)
-                    list.Add(node.Info);
+                    if (!list.Contains(node.Info))
+                        list.Add(node.Info);
 
             return list;
         }
@@ -122,7 +123,7 @@ namespace FMachine.Shapes.Nodes
 
             StartCoroutine(FollowMachine.RunInputNode(EnteredSocket.Info));
 
-            yield return new WaitWhile(()=> FollowMachine.IsRunning);
+            yield return new WaitWhile(() => FollowMachine.IsRunning);
         }
 
         public override void OnShow()
