@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using FMachine.Shapes.Sockets;
 using FollowMachineDll.Utility;
-using UnityEditor;
 using UnityEngine;
 
 namespace FMachine.Shapes
@@ -47,31 +46,9 @@ namespace FMachine.Shapes
             }
             else if (currentEvent.button == 1)
             {
-                ShowContexMenu(this);
+                EditorTools.Instance.ShowContexMenu(this);
             }
         }
-
-        private void ShowContexMenu(Edge edge)
-        {
-            var menu = new GenericMenu();
-
-            menu.AddItem(new GUIContent("Auto Hide"), 
-                edge.AutoHide,
-                ()=>{edge.AutoHide = !edge.AutoHide;});
-
-            menu.AddSeparator("");
-
-            menu.AddItem(new GUIContent("Reset"),
-                false,
-                ()=>{EditPoints.Clear();});
-
-            menu.AddItem(new GUIContent("Delete"),
-                false,
-                edge.Delete);
-
-            menu.ShowAsContext();
-        }
-
 
         public Vector2 ToRelativePos(Vector3 x)
         {

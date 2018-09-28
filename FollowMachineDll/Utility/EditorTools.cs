@@ -6,6 +6,7 @@ using System.Text;
 using FMachine;
 using FMachine.Shapes;
 using FMachine.Shapes.Nodes;
+using FMachine.Shapes.Sockets;
 using FollowMachineDll.Shapes.Nodes;
 using UnityEngine;
 //using UnityEngine.UI;
@@ -46,5 +47,9 @@ namespace FollowMachineDll.Utility
         public abstract void BoldLabel(string text);
         public abstract void FocusTo(Node node, bool zooming);
         public abstract void DrawDotedLine(Vector2 p1, Vector2 p2);
+        public abstract void ShowContexMenu(Edge edge);
+        public abstract void ShowContexMenu(InputSocket edge);
+        public abstract void ShowContexMenu(OutputSocket socket);
+        public abstract void ShowContexMenu(Node node);
     }
 }

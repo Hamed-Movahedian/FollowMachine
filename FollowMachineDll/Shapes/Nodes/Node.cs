@@ -5,7 +5,6 @@ using FMachine.Shapes.Sockets;
 using FMachine.Utility;
 using FollowMachineDll.SettingScripts;
 using FollowMachineDll.Utility;
-using UnityEditor;
 using UnityEngine;
 
 namespace FMachine.Shapes.Nodes
@@ -91,29 +90,10 @@ namespace FMachine.Shapes.Nodes
             }
             else if (currentEvent.button == 1)
             {
-                ShowContexMenu();
+                EditorTools.Instance.ShowContexMenu(this);
             }
         }
-
-        private void ShowContexMenu()
-        {
-            var menu = new GenericMenu();
-
-            menu.AddItem(new GUIContent("Disconnect"),
-                false,
-                () =>
-                {
-                    InputSocketList.ForEach(socket => socket.Disconnect());
-                    OutputSocketList.ForEach(socket => socket.Disconnect());
-                });
-
-            menu.AddItem(new GUIContent("Delete"),
-                false,
-                Delete);
-
-            menu.ShowAsContext();
-        }
-
+        
         public override void MouseDrag(Vector2 delta, Vector2 mousePosition, Event currentEvent)
         {
             if (currentEvent.button==0)

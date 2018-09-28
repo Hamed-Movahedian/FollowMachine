@@ -7,6 +7,7 @@ using FMachine.Editor;
 using FMachine.SettingScripts;
 using FMachine.Shapes;
 using FMachine.Shapes.Nodes;
+using FMachine.Shapes.Sockets;
 using FollowMachineDll.Utility;
 using FollowMachineEditor.Windows.FollowMachineInspector;
 using MgsCommonLib.Theme;
@@ -63,7 +64,7 @@ namespace FollowMachineEditor.Utility
 
         #region GetParameter
 
-        public override string GetParameter(Object objectToUndo, string lable, Type type,string valueString)
+        public override string GetParameter(Object objectToUndo, string lable, Type type, string valueString)
         {
             if (type == typeof(int))
             {
@@ -438,11 +439,11 @@ namespace FollowMachineEditor.Utility
             ref string pText, Type parameterType)
         {
             // Get game object
-            GameObject go = (GameObject) EditorGUILayout.ObjectField("Game Object",pGameObject, typeof(GameObject), true);
+            GameObject go = (GameObject)EditorGUILayout.ObjectField("Game Object", pGameObject, typeof(GameObject), true);
 
             if (go != pGameObject)
             {
-                Undo.RecordObject(gameObject,"Change Parameter");
+                Undo.RecordObject(gameObject, "Change Parameter");
                 pGameObject = go;
             }
 
@@ -468,7 +469,7 @@ namespace FollowMachineEditor.Utility
                 pGameObject
                     .GetComponents<Component>()
                     .Select(c => c.GetType()).ToList();
-            
+
             // add game object
             componentsTypes.Insert(0, typeof(GameObject));
 
@@ -476,7 +477,7 @@ namespace FollowMachineEditor.Utility
             var pInfoList = componentsTypes
                 .SelectMany(cType => cType
                     .GetProperties()
-                    .Where(pi=>parameterType==null || pi.PropertyType==parameterType || pi.PropertyType.IsSubclassOf(parameterType))
+                    .Where(pi => parameterType == null || pi.PropertyType == parameterType || pi.PropertyType.IsSubclassOf(parameterType))
                     .Select(pInfo => new { cType, pInfo })
                     .ToList())
                 .ToList();
@@ -505,7 +506,7 @@ namespace FollowMachineEditor.Utility
 
             if (index != selectedPropertyIndex)
             {
-                Undo.RecordObject(gameObject,"Change Parameter");
+                Undo.RecordObject(gameObject, "Change Parameter");
                 pText = pInfoList[index].cType.Name + "." + pInfoList[index].pInfo.Name;
             }
 
@@ -515,18 +516,108 @@ namespace FollowMachineEditor.Utility
 
         public override void BoldLabel(string text)
         {
-            GUILayout.Label(text,EditorStyles.boldLabel);
+            GUILayout.Label(text, EditorStyles.boldLabel);
         }
 
         public override void FocusTo(Node node, bool zooming)
         {
-            _window.Canvas.CordinationSystem.Focus(node,zooming);
+            _window.Canvas.CordinationSystem.Focus(node, zooming);
         }
 
         public override void DrawDotedLine(Vector2 p1, Vector2 p2)
         {
             //Handles.DrawDottedLine(p1,p2,20);
-            Handles.DrawAAPolyLine(10,p1,p2);
+            Handles.DrawAAPolyLine(10, p1, p2);
+        }
+
+        public override void ShowContexMenu(Edge edge)
+        {
+            var menu = new GenericMenu();
+
+            menu.AddItem(new GUIContent("Auto Hide"),
+                edge.AutoHide,
+                () => { edge.AutoHide = !edge.AutoHide; });
+
+            menu.AddSeparator("");
+
+            menu.AddItem(new GUIContent("Reset"),
+                false,
+                () => { edge.EditPoints.Clear(); });
+
+            menu.AddItem(new GUIContent("Delete"),
+                false,
+                edge.Delete);
+
+            menu.ShowAsContext();
+        }
+
+        public override void ShowContexMenu(InputSocket socket)
+        {
+            var menu = new GenericMenu();
+
+            menu.AddItem(new GUIContent("Auto Hide Edges"),
+                false,
+                () =>
+                {
+                    socket.EdgeList.ForEach(edge => edge.AutoHide = true);
+                });
+
+            menu.AddItem(new GUIContent("Always Show Edges"),
+                false,
+                () =>
+                {
+                    socket.EdgeList.ForEach(edge => edge.AutoHide = false);
+                });
+
+            menu.AddItem(new GUIContent("Disconnect"),
+                false,
+                socket.Disconnect);
+
+            menu.ShowAsContext();
+        }
+
+        public override void ShowContexMenu(OutputSocket socket)
+        {
+                        var menu = new GenericMenu();
+
+            menu.AddItem(new GUIContent("Auto Hide Edges"),
+                false,
+                ()=>
+                {
+                    socket.EdgeList.ForEach(edge=>edge.AutoHide=true);
+                });
+
+            menu.AddItem(new GUIContent("Always Show Edges"),
+                false,
+                ()=>
+                {
+                    socket.EdgeList.ForEach(edge=>edge.AutoHide=false);
+                });
+
+            menu.AddItem(new GUIContent("Disconnect"),
+                false,
+                socket.Disconnect);
+
+            menu.ShowAsContext();
+        }
+
+        public override void ShowContexMenu(Node node)
+        {
+            var menu = new GenericMenu();
+
+            menu.AddItem(new GUIContent("Disconnect"),
+                false,
+                () =>
+                {
+                    node.InputSocketList.ForEach(socket => socket.Disconnect());
+                    node.OutputSocketList.ForEach(socket => socket.Disconnect());
+                });
+
+            menu.AddItem(new GUIContent("Delete"),
+                false,
+                node.Delete);
+
+            menu.ShowAsContext();
         }
 
         public override void AddFollowMachine(FollowMachine followmachine)
