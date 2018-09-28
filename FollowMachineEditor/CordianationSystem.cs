@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using FMachine.Shapes.Nodes;
+using UnityEngine;
 
 namespace FMachine.Editor
 {
@@ -102,17 +104,34 @@ namespace FMachine.Editor
             if (_canvas.Graph == null)
                 return;
 
-            Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
-
+            var nodes = new List<Node>();
             foreach (var node in _canvas.Graph.NodeList)
                 if (!toSelection || node.IsSelected)
-                    if (bounds.center == Vector3.zero)
-                        bounds = new Bounds(node.Rect.center, node.Rect.size);
-                    else
-                    {
-                        bounds.Encapsulate(node.Rect.min);
-                        bounds.Encapsulate(node.Rect.max);
-                    }
+                    nodes.Add(node);
+
+            Focus(nodes, zooming);
+        }
+
+        public void Focus(Node node, bool zooming)
+        {
+            Focus(new List<Node> { node }, zooming);
+        }
+
+        public void Focus(List<Node> nodes, bool zooming)
+        {
+            if (_canvas.Graph == null)
+                return;
+
+            Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
+
+            foreach (var node in nodes)
+                if (bounds.center == Vector3.zero)
+                    bounds = new Bounds(node.Rect.center, node.Rect.size);
+                else
+                {
+                    bounds.Encapsulate(node.Rect.min);
+                    bounds.Encapsulate(node.Rect.max);
+                }
 
             if (bounds.center == Vector3.zero)
                 return;
@@ -127,7 +146,7 @@ namespace FMachine.Editor
                 _canvas.Zoom = Mathf.Max(MinZoom, _canvas.Zoom);
                 _canvas.Zoom = Mathf.Min(MaxZoom, _canvas.Zoom);
             }
-            _canvas.Position = -(Vector2)bounds.center+_canvas.WindowRect.size*0.5f/_canvas.Zoom;
+            _canvas.Position = -(Vector2)bounds.center + _canvas.WindowRect.size * 0.5f / _canvas.Zoom;
         }
     }
 }

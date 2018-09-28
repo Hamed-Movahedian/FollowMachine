@@ -75,12 +75,17 @@ namespace FMachine.Editor.ShapeBehaviours
             {
                 // *********************************** Mouse Down
                 case EventType.MouseDown:
-                    // exit if mouse not in canvas
-                    if (!_isMouseInCanvas)
-                        return;
 
                     // get interaction source
-                    SetMouseInteractionSource();
+                    _interactionSource = GetMouseInteractionSource(_mousePosition);
+
+                    if (_interactionSource == null)
+                    {
+                        if (currentEvent.button == 0)
+                            _interactionSource = _canvas.BoxSelection;
+                        else
+                            _canvas.CreationMenu.Show(_mousePosition);
+                    }
 
                     if (currentEvent.clickCount < 2)
                         _interactionSource.MouseDown(_mousePosition, currentEvent);
@@ -93,9 +98,9 @@ namespace FMachine.Editor.ShapeBehaviours
                 // *********************************** Mouse Drag
                 case EventType.MouseDrag:
                     _interactionSource?.MouseDrag(
-                        currentEvent.delta / _canvas.Zoom,
-                        _mousePosition,
-                        currentEvent);
+                    currentEvent.delta / _canvas.Zoom,
+                    _mousePosition,
+                    currentEvent);
                     break;
 
                 // *********************************** Mouse Up
@@ -178,8 +183,7 @@ namespace FMachine.Editor.ShapeBehaviours
 
         private void SetMouseInteractionSource()
         {
-            _interactionSource = GetMouseInteractionSource(_mousePosition) ?? 
-                                 _canvas.BoxSelection;
+            _interactionSource = GetMouseInteractionSource(_mousePosition);
         }
 
         private void SetupMouseInfo()

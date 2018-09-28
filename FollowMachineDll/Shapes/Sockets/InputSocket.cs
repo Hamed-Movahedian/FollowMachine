@@ -3,12 +3,14 @@ using System.Linq;
 using FMachine.Shapes.Nodes;
 using FollowMachineDll.SettingScripts;
 using FollowMachineDll.Utility;
+using UnityEditor;
 using UnityEngine;
 
 namespace FMachine.Shapes.Sockets
 {
     public class InputSocket : Socket
     {
+        public bool AutoEdgeHide = false;
         private bool _showDragLine;
         private Vector2 _dragPos;
         public bool AutoHide;
@@ -18,37 +20,74 @@ namespace FMachine.Shapes.Sockets
 
         public override void OnCreate(Graph graph, Node node)
         {
-            base.OnCreate(graph,node);
+            base.OnCreate(graph, node);
             Rect.size = Node.NodeSetting.InputSocketSetting.Size;
         }
 
         public override void MouseDown(Vector2 mousePosition, Event currentEvent)
         {
-            while (EdgeList.Count > 0)
+            if (currentEvent.button==0)
             {
-                EdgeList[0].Delete();
+                while (EdgeList.Count > 0)
+                {
+                    EdgeList[0].Delete();
+                } 
             }
+            else if (currentEvent.button == 1)
+                ShowContexMenu();
+        }
+
+        private void ShowContexMenu()
+        {
+            var menu = new GenericMenu();
+
+            menu.AddItem(new GUIContent("Auto Hide Edges"),
+                false,
+                () =>
+                {
+                    EdgeList.ForEach(edge => edge.AutoHide = true);
+                });
+
+            menu.AddItem(new GUIContent("Always Show Edges"),
+                false,
+                () =>
+                {
+                    EdgeList.ForEach(edge => edge.AutoHide = false);
+                });
+
+            menu.AddItem(new GUIContent("Disconnect"),
+                false,
+                Disconnect);
+
+            menu.ShowAsContext();
+
         }
 
 
         public override void MouseDrag(Vector2 delta, Vector2 mousePosition, Event currentEvent)
         {
-            _showDragLine = true;
-            _dragPos = mousePosition;
+            if (currentEvent.button == 0)
+            {
+                _showDragLine = true;
+                _dragPos = mousePosition; 
+            }
         }
 
         public override void MouseUp(Vector2 mousePosition, Event currentEvent)
         {
-            _showDragLine = false;
-
-            foreach (var node in Graph.NodeList)
-                //if (node != Node)
+            if (currentEvent.button == 0)
+            {
+                _showDragLine = false;
+                        
+                foreach (var node in Graph.NodeList)
                     foreach (OutputSocket socket in node.InputSocketList)
                         if (socket.Rect.Contains(mousePosition))
                         {
                             CreateEdge(this, socket);
+
                             return;
-                        }
+                        } 
+            }
         }
 
         public override void Draw()
@@ -85,10 +124,22 @@ namespace FMachine.Shapes.Sockets
 
         public void Disconnect()
         {
-            while (EdgeList.Count>0)
+            while (EdgeList.Count > 0)
             {
                 EdgeList[0].Delete();
             }
+        }
+
+        protected  void CreateEdge(InputSocket inputSocket, OutputSocket outputSocket)
+        {
+            Edge edge = Graph.Repository.CreateEdge(inputSocket);
+            edge.InputSocket = inputSocket;
+            edge.OutputSocket = outputSocket;
+            if(AutoEdgeHide)
+            edge.AutoHide = true;
+
+            inputSocket.EdgeList.Add(edge);
+            outputSocket.EdgeList.Add(edge);
         }
     }
 }

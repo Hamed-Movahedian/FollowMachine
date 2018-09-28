@@ -6,6 +6,7 @@ using FMachine;
 using FMachine.Editor;
 using FMachine.SettingScripts;
 using FMachine.Shapes;
+using FMachine.Shapes.Nodes;
 using FollowMachineDll.Utility;
 using FollowMachineEditor.Windows.FollowMachineInspector;
 using MgsCommonLib.Theme;
@@ -515,6 +516,17 @@ namespace FollowMachineEditor.Utility
         public override void BoldLabel(string text)
         {
             GUILayout.Label(text,EditorStyles.boldLabel);
+        }
+
+        public override void FocusTo(Node node, bool zooming)
+        {
+            _window.Canvas.CordinationSystem.Focus(node,zooming);
+        }
+
+        public override void DrawDotedLine(Vector2 p1, Vector2 p2)
+        {
+            //Handles.DrawDottedLine(p1,p2,20);
+            Handles.DrawAAPolyLine(10,p1,p2);
         }
 
         public override void AddFollowMachine(FollowMachine followmachine)

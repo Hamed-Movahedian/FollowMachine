@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using FMachine.Shapes.Sockets;
 using FollowMachineDll.Utility;
+using UnityEditor;
 using UnityEngine;
 
 namespace FMachine.Shapes
@@ -10,8 +11,9 @@ namespace FMachine.Shapes
         public InputSocket InputSocket;
         public OutputSocket OutputSocket;
         public List<Vector2> EditPoints = new List<Vector2>();
-        private int _dragIndex = -1;
         public int ClickEditpointIndex;
+        public bool AutoHide = false;
+        private int _dragIndex = -1;
 
         public bool IsRunning { get { return OutputSocket.Node.IsRunningNode && InputSocket.Node.IsLastRunningNode; } }
 
@@ -22,27 +24,54 @@ namespace FMachine.Shapes
 
         public override void MouseDown(Vector2 mousePosition, Event currentEvent)
         {
-            base.MouseDown(mousePosition, currentEvent);
-
-            for (var i = 0; i < EditPoints.Count; i++)
+            if (currentEvent.button == 0)
             {
-                if ((ToAbsPos(EditPoints[i]) - mousePosition).sqrMagnitude < 100)
+                for (var i = 0; i < EditPoints.Count; i++)
                 {
-                    if (currentEvent.alt)
+                    if ((ToAbsPos(EditPoints[i]) - mousePosition).sqrMagnitude < 100)
                     {
-                        EditPoints.RemoveAt(i);
-                        _dragIndex = -1;
+                        if (currentEvent.alt)
+                        {
+                            EditPoints.RemoveAt(i);
+                            _dragIndex = -1;
+                        }
+                        else
+                            _dragIndex = i;
+
+                        return;
                     }
-                    else
-                        _dragIndex = i;
-
-                    return;
                 }
-            }
 
-            EditPoints.Insert(ClickEditpointIndex, ToRelativePos(mousePosition));
-            _dragIndex = ClickEditpointIndex;
+                EditPoints.Insert(ClickEditpointIndex, ToRelativePos(mousePosition));
+                _dragIndex = ClickEditpointIndex;
+            }
+            else if (currentEvent.button == 1)
+            {
+                ShowContexMenu(this);
+            }
         }
+
+        private void ShowContexMenu(Edge edge)
+        {
+            var menu = new GenericMenu();
+
+            menu.AddItem(new GUIContent("Auto Hide"), 
+                edge.AutoHide,
+                ()=>{edge.AutoHide = !edge.AutoHide;});
+
+            menu.AddSeparator("");
+
+            menu.AddItem(new GUIContent("Reset"),
+                false,
+                ()=>{EditPoints.Clear();});
+
+            menu.AddItem(new GUIContent("Delete"),
+                false,
+                edge.Delete);
+
+            menu.ShowAsContext();
+        }
+
 
         public Vector2 ToRelativePos(Vector3 x)
         {
@@ -65,16 +94,23 @@ namespace FMachine.Shapes
 
         public override void MouseDrag(Vector2 delta, Vector2 mousePosition, Event currentEvent)
         {
-            base.MouseDrag(delta, mousePosition, currentEvent);
-            if (_dragIndex != -1)
-                EditPoints[_dragIndex] = ToRelativePos(mousePosition);
+            if (currentEvent.button == 0)
+                if (_dragIndex != -1)
+                    EditPoints[_dragIndex] = ToRelativePos(mousePosition);
         }
 
         public override void Draw()
         {
             if (IsHidden)
                 return;
-            EditorTools.Instance.DrawEdge(this);
+
+            if (!AutoHide ||
+                IsHover ||
+                InputSocket.Node.IsHover ||
+                OutputSocket.Node.IsHover||
+                InputSocket.Node.IsSelected ||
+                OutputSocket.Node.IsSelected)
+                EditorTools.Instance.DrawEdge(this);
         }
 
         public void SetOutputSocket(OutputSocket socket)

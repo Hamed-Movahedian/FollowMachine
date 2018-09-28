@@ -7,9 +7,9 @@ using UnityEngine;
 
 namespace FMachine.Shapes.Nodes
 {
+    [Node(MenuTitle = "Follow Machine")]
     public class FollowMachineNode : Node
     {
-        [Node(MenuTitle = "Follow Machine")]
         public FollowMachine FollowMachine;
 
         public override bool IsEqualTo(Node node)

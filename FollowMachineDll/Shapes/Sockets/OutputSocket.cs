@@ -2,6 +2,7 @@
 using FMachine.Shapes.Nodes;
 using FollowMachineDll.SettingScripts;
 using FollowMachineDll.Utility;
+using UnityEditor;
 using UnityEngine;
 
 namespace FMachine.Shapes.Sockets
@@ -25,18 +26,50 @@ namespace FMachine.Shapes.Sockets
 
         public override void MouseDown(Vector2 mousePosition, Event currentEvent)
         {
-            _selectedEdge = EdgeList.Count == 0 ? null : EdgeList[EdgeList.Count - 1];
+            if (currentEvent.button==0)
+            {
+                _selectedEdge = EdgeList.Count == 0 ? null : EdgeList[EdgeList.Count - 1];
 
-            if (_selectedEdge == null) return;
+                if (_selectedEdge == null) return;
 
-            _selectedEdge.Hide();
-            _selectedInputSocket = _selectedEdge.InputSocket;
+                _selectedEdge.Hide();
+                _selectedInputSocket = _selectedEdge.InputSocket; 
+            }
+            else if (currentEvent.button == 1)
+                ShowContexMenu();
         }
+        private void ShowContexMenu()
+        {
+            var menu = new GenericMenu();
 
+            menu.AddItem(new GUIContent("Auto Hide Edges"),
+                false,
+                ()=>
+                {
+                    EdgeList.ForEach(edge=>edge.AutoHide=true);
+                });
+
+            menu.AddItem(new GUIContent("Always Show Edges"),
+                false,
+                ()=>
+                {
+                    EdgeList.ForEach(edge=>edge.AutoHide=false);
+                });
+
+            menu.AddItem(new GUIContent("Disconnect"),
+                false,
+                Disconnect);
+
+            menu.ShowAsContext();
+
+        }
         public override void MouseDrag(Vector2 delta, Vector2 mousePosition, Event currentEvent)
         {
-            _dragPos = mousePosition;
-            _showDragLine = true;
+            if (currentEvent.button==0)
+            {
+                _dragPos = mousePosition;
+                _showDragLine = true; 
+            }
         }
 
         public override void MouseUp(Vector2 mousePosition, Event currentEvent)

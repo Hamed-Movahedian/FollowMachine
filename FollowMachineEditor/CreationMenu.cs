@@ -41,10 +41,6 @@ namespace FMachine.Editor
 
                 if (customAttributes.Length>0)
                     menuEntries.Add(((NodeAttribute) customAttributes[0]).MenuTitle, type);
-                else
-                {
-                    menuEntries.Add(type.Name,type);
-                }
             }
 
             menuEntries.OrderBy(x => x.Key);
@@ -89,24 +85,11 @@ namespace FMachine.Editor
 
         }
 
-        private void Show(Vector2 position)
+        public void Show(Vector2 position)
         {
             _mousePosition = position;
             _menu.ShowAsContext();
         }
 
-        public void HandleUserInput()
-        {
-            if (Event.current.type == EventType.ContextClick)
-            {
-                var mousePosition = Event.current.mousePosition;
-
-                if (_canvas.WindowRect.Contains(mousePosition))
-                    Show(_canvas.CordinationSystem.ConvertScreenCoordsToZoomCoords(mousePosition));
-
-                Event.current.Use();
-            }
-
-        }
     }
 }

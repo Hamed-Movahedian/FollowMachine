@@ -194,9 +194,6 @@ namespace FMachine.Editor
                 // Zoom & pan
                 CordinationSystem.HandleZoomAndPan();
 
-                // creation menu
-                CreationMenu.HandleUserInput();
-
                 // Process Events
                 EventProcessor.ProcessEvents();
             }

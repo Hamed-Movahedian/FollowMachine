@@ -55,24 +55,19 @@ namespace FMachine.Shapes.Sockets
         }
 
 
-
-        protected void CreateEdge(InputSocket inputSocket, OutputSocket outputSocket)
-        {
-            Edge edge = Graph.Repository.CreateEdge(inputSocket);
-            edge.InputSocket = inputSocket;
-            edge.OutputSocket = outputSocket;
-            inputSocket.EdgeList.Add(edge);
-            outputSocket.EdgeList.Add(edge);
-        }
-
         public override void Delete()
         {
-            var edges = new List<Edge>(EdgeList);
-
-            foreach (var edge in edges)
-                edge.Delete();
+            Disconnect();
 
             DestroyImmediate(this);
+        }
+
+        public void Disconnect()
+        {
+            var edges = new List<Edge>(EdgeList);
+            foreach (var edge in edges)
+                edge.Delete();
+            EdgeList.Clear();
         }
     }
 }

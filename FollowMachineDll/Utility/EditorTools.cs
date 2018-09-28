@@ -6,6 +6,7 @@ using System.Text;
 using FMachine;
 using FMachine.Shapes;
 using FMachine.Shapes.Nodes;
+using FollowMachineDll.Shapes.Nodes;
 using UnityEngine;
 //using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -43,5 +44,7 @@ namespace FollowMachineDll.Utility
         public abstract PropertyInfo GetDynamicParameter(GameObject gameObject, ref GameObject pGameObject,
             ref string pText, Type parameterType);
         public abstract void BoldLabel(string text);
+        public abstract void FocusTo(Node node, bool zooming);
+        public abstract void DrawDotedLine(Vector2 p1, Vector2 p2);
     }
 }
