@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FMachine.Shapes.Nodes;
 using FMachine.Shapes.Sockets;
 using FollowMachineDll.Utility;
 using UnityEngine;
@@ -15,6 +16,8 @@ namespace FMachine.Shapes
         private int _dragIndex = -1;
 
         public bool IsRunning { get { return OutputSocket.Node.IsRunningNode && InputSocket.Node.IsLastRunningNode; } }
+        public Node InputNode => InputSocket.Node;
+        public Node OutputNode => OutputSocket.Node;
 
         public override IMouseInteractable IsMouseOver(Vector2 mousePosition)
         {

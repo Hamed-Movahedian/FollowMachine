@@ -188,5 +188,10 @@ namespace FollowMachineDll.Shapes
         }
 
         #endregion
+
+        public bool ContainNode(Node node)
+        {
+            return NodeList.Contains(node);
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using FMachine.Shapes;
 using FMachine.Shapes.Nodes;
+using FollowMachineEditor.Utility;
 using UnityEditor;
 using UnityEngine;
 
@@ -51,6 +52,13 @@ namespace FMachine.Editor.ShapeBehaviours
                         {
                             _canvas.Graph.GroupSelection();
 
+                        }
+                    break;
+                case KeyCode.L:
+                    if (currentEvent.type == EventType.KeyDown)
+                        if (currentEvent.control)
+                        {
+                            LayoutGraph.ReLayout(_canvas.Graph);
                         }
                     break;
                 case KeyCode.F:

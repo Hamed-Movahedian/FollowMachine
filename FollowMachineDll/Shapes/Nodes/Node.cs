@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using FMachine.Shapes.Sockets;
 using FMachine.Utility;
 using FollowMachineDll.SettingScripts;
+using FollowMachineDll.Shapes;
 using FollowMachineDll.Utility;
 using UnityEngine;
 
@@ -49,6 +50,21 @@ namespace FMachine.Shapes.Nodes
         public bool IsRunningNode => Graph.RunningNode == this;
         public bool IsLastRunningNode => Graph.LastRunningNode == this;
         public OutputSocket EnteredSocket { get; set; }
+
+        public Group Group
+        {
+            get
+            {
+                foreach (var @group in Graph.GroupList)
+                {
+                    if (group.ContainNode(this))
+                        return group;
+                }
+
+                return null;
+            }
+        }
+
         #endregion
 
         // ************************** Methods
@@ -308,6 +324,13 @@ namespace FMachine.Shapes.Nodes
             DefaultOutputSocket = (InputSocket)Graph.Repository.CreateSocket(this, typeof(InputSocket));
             DefaultOutputSocket.AutoHide = true;
             Initialize();
+        }
+
+        public override void Move(Vector2 delta)
+        {
+            base.Move(delta);
+            InputSocketList.ForEach(socket=>socket.Move(delta));
+            OutputSocketList.ForEach(socket=>socket.Move(delta));
         }
 
         protected abstract void Initialize();
