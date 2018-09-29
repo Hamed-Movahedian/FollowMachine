@@ -11,8 +11,20 @@ namespace FMachine
 {
     public class Graph : MonoBehaviour
     {
+        #region Public
+
+        [HideInInspector]
         public Vector2 Position = new Vector2(-50000, -50000);
+        [HideInInspector]
         public float Zoom = 1;
+        [HideInInspector]
+        public List<Node> NodeList = new List<Node>();
+        [HideInInspector]
+        public List<Group> GroupList = new List<Group>();
+        [HideInInspector]
+        public Node LastRunningNode;
+
+        #endregion
 
         #region ShapeRepository
 
@@ -47,10 +59,7 @@ namespace FMachine
             }
         } 
         #endregion
-
-        public List<Node> NodeList = new List<Node>();
-        public List<Group> GroupList = new List<Group>();
-
+        
         #region RunningNode
         private Node _runningNode;
         public Node RunningNode
@@ -62,10 +71,6 @@ namespace FMachine
                 _runningNode = value;
             }
         }
-
-
-        public Node LastRunningNode;
-
         #endregion
 
         public void DeselectAll()

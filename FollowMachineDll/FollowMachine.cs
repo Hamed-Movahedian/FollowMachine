@@ -2,12 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using FMachine.Shapes.Nodes;
+using UnityEngine;
 
 namespace FMachine
 {
     public class FollowMachine : Graph
     {
         private static string _outputLable;
+        [HideInInspector]
         public bool IsRunning;
 
         public IEnumerator RunNode(Node node)
