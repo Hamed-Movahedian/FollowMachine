@@ -10,13 +10,14 @@ using UnityEngine;
 
 namespace FMachine.Shapes.Nodes
 {
-    [Node(MenuTitle="UI/Dialoge")]
+    [Node(MenuTitle="UI/Dialog")]
     public class DialogeNode : Node
     {
         public MgsDialougWindow Window;
         public string Title;
         public string Message;
         public string Icon;
+        public float Timer = 0;
         public List<string> Buttons = new List<string>();
 
         public override void OnInspector()
@@ -33,32 +34,42 @@ namespace FMachine.Shapes.Nodes
             EditorTools.Instance.LanguageField(this, "Message", ref Message);
             EditorTools.Instance.IconField(this, "Icon", ref Icon);
 
+            if (EditorTools.Instance.PropertyField(this, "Timer"))
+                UpdateOutputSockets();
+                
             EditorTools.Instance.Space();
 
             if (EditorTools.Instance.LanguageListField(this, "Buttons", Buttons))
-            {
-                while (Buttons.Count < OutputSocketList.Count)
-                {
-                    var socket = OutputSocketList[OutputSocketList.Count - 1];
-                    socket.Delete();
-                    OutputSocketList.Remove(socket);
-                }
+                UpdateOutputSockets();
 
-                while (Buttons.Count > OutputSocketList.Count)
-                {
-                    AddOutputSocket<InputSocket>("");
-                }
-
-                for (int i = 0; i < Buttons.Count; i++)
-                {
-                    OutputSocketList[i].Info = Buttons[i];
-                }
-
-            }
             if (Message != "")
                 if (GUILayout.Button("Fill Info"))
                     Info = Message;
 
+        }
+
+        private void UpdateOutputSockets()
+        {
+            if(Timer>0)
+                Buttons.Add("Time Out");
+            while (Buttons.Count < OutputSocketList.Count)
+            {
+                var socket = OutputSocketList[OutputSocketList.Count - 1];
+                socket.Delete();
+                OutputSocketList.Remove(socket);
+            }
+
+            while (Buttons.Count > OutputSocketList.Count)
+            {
+                AddOutputSocket<InputSocket>("");
+            }
+
+            for (int i = 0; i < Buttons.Count; i++)
+            {
+                OutputSocketList[i].Info = Buttons[i];
+            }
+            if (Timer > 0)
+                Buttons.RemoveAt(Buttons.Count-1);
         }
 
         protected override void Initialize()
@@ -69,9 +80,9 @@ namespace FMachine.Shapes.Nodes
         protected override IEnumerator Run()
         {
             if (Window == null)
-                throw new Exception("Error in dialoge node! Window is'nt set");
+                throw new Exception("Error in dialog node! Window isn't set");
 
-            return Window.Display(Title, Message, Icon, Buttons);
+            return Window.Display(Title, Message, Icon, Buttons,Timer);
         }
 
         public override Node GetNextNode()
