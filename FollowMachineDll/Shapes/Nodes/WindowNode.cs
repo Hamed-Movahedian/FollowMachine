@@ -73,6 +73,35 @@ namespace FMachine.Shapes.Nodes
 
         }
 
+        public override void MoveSocket(InputSocket socket, int delta)
+        {
+            if(Window==null)
+                return;
+
+            var index = OutputSocketList.IndexOf(socket);
+
+            if (index == -1)
+                return;
+
+            if(index+delta<0)
+                return;
+
+            if(index+delta>=OutputSocketList.Count)
+                return;
+
+            OutputSocketList[index] = OutputSocketList[index + delta];
+            OutputSocketList[index + delta] = socket;
+
+            var action = Window.ActionList[index];
+            Window.ActionList[index] = Window.ActionList[index + delta];
+            Window.ActionList[index + delta] = action;
+
+            var hide = HideList[index];
+            HideList[index] = HideList[index + delta];
+            HideList[index + delta] = hide;
+
+        }
+
         #region UpdateOutputSockets
 
         public void UpdateOutputSockets()

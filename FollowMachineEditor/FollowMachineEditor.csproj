@@ -55,6 +55,7 @@
     <Compile Include="FMWindow.cs" />
     <Compile Include="FMWindowBase.cs" />
     <Compile Include="Utility\LayoutGraph.cs" />
+    <Compile Include="Windows\Bounder\BounderWindow.cs" />
     <Compile Include="Windows\EntryPoints\EntryPointsWindow.cs" />
     <Compile Include="Windows\FollowMachineExplorer\FollowMachineTreeView.cs" />
     <Compile Include="Windows\FollowMachineExplorer\FollowMachineTreeViewWindow.cs" />

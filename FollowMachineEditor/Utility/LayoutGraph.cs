@@ -5,6 +5,7 @@ using System.Text;
 using FMachine;
 using FMachine.Shapes;
 using FMachine.Shapes.Nodes;
+using FollowMachineDll.Utility;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,9 +13,10 @@ namespace FollowMachineEditor.Utility
 {
     public static class LayoutGraph
     {
-        private static readonly int RearangeIterations = 100;
+        private static readonly int RearangeIterations = 70;
         private static readonly float GapSize=100;
         private static readonly float MoveStep=5;
+        private static readonly Vector2 NodeBorder=new Vector2(20,20);
 
         public static void ReLayout(Graph graph)
         {
@@ -26,8 +28,9 @@ namespace FollowMachineEditor.Utility
             var nodes = graph.NodeList;
             var edges = nodes
                 .SelectMany(n => n.InputSocketList.SelectMany(s => s.EdgeList))
-                .Where(e => !e.AutoHide && e.InputNode.Group == e.OutputNode.Group)
+                .Where(e => !e.AutoHide && !e.ExcludeInLayout && e.InputNode.Group == e.OutputNode.Group)
                 .ToList();
+
 
             // Record undo for all nodes
             nodes.ForEach(n => Undo.RecordObject(n, "Re-layout"));
@@ -52,14 +55,22 @@ namespace FollowMachineEditor.Utility
 
         private static void CheckCollision(Node n1, Node n2)
         {
-            if(!n1.Rect.Overlaps(n2.Rect))
+            var r1 = n1.Rect;
+            var r2 = n2.Rect;
+
+            r1.min -= NodeBorder;
+            r1.max += NodeBorder;
+            r2.min -= NodeBorder;
+            r2.max += NodeBorder;
+
+            if (!r1.Overlaps(r2))
                 return;
 
-            var c1 = n1.Rect.center;
-            var c2 = n2.Rect.center;
+            var c1 = r1.center;
+            var c2 = r2.center;
 
-            var dx = ((n1.Rect.width + n2.Rect.width) / 2 - Mathf.Abs(c1.x - c2.x)) / 2;
-            var dy = ((n1.Rect.height + n2.Rect.height) / 2 - Mathf.Abs(c1.y - c2.y)) / 2;
+            var dx = ((r1.width + r2.width) / 2 - Mathf.Abs(c1.x - c2.x)) / 2;
+            var dy = ((r1.height + r2.height) / 2 - Mathf.Abs(c1.y - c2.y)) / 2;
 
             if (dx < dy)
             {

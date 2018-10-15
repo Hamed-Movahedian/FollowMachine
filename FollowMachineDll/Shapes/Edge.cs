@@ -13,11 +13,24 @@ namespace FMachine.Shapes
         public List<Vector2> EditPoints = new List<Vector2>();
         public int ClickEditpointIndex;
         public bool AutoHide = false;
+        public bool ExcludeInLayout = false;
+
         private int _dragIndex = -1;
 
         public bool IsRunning { get { return OutputSocket.Node.IsRunningNode && InputSocket.Node.IsLastRunningNode; } }
         public Node InputNode => InputSocket.Node;
         public Node OutputNode => OutputSocket.Node;
+
+        public Color Color => IsRunning ?
+                                InputSocket.Node.NodeSetting.LineRunning :
+                                !AutoHide ||
+                                IsHover ||
+                                InputSocket.Node.IsHover ||
+                                OutputSocket.Node.IsHover ||
+                                InputSocket.Node.IsSelected ||
+                                OutputSocket.Node.IsSelected ?
+                                    InputSocket.SocketSetting.Color :
+                                    InputSocket.SocketSetting.AutoHideColor;
 
         public override IMouseInteractable IsMouseOver(Vector2 mousePosition)
         {
@@ -84,13 +97,7 @@ namespace FMachine.Shapes
             if (IsHidden)
                 return;
 
-            if (!AutoHide ||
-                IsHover ||
-                InputSocket.Node.IsHover ||
-                OutputSocket.Node.IsHover||
-                InputSocket.Node.IsSelected ||
-                OutputSocket.Node.IsSelected)
-                EditorTools.Instance.DrawEdge(this);
+            EditorTools.Instance.DrawEdge(this);
         }
 
         public void SetOutputSocket(OutputSocket socket)

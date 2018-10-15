@@ -6,8 +6,10 @@ using System.Text;
 using FMachine.Shapes.Nodes;
 using FollowMachineDll.Attributes;
 using FollowMachineDll.Utility;
+using FollowMachineDll.Utility.Bounder;
 using MgsCommonLib.MgsCommonLib.Utilities;
 using MgsCommonLib.Utilities;
+using UnityEditor;
 using UnityEngine;
 
 namespace FollowMachineDll.Shapes.Nodes
@@ -31,56 +33,92 @@ namespace FollowMachineDll.Shapes.Nodes
             ParameterGameObjects.Resize(_parameterInfos.Length);
             DynamicParameter.Resize(_parameterInfos.Length);
 
-            // Bold label for parameters
-            //GUILayout.Label("Parameters:");
+            GUILayout.BeginVertical((GUIStyle)"box");
+
+            EditorTools.Instance.BoldLabel("Parameters :");
 
             for (int i = 0; i < _parameterInfos.Length; i++)
             {
-                GUILayout.Space(10);
 
                 // Parameter Name and dynamic toggle
-                GUILayout.BeginHorizontal();
+                GUILayout.BeginVertical((GUIStyle)"box");
                 // parameter name
                 EditorTools.Instance.BoldLabel(_parameterInfos[i].Name.ToFristLetterUpperCase() + " (" + _parameterInfos[i].ParameterType.Name + ")");
-                GUILayout.FlexibleSpace();
-                // Dynamic toggle
-                var toggle = GUILayout.Toggle(DynamicParameter[i], "Dynamic");
-                if (toggle != DynamicParameter[i])
                 {
-                    EditorTools.Instance.Undo_RecordObject(this, "Change Parameter");
-                    DynamicParameter[i] = toggle;
-                    ParameterValueStrings[i] = "";
-                }
-
-                GUILayout.EndHorizontal();
-
-                GUILayout.BeginHorizontal();
-                {
-                    GUILayout.Space(10);
-                    GUILayout.BeginVertical();
                     {
+                        GUILayout.BeginHorizontal();
                         if (DynamicParameter[i])
                         {
-                            var pGameObject = ParameterGameObjects[i];
-                            var pText = ParameterValueStrings[i];
-                            EditorTools.Instance.GetDynamicParameter(gameObject, ref pGameObject, ref pText,
-                                _parameterInfos[i].ParameterType);
-                            ParameterGameObjects[i] = pGameObject;
-                            ParameterValueStrings[i] = pText;
+
+                            GUILayout.Label(ParameterValueStrings[i]);
+
+                            if (GUILayout.Button(".", GUILayout.Width(20)))
+                            {
+                                var menu = new GenericMenu();
+                                menu.AddItem(new GUIContent("Edit"), false, (indexObj) =>
+                                 {
+                                     var index = (int)indexObj;
+                                     EditorTools.Instance
+                                         .EditBoundData(
+                                             ParameterGameObjects[index],
+                                             ParameterValueStrings[index],
+                                             _parameterInfos[index].ParameterType,
+                                             (o, s) =>
+                                             {
+                                                 ParameterGameObjects[index] = o;
+                                                 ParameterValueStrings[index] = s;
+                                             });
+                                 }, i);
+
+                                menu.AddItem(new GUIContent("Unbound"), false, (indexObj) =>
+                                {
+                                    var index = (int)indexObj;
+                                    EditorTools.Instance.Undo_RecordObject(this, "Change Parameter");
+                                    DynamicParameter[index] = false;
+                                    ParameterValueStrings[index] = "";
+                                }, i);
+
+                                menu.ShowAsContext();
+                            }
+
                         }
                         else
                         {
-                            GUILayout.Space(5);
                             ParameterValueStrings[i] =
                                 EditorTools.Instance.GetParameter(this, "", _parameterInfos[i].ParameterType, ParameterValueStrings[i]);
+                            if (GUILayout.Button(".", GUILayout.Width(20)))
+                            {
+                                var menu = new GenericMenu();
+                                menu.AddItem(new GUIContent("Bound"), false, (indexObj) =>
+                                {
+                                    var index = (int)indexObj;
+                                    ParameterValueStrings[index] = "";
+                                    EditorTools.Instance
+                                        .EditBoundData(
+                                            ParameterGameObjects[index],
+                                            ParameterValueStrings[index],
+                                            _parameterInfos[index].ParameterType,
+                                            (o, s) =>
+                                            {
+                                                ParameterGameObjects[index] = o;
+                                                ParameterValueStrings[index] = s;
+                                                DynamicParameter[index] = true;
+
+                                            });
+                                }, i);
+                                menu.ShowAsContext();
+                            }
+
 
                         }
+                        GUILayout.EndHorizontal();
                     }
-                    GUILayout.EndVertical();
                 }
-                GUILayout.EndHorizontal();
+                GUILayout.EndVertical();
 
             }
+
+            GUILayout.EndVertical();
         }
 
         protected override void GetParametersObjects()
@@ -99,13 +137,13 @@ namespace FollowMachineDll.Shapes.Nodes
 
             for (int i = 0; i < _parameters.Length; i++)
                 if (DynamicParameter[i])
-                    _parameters[i]=SetDynamicParameterObject(ParameterGameObjects[i],ParameterValueStrings[i]);
+                    _parameters[i] = SetDynamicParameterObject(ParameterGameObjects[i], ParameterValueStrings[i]);
                 else
                     SetStaticParamerterObject(i);
 
         }
 
-        private  object SetDynamicParameterObject(GameObject pGameObject, string pText)
+        private object SetDynamicParameterObject(GameObject pGameObject, string pText)
         {
             // check game object isn't empty
             if (pGameObject == null)
@@ -148,12 +186,8 @@ namespace FollowMachineDll.Shapes.Nodes
                 return null;
 
             // get value object
-            return propertyInfo.GetValue(pObject,null);
+            return propertyInfo.GetValue(pObject, null);
         }
 
-        private void SetDynamicParameterObject(int i)
-        {
-            
-        }
     }
 }

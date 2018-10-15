@@ -11,6 +11,7 @@ namespace FollowMachineDll.SettingScripts
         public Vector2 Offset = new Vector2(10,5);
         public float Space = 5;
         public Color Color;
+        public Color AutoHideColor;
         public Texture2D ConnectedTexure;
         public Texture2D DisconnectedTexure;
     }

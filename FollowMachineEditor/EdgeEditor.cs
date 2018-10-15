@@ -117,11 +117,7 @@ namespace FMachine.Editor
 
             Handles.DrawBezier(p1, p2, t1, t2, bColor, null, edge.InputSocket.SocketSetting.Thickness + 4);
 
-            Color fColor = isRunning ?
-                    edge.InputSocket.Node.NodeSetting.LineRunning :
-                    edge.InputSocket.SocketSetting.Color;
-
-            Handles.DrawBezier(p1, p2, t1, t2, fColor, null, edge.InputSocket.SocketSetting.Thickness);
+            Handles.DrawBezier(p1, p2, t1, t2, edge.Color, null, edge.InputSocket.SocketSetting.Thickness);
         }
 
         public void DrawBezierEdge(Vector2 p1, Vector2 p2, Color forgroundColor, Color backColor, float thickness)

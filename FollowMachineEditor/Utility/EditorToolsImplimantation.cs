@@ -9,6 +9,7 @@ using FMachine.Shapes;
 using FMachine.Shapes.Nodes;
 using FMachine.Shapes.Sockets;
 using FollowMachineDll.Utility;
+using FollowMachineEditor.Windows.Bounder;
 using FollowMachineEditor.Windows.FollowMachineInspector;
 using MgsCommonLib.Theme;
 using UnityEditor;
@@ -504,7 +505,7 @@ namespace FollowMachineEditor.Utility
 
             var index = Popup("", selectedPropertyIndex, menuList);
 
-            if (index != selectedPropertyIndex)
+            if (index != selectedPropertyIndex || selectedPropertyInfo == null)
             {
                 Undo.RecordObject(gameObject, "Change Parameter");
                 pText = pInfoList[index].cType.Name + "." + pInfoList[index].pInfo.Name;
@@ -538,6 +539,10 @@ namespace FollowMachineEditor.Utility
                 edge.AutoHide,
                 () => { edge.AutoHide = !edge.AutoHide; });
 
+            menu.AddItem(new GUIContent("Exclude In Layout"),
+                edge.ExcludeInLayout,
+                () => { edge.ExcludeInLayout = !edge.ExcludeInLayout; });
+
             menu.AddSeparator("");
 
             menu.AddItem(new GUIContent("Reset"),
@@ -568,6 +573,17 @@ namespace FollowMachineEditor.Utility
                 {
                     socket.EdgeList.ForEach(edge => edge.AutoHide = false);
                 });
+            menu.AddSeparator("");
+
+            menu.AddItem(new GUIContent("Move Up"),
+                false,
+                () => { socket.Node.MoveSocket(socket, -1); });
+
+            menu.AddItem(new GUIContent("Move Down"),
+                false,
+                () => { socket.Node.MoveSocket(socket, 1); });
+
+            menu.AddSeparator("");
 
             menu.AddItem(new GUIContent("Disconnect"),
                 false,
@@ -618,6 +634,11 @@ namespace FollowMachineEditor.Utility
                 node.Delete);
 
             menu.ShowAsContext();
+        }
+
+        public override void EditBoundData(GameObject gameObject, string text, Type type, Action<GameObject, string> action)
+        {
+            BounderWindow.EditBound(gameObject,text,type,action);
         }
 
         public override void AddFollowMachine(FollowMachine followmachine)

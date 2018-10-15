@@ -393,5 +393,10 @@ namespace FMachine.Shapes.Nodes
             return newNode;
         }
         #endregion
+
+        public virtual void MoveSocket(InputSocket socket, int i)
+        {
+            
+        }
     }
 }

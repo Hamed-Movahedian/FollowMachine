@@ -90,6 +90,10 @@
     <Compile Include="Shapes\Sockets\InputSocket.cs" />
     <Compile Include="Shapes\Sockets\OutputSocket.cs" />
     <Compile Include="Shapes\Sockets\Socket.cs" />
+    <Compile Include="Utility\Bounder\BoundData.cs" />
+    <Compile Include="Utility\Bounder\BounderUtilitys.cs" />
+    <Compile Include="Utility\Bounder\BoundMember.cs" />
+    <Compile Include="Utility\Bounder\SupportedTypes.cs" />
     <Compile Include="Utility\EditorTools.cs" />
     <Compile Include="Utility\RectExtensions.cs" />
     <Compile Include="Utility\StyleExtention.cs" />
