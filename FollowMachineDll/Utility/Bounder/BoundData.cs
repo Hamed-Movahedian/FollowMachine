@@ -171,7 +171,21 @@ namespace FollowMachineDll.Utility.Bounder
                 obj = _boundMembers[i].GetValue(obj);
             }
 
-            return obj;
+            if (obj == null)
+                return null;
+
+            var objType = obj.GetType();
+
+            if (objType==type)
+                return obj;
+
+            if (type == typeof(string))
+                return obj.ToString();
+
+            if (type.IsAssignableFrom(objType))
+                return obj;
+
+            return Convert.ChangeType(obj, type);
         }
 
         public void OnGUI()

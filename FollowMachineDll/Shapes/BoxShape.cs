@@ -50,8 +50,20 @@ namespace FMachine.Shapes
 
         public virtual void OnInspector()
         {
-            if (EditorTools.Instance.PropertyField(this, "Info"))
-                name = Info + " (" + GetType().Name + ")";
+            GUILayout.BeginVertical((GUIStyle)"box");
+            {
+                GUILayout.Label("Info :", (GUIStyle) "BoldLabel");
+
+                var s = GUILayout.TextField(Info);
+                if (s != Info)
+                {
+                    EditorTools.Instance.Undo_RecordObject(this,"Change Info");
+                    Info = s;
+                    name = Info + " (" + GetType().Name + ")";
+                }
+            }
+            GUILayout.EndVertical();
+            GUILayout.Space(5);
         }
     }
 }

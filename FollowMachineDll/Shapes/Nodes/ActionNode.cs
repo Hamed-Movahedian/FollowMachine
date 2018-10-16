@@ -69,22 +69,29 @@ namespace FMachine.Shapes.Nodes
             base.OnInspector();
 
 
+            GUILayout.BeginVertical((GUIStyle)"box");
+            {
+                EditorTools.Instance.BoldLabel("Method:");
+                // Get GameObject
+                EditorTools.Instance.PropertyField(this, "TargetGameObject");
 
-            EditorTools.Instance.BoldLabel("Method:");
-            // Get GameObject
-            EditorTools.Instance.PropertyField(this, "TargetGameObject");
+                if (TargetGameObject == null)
+                    return;
 
-            if (TargetGameObject == null)
-                return;
+                _methodInfo = EditorTools.Instance.GetMethodInfo(
+                    TargetGameObject, ref ComponentTypeName, ref MethodName);
 
-            _methodInfo = EditorTools.Instance.GetMethodInfo(
-                TargetGameObject, ref ComponentTypeName, ref MethodName);
+                if (_methodInfo == null)
+                    return;
+            }
+            GUILayout.EndVertical();
 
-            if (_methodInfo == null)
-                return;
+            GUILayout.Space(5);
 
             // Get parameters
             GetParameters();
+
+            GUILayout.Space(5);
 
             #region Check follow machine attributes
             var attributes = _methodInfo.GetCustomAttributes(typeof(FollowMachineAttribute), false);
@@ -110,24 +117,35 @@ namespace FMachine.Shapes.Nodes
                 return;
 
             // Get Progress bar 
-            GUILayout.Space(10);
 
-            EditorTools.Instance.PropertyField(this, "ProgressbarWindow");
+            GUILayout.BeginVertical((GUIStyle)"box");
+            {
+                GUILayout.Label("Progressbar :", (GUIStyle)"BoldLabel");
 
-            if (ProgressbarWindow == null)
-                return;
+                EditorTools.Instance.PropertyField(this, "ProgressbarWindow");
 
-            EditorTools.Instance.LanguageField(this, "Progressbar Message", ref ProgressbarMessage);
+                if (ProgressbarWindow == null)
+                    return;
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Display method:");
-            ProgressbarShow = GUILayout.Toggle(ProgressbarShow, "Show");
-            ProgressbarHide = GUILayout.Toggle(ProgressbarHide, "Hide");
-            GUILayout.EndHorizontal();
+                EditorTools.Instance.LanguageField(this, "Progressbar Message", ref ProgressbarMessage);
+
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Label("Display method:");
+                    ProgressbarShow = GUILayout.Toggle(ProgressbarShow, "Show");
+                    ProgressbarHide = GUILayout.Toggle(ProgressbarHide, "Hide");
+                }
+                GUILayout.EndHorizontal();
+            }
+            GUILayout.EndVertical();
         }
 
         protected virtual void GetParameters()
         {
+            GUILayout.BeginVertical((GUIStyle)"box");
+
+            GUILayout.Label("Progressbar :", (GUIStyle)"BoldLabel");
+
             ParameterInfo[] parameters = _methodInfo.GetParameters();
 
             if (parameters.Length > 0)
@@ -140,6 +158,8 @@ namespace FMachine.Shapes.Nodes
                         EditorTools.Instance.GetParameter(this, parameters[i].Name, parameters[i].ParameterType, ParameterValueStrings[i]);
                 }
             }
+            GUILayout.EndVertical();
+
         }
 
         private void UpdateOutputSocketsWithLables()

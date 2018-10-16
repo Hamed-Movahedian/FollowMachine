@@ -84,6 +84,7 @@
     <Compile Include="SettingScripts\SpcificNodeSetting.cs" />
     <Compile Include="Shapes\Nodes\ProgressNode.cs" />
     <Compile Include="Shapes\Nodes\EntryPointNode.cs" />
+    <Compile Include="Shapes\Nodes\ServerNode.cs" />
     <Compile Include="Shapes\Nodes\SetProperty.cs" />
     <Compile Include="Shapes\Nodes\WindowNode.cs" />
     <Compile Include="Shapes\Shape.cs" />

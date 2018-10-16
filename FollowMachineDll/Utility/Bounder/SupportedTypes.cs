@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEngine;
 
 namespace FollowMachineDll.Utility.Bounder
 {
     public static class SupportedTypes
     {
-        private static  Dictionary<string, TypeUtils> Types = new Dictionary<string, TypeUtils>
+        public static  Dictionary<string, TypeUtils> Types = new Dictionary<string, TypeUtils>
         {
             {
                 "Int32",new TypeUtils
@@ -14,7 +15,9 @@ namespace FollowMachineDll.Utility.Bounder
                     Type=typeof(Int32),
                     Default = 0,
                     Convertor = s=>Convert.ToInt32(s),
-                    GUI=(s, o) => EditorGUILayout.IntField(s,(int)o)
+                    GUI=(s, o) => s=="" ?
+                        EditorGUILayout.IntField(s,(int)o) :
+                        EditorGUILayout.IntField((int)o)
                 }
             } ,
             {
@@ -23,7 +26,10 @@ namespace FollowMachineDll.Utility.Bounder
                     Type=typeof(Boolean),
                     Default = false,
                     Convertor = s=>Convert.ToBoolean(s),
-                    GUI=(s, o) => EditorGUILayout.Toggle(s,(bool)o)
+                    GUI=(s, o) => s=="" ? 
+                        EditorGUILayout.Toggle(s,(bool)o) :
+                        EditorGUILayout.Toggle((bool)o) 
+
                 }
             } ,
             {
@@ -32,7 +38,9 @@ namespace FollowMachineDll.Utility.Bounder
                     Type=typeof(Single),
                     Default = 0f,
                     Convertor = s=>Convert.ToSingle(s),
-                    GUI=(s, o) => EditorGUILayout.FloatField(s,(float)o)
+                    GUI=(s, o) => s=="" ? 
+                        EditorGUILayout.FloatField(s,(float)o):
+                        EditorGUILayout.FloatField((float)o)
                 }
             } ,
             {
@@ -41,7 +49,9 @@ namespace FollowMachineDll.Utility.Bounder
                     Type=typeof(string),
                     Default = "",
                     Convertor = s=>s,
-                    GUI=(s, o) => EditorGUILayout.TextField(s,(string)o)
+                    GUI=(s, o) => s=="" ? 
+                        EditorGUILayout.TextField(s,(string)o):
+                        EditorGUILayout.TextField((string)o)
                 }
             } ,
         };
@@ -53,6 +63,7 @@ namespace FollowMachineDll.Utility.Bounder
             public object Default;
             public Func<string, object> Convertor;
             public Func<string, object, object> GUI;
+            public Func<object, object> GUINoLable;
         }
 
         public static bool IsSupported(Type type)

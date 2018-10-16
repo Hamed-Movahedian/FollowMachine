@@ -49,6 +49,8 @@
   <ItemGroup>
     <Compile Include="CordianationSystem.cs" />
     <Compile Include="CreationMenu.cs" />
+    <Compile Include="CustomInspectors\CustomInspector.cs" />
+    <Compile Include="CustomInspectors\ServerNodeEditor.cs" />
     <Compile Include="DropNode.cs" />
     <Compile Include="EdgeEditor.cs" />
     <Compile Include="FMCanvas.cs" />

@@ -1,7 +1,11 @@
-﻿using FMachine.Editor;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FMachine.Editor;
 using FMachine.SettingScripts;
 using FMachine.Shapes.Nodes;
 using FollowMachineDll.SettingScripts;
+using FollowMachineEditor.CustomInspectors;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,6 +18,7 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
 
         private FMWindow _fmWindow;
         private Vector2 _scrollPos;
+
 
         [MenuItem("Window/FollowMachine/Inspector")]
         private static void OnCreateWindow()
@@ -32,7 +37,6 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
                 _setting = (FMInspectorSetting)SettingController.Instance.GetAsset("InspectorSetting", typeof(FMInspectorSetting));
             titleContent = new GUIContent("Inspector", _setting.Icon);
         }
-
         private void OnGUI()
         {
 
@@ -54,12 +58,12 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
             if (selectedNode)
             {
-                selectedNode.OnInspector();
+                CustomInspector.DrawInspector(selectedNode);
             }
             else
             {
                 var selectedGroup = graph.SelectedGroup;
-                if(selectedGroup)
+                if (selectedGroup)
                     selectedGroup.OnInspector();
             }
 
