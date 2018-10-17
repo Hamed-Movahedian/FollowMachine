@@ -26,6 +26,7 @@ namespace FollowMachineDll.Shapes.Nodes
         public class ParamData
         {
             public string Name;
+            public string Type;
             public string Value;
             public bool IsBound;
             public GameObject BoundGameObject;
@@ -48,22 +49,52 @@ namespace FollowMachineDll.Shapes.Nodes
         }
     }
 
-    
+
 }
 
 public abstract class ServerControllerBase : MgsSingleton<ServerControllerBase>
 {
+    public ServerData Data;
+    public string URL
+    {
+        get
+        {
+            if (Data == null)
+                throw new Exception($"Server Data Not set!!!");
+            return Data.URL;
+
+        }
+    }
+    public abstract IEnumerator SendRequest(string methodName, List<string> paramNames, List<object> paramObjects);
+
+
+}
+
+[CreateAssetMenu(menuName = "ServerData")]
+public class ServerData : ScriptableObject
+{
     public ServerStateEnum ServerState = ServerStateEnum.Remote;
 
+    public string LocalURL = "http://localhost:52391";
+    public string RemoteURL = "http://charsoogame.ir";
+
     public List<Controller> Controllers;
+    public string URL
+    {
+        get
+        {
+            if (ServerState == ServerStateEnum.Local && Application.isEditor)
+                return LocalURL;
+            else
+                return RemoteURL;
+
+        }
+    }
 
     public enum ServerStateEnum
     {
         Local, Remote
     }
-
-    public abstract IEnumerator SendRequest(string methodName, List<string> paramNames, List<object> paramObjects);
-
 
     [Serializable]
     public class Controller
@@ -71,5 +102,4 @@ public abstract class ServerControllerBase : MgsSingleton<ServerControllerBase>
         public string Name;
         public List<string> Methods;
     }
-
 }

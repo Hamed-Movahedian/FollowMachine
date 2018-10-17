@@ -31,20 +31,26 @@ namespace FollowMachineEditor.CustomInspectors
                 return;
             }
 
-            if(serverController.Controllers.Count==0)
+            if(serverController.Data==null)
+            {
+                DisplayError(" Server not set!!");
+                return;
+            }
+
+            if(serverController.Data.Controllers.Count==0)
             {
                 DisplayError(" Server controller has no controller!!");
                 return;
             }
 
             var methodList = serverController
-                .Controllers
+                .Data.Controllers
                 .SelectMany(c => c.Methods.Select(m => c.Name + "/" + m))
                 .ToList();
 
             if (PopupFieldInBox("Method :", ref _serverNode.MethodName, methodList))
             {
-                node.Info = _serverNode.MethodName.Split('(').First().Split('/').Last();
+                node.Info = _serverNode.MethodName.Split('(').First().Replace("/",".");
             }
 
             var parts = _serverNode.MethodName.Split('(', ')',',')
@@ -55,6 +61,7 @@ namespace FollowMachineEditor.CustomInspectors
             _serverNode.Parameters.Resize(parts.Count-1);
 
             _serverNode.BodyParamIndex = -1;
+
             for (int i = 0; i < parts.Count-1; i++)
             {
                 if(_serverNode.Parameters[i]==null)
@@ -68,8 +75,11 @@ namespace FollowMachineEditor.CustomInspectors
                     .Select(s => s.Trim())
                     .Where(s => s != "")
                     .ToList();
-                if(paramParts.Count>1)
-                _serverNode.Parameters[i].Name = paramParts[paramParts.Count - 1];
+                if (paramParts.Count > 1)
+                {
+                    _serverNode.Parameters[i].Name = paramParts[paramParts.Count - 1];
+                    _serverNode.Parameters[i].Type = paramParts[paramParts.Count - 2];
+                }
             }
 
             DrawInBox(GetParameters);
@@ -80,14 +90,22 @@ namespace FollowMachineEditor.CustomInspectors
             BoldLable("Parameters :");
 
             for (int i = 0; i < _serverNode.Parameters.Count; i++)
-                DrawInBox(() => GetParameter(i));
+            {
+                //DrawInBox(() => GetParameter(i));
+                var paramData = _serverNode.Parameters[i];
+
+                GUILayout.Label($"{paramData.Name} ({paramData.Type}) {(i == _serverNode.BodyParamIndex ? "  [FromBody]" : "")}");
+
+                BoundField(paramData);
+            }
+
         }
 
         private void GetParameter(int i)
         {
             var paramData = _serverNode.Parameters[i];
 
-            BoldLable(paramData.Name+(i==_serverNode.BodyParamIndex ? "  [FromBody]":""));
+            GUILayout.Label($"{paramData.Name} ({paramData.Type}) {(i == _serverNode.BodyParamIndex ? "  [FromBody]" : "")}");
 
             BoundField(paramData);
         }
