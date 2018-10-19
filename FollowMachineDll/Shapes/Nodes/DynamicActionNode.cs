@@ -20,7 +20,7 @@ namespace FollowMachineDll.Shapes.Nodes
 
         public List<bool> DynamicParameter = new List<bool>();
         public List<GameObject> ParameterGameObjects = new List<GameObject>();
-        private List<BoundData> _parameterBoundDatas = new List<BoundData>();
+        private List<Bounder> _parameterBoundDatas = new List<Bounder>();
 
         protected override void GetParameters()
         {
@@ -142,7 +142,7 @@ namespace FollowMachineDll.Shapes.Nodes
         private object SetDynamicParameterObject(int i)
         {
             if (_parameterBoundDatas[i] == null)
-                _parameterBoundDatas[i] = new BoundData(ParameterGameObjects[i], ParameterValueStrings[i]);
+                _parameterBoundDatas[i] = new Bounder(ParameterGameObjects[i], ParameterValueStrings[i]);
 
             return _parameterBoundDatas[i].GetValue(_parameterInfos[i].ParameterType);
         }

@@ -6,6 +6,7 @@ using FMachine.Shapes.Nodes;
 using FollowMachineDll.Shapes.Nodes;
 using FollowMachineDll.Utility;
 using FollowMachineDll.Utility.Bounder;
+using FollowMachineEditor.Windows.Bounder;
 using FollowMachineEditor.Windows.FollowMachineInspector;
 using UnityEditor;
 using UnityEngine;
@@ -180,6 +181,67 @@ namespace FollowMachineEditor.CustomInspectors
             DrawInBox(lable, () => flag=PopupField(ref s, textList));
             text = s;
             return flag;
+        }
+
+        protected void BoundField(BoundData boundData)
+        {
+            GUILayout.BeginHorizontal();
+
+            if (boundData.Type==null)
+                boundData.IsBound = true;
+
+            if (boundData.IsBound)
+                GUILayout.Label(boundData.Value);
+            else
+            {
+                var typeUtils = SupportedTypes.Types[boundData.Type.Name];
+
+                boundData.Value=
+                    typeUtils.GUI("", typeUtils.Convertor(boundData.Value)).ToString();
+            }
+
+            if (GUILayout.Button("B", GUILayout.Width(20)))
+            {
+                var menu = new GenericMenu();
+
+                if (boundData.IsBound)
+                {
+                    menu.AddItem(new GUIContent("Edit"), false, () => BounderWindow.EditBound(
+                        boundData.BoundGameObject,
+                        boundData.Value,
+                        typeof(string),
+                        (o, s) =>
+                        {
+                            boundData.BoundGameObject = o;
+                            boundData.Value = s;
+                        }));
+
+                    menu.AddItem(new GUIContent("Unbound"), false, () =>
+                    {
+                        Undo.RecordObject(TargetNode, "Change Bound");
+                        boundData.IsBound = false;
+                        boundData.Value = "";
+                    });
+                }
+                else
+                {
+                    menu.AddItem(new GUIContent("Bound"), false, () => BounderWindow.EditBound(
+                        boundData.BoundGameObject,
+                        boundData.Value,
+                        typeof(string),
+                        (o, s) =>
+                        {
+                            boundData.BoundGameObject = o;
+                            boundData.Value = s;
+                            boundData.IsBound = true;
+                        }));
+                }
+
+                menu.ShowAsContext();
+            }
+
+            GUILayout.EndHorizontal();
+
         }
     }
 }

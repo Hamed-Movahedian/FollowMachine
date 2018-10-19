@@ -3,10 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FMachine;
 using FMachine.Shapes.Nodes;
 using FMachine.Shapes.Sockets;
 using FollowMachineDll.Attributes;
+using FollowMachineDll.Components;
 using FollowMachineDll.Utility;
+using FollowMachineDll.Utility.Bounder;
 using MgsCommonLib;
 using UnityEngine;
 
@@ -17,22 +20,13 @@ namespace FollowMachineDll.Shapes.Nodes
     {
         public string MethodName;
 
-        public List<ParamData> Parameters;
+        public List<BoundData> Parameters;
 
         public int BodyParamIndex = -1;
 
-        #region ParamData class
-        [Serializable]
-        public class ParamData
-        {
-            public string Name;
-            public string Type;
-            public string Value;
-            public bool IsBound;
-            public GameObject BoundGameObject;
-        }
+        public ServerConnectionMethod ConnectionMethod;
 
-        #endregion
+        private string _outputFollowControl;
 
         protected override void Initialize()
         {
@@ -43,63 +37,62 @@ namespace FollowMachineDll.Shapes.Nodes
             AddOutputSocket<InputSocket>("Http Error");
         }
 
+        protected override IEnumerator Run()
+        {
+            var url = MethodName;
+
+            var firstParam = true;
+
+            object outData = null;
+
+            for (int i = 0; i < Parameters.Count; i++)
+            {
+                var parm = Parameters[i];
+
+                if (BodyParamIndex == i)
+                {
+                    outData = parm.GetValue();
+                }
+                else
+                {
+                    url += $"{(firstParam ? "?" : "&")}{parm.Name}={parm.GetValue()}";
+
+                    firstParam = false;
+                }
+            }
+
+            return ServerControllerBase.Send(
+                ConnectionMethod,
+                url,
+                outData,
+                // On Success
+                () =>
+                {
+                    _outputFollowControl = ServerControllerBase.Instance.GetOutputFollowControl() ?? "Success";
+                },
+                // On Error
+                request =>
+                {
+                    // Network Error !!!!!
+                    if (request.isNetworkError)
+                        _outputFollowControl = "Network Error";
+
+                    // Http Error !!!!
+                    else if (request.isHttpError)
+                        _outputFollowControl = "Http Error";
+                });
+        }
+
         public override Node GetNextNode()
         {
+            foreach (var socket in OutputSocketList)
+                if (socket.Info.ToLower()==_outputFollowControl.ToLower())
+                    return socket.GetNextNode();
+
             return null;
         }
-    }
 
-
-}
-
-public abstract class ServerControllerBase : MgsSingleton<ServerControllerBase>
-{
-    public ServerData Data;
-    public string URL
-    {
-        get
-        {
-            if (Data == null)
-                throw new Exception($"Server Data Not set!!!");
-            return Data.URL;
-
-        }
-    }
-    public abstract IEnumerator SendRequest(string methodName, List<string> paramNames, List<object> paramObjects);
-
-
-}
-
-[CreateAssetMenu(menuName = "ServerData")]
-public class ServerData : ScriptableObject
-{
-    public ServerStateEnum ServerState = ServerStateEnum.Remote;
-
-    public string LocalURL = "http://localhost:52391";
-    public string RemoteURL = "http://charsoogame.ir";
-
-    public List<Controller> Controllers;
-    public string URL
-    {
-        get
-        {
-            if (ServerState == ServerStateEnum.Local && Application.isEditor)
-                return LocalURL;
-            else
-                return RemoteURL;
-
-        }
-    }
-
-    public enum ServerStateEnum
-    {
-        Local, Remote
-    }
-
-    [Serializable]
-    public class Controller
-    {
-        public string Name;
-        public List<string> Methods;
     }
 }
+
+

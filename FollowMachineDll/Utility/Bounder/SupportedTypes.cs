@@ -14,7 +14,7 @@ namespace FollowMachineDll.Utility.Bounder
                 {
                     Type=typeof(Int32),
                     Default = 0,
-                    Convertor = s=>Convert.ToInt32(s),
+                    Convertor = s=> Int32.TryParse(s, out var i) ? i : 0,
                     GUI=(s, o) => s=="" ?
                         EditorGUILayout.IntField(s,(int)o) :
                         EditorGUILayout.IntField((int)o)
@@ -25,7 +25,7 @@ namespace FollowMachineDll.Utility.Bounder
                 {
                     Type=typeof(Boolean),
                     Default = false,
-                    Convertor = s=>Convert.ToBoolean(s),
+                    Convertor = s=> Boolean.TryParse(s, out var f) && f,
                     GUI=(s, o) => s=="" ? 
                         EditorGUILayout.Toggle(s,(bool)o) :
                         EditorGUILayout.Toggle((bool)o) 
@@ -37,7 +37,7 @@ namespace FollowMachineDll.Utility.Bounder
                 {
                     Type=typeof(Single),
                     Default = 0f,
-                    Convertor = s=>Convert.ToSingle(s),
+                    Convertor = s=>Single.TryParse(s,out var f) ? f:0f,
                     GUI=(s, o) => s=="" ? 
                         EditorGUILayout.FloatField(s,(float)o):
                         EditorGUILayout.FloatField((float)o)
@@ -51,6 +51,28 @@ namespace FollowMachineDll.Utility.Bounder
                     Convertor = s=>s,
                     GUI=(s, o) => s=="" ? 
                         EditorGUILayout.TextField(s,(string)o):
+                        EditorGUILayout.TextField((string)o)
+                }
+            } ,
+            {
+                "String",new TypeUtils
+                {
+                    Type=typeof(String),
+                    Default = "",
+                    Convertor = s=>s,
+                    GUI=(s, o) => s=="" ? 
+                        EditorGUILayout.TextField(s,(String)o):
+                        EditorGUILayout.TextField((String)o)
+                }
+            } ,
+            {
+                "DateTime",new TypeUtils
+                {
+                    Type=typeof(DateTime),
+                    Default = DateTime.Now,
+                    Convertor = s=>DateTime.TryParse(s,out var date) ? date: DateTime.Now,
+                    GUI=(s, o) => s=="" ? 
+                        EditorGUILayout.TextField(s,o.ToString()):
                         EditorGUILayout.TextField((string)o)
                 }
             } ,

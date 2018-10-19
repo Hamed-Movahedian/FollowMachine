@@ -52,7 +52,7 @@ namespace FollowMachineEditor.Windows.Bounder
 
         #region Privates
 
-        private BoundData _boundData = null;
+        private FollowMachineDll.Utility.Bounder.Bounder _bounder = null;
 
         private string _search = "";
 
@@ -72,10 +72,10 @@ namespace FollowMachineEditor.Windows.Bounder
             #region TargetGameObject
 
             // ********************   TargetGameObject
-            _boundData.GameObject =
-                (GameObject)EditorGUILayout.ObjectField("Game Object", _boundData.GameObject, typeof(GameObject), true);
+            _bounder.GameObject =
+                (GameObject)EditorGUILayout.ObjectField("Game Object", _bounder.GameObject, typeof(GameObject), true);
 
-            if (_boundData.GameObject == null)
+            if (_bounder.GameObject == null)
                 return;
 
             #endregion
@@ -83,17 +83,17 @@ namespace FollowMachineEditor.Windows.Bounder
             #region Component
 
             // target game object components + GameObject
-            List<Type> types = _boundData.GetCandidateBaseTypes();
+            List<Type> types = _bounder.GetCandidateBaseTypes();
 
             // Select _boundTypes first item
-            int index = types.IndexOf(_boundData.BaseType);
+            int index = types.IndexOf(_bounder.BaseType);
 
             if (index == -1)
                 index = types.Count - 1;
 
             index = EditorGUILayout.Popup(new GUIContent("Component"), index, types.Select(t => t.Name).ToArray());
 
-            _boundData.BaseType = types[index];
+            _bounder.BaseType = types[index];
 
             #endregion
 
@@ -104,15 +104,15 @@ namespace FollowMachineEditor.Windows.Bounder
 
             GUILayout.BeginHorizontal();
 
-            GUILayout.Label(_boundData.BoundText, BindStringStyle,GUILayout.ExpandWidth(true));
+            GUILayout.Label(_bounder.BoundText, BindStringStyle,GUILayout.ExpandWidth(true));
 
-            if (_boundData.HasMember)
+            if (_bounder.HasMember)
                 if (GUILayout.Button(" ◄ ", GUILayout.ExpandWidth(false), GUILayout.Height(20)))
-                    _boundData.RemoveLastMemeber();
+                    _bounder.RemoveLastMemeber();
 
             if (GUILayout.Button(" Bound ", GUILayout.ExpandWidth(false), GUILayout.Height(20)))
             {
-                _onBound?.Invoke(_boundData.GameObject, _boundData.BoundText);
+                _onBound?.Invoke(_bounder.GameObject, _bounder.BoundText);
                 Close();
             }
 
@@ -121,7 +121,7 @@ namespace FollowMachineEditor.Windows.Bounder
 
             #endregion
 
-            _boundData.OnGUI();
+            _bounder.LastMemberGUI();
 
             BounderUtilitys.BoldSeparator();
 
@@ -160,7 +160,7 @@ namespace FollowMachineEditor.Windows.Bounder
             Type lastItemType = null;
 
             _scrollPos = GUILayout.BeginScrollView(_scrollPos);
-            var _memberInfos = _boundData.NextLevelMembers;
+            var _memberInfos = _bounder.NextLevelMembers;
             for (int i = 0; i < _memberInfos.Count; i++)
             {
                 if (_search != "")
@@ -177,7 +177,7 @@ namespace FollowMachineEditor.Windows.Bounder
                 var lastRect = GUILayoutUtility.GetLastRect();
 
                 if (GUI.Button(lastRect, GUIContent.none, GUIStyle.none))
-                    _boundData.Add(_memberInfos[i]);
+                    _bounder.AddNewMember(_memberInfos[i]);
             }
 
             GUILayout.EndScrollView();
@@ -252,7 +252,7 @@ namespace FollowMachineEditor.Windows.Bounder
         private void EditBounds(GameObject boundObject, string boundText, Type requreType, Action<GameObject, string> onBound)
         {
             
-            _boundData = new BoundData(boundObject, boundText);
+            _bounder = new FollowMachineDll.Utility.Bounder.Bounder(boundObject, boundText);
             _requreType = requreType;
             _onBound = onBound;
         }

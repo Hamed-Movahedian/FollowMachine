@@ -73,6 +73,8 @@
     <Compile Include="Shapes\Group.cs" />
     <Compile Include="Shapes\Nodes\ActionNode.cs" />
     <Compile Include="Shapes\Nodes\AnimationNode.cs" />
+    <Compile Include="Shapes\Nodes\ServerNode.cs" />
+    <Compile Include="Utility\Bounder\BoundData.cs" />
     <Compile Include="Shapes\Nodes\DialogeNode.cs" />
     <Compile Include="Shapes\Nodes\DynamicActionNode.cs" />
     <Compile Include="Shapes\Nodes\EventNode.cs" />
@@ -84,14 +86,15 @@
     <Compile Include="SettingScripts\SpcificNodeSetting.cs" />
     <Compile Include="Shapes\Nodes\ProgressNode.cs" />
     <Compile Include="Shapes\Nodes\EntryPointNode.cs" />
-    <Compile Include="Shapes\Nodes\ServerNode.cs" />
+    <Compile Include="Components\ServerControllerBase.cs" />
+    <Compile Include="Assets\ServerData.cs" />
     <Compile Include="Shapes\Nodes\SetProperty.cs" />
     <Compile Include="Shapes\Nodes\WindowNode.cs" />
     <Compile Include="Shapes\Shape.cs" />
     <Compile Include="Shapes\Sockets\InputSocket.cs" />
     <Compile Include="Shapes\Sockets\OutputSocket.cs" />
     <Compile Include="Shapes\Sockets\Socket.cs" />
-    <Compile Include="Utility\Bounder\BoundData.cs" />
+    <Compile Include="Utility\Bounder\Bounder.cs" />
     <Compile Include="Utility\Bounder\BounderUtilitys.cs" />
     <Compile Include="Utility\Bounder\BoundMember.cs" />
     <Compile Include="Utility\Bounder\SupportedTypes.cs" />
