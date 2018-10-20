@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FMachine.Editor;
 using FMachine.Shapes.Nodes;
+using FMachine.Shapes.Sockets;
 using FollowMachineDll.Components;
 using FollowMachineDll.Shapes.Nodes;
 using FollowMachineDll.Utility.Bounder;
@@ -47,12 +49,39 @@ namespace FollowMachineEditor.CustomInspectors
 
             var methodList = serverController
                 .Data.Controllers
-                .SelectMany(c => c.Methods.Select(m => c.Name + "/" + m))
+                .SelectMany(controller => controller.Methods.Select(methodData => new {controller,methodData}))
                 .ToList();
 
-            if (PopupFieldInBox("Method :", ref _serverNode.MethodName, methodList))
+            var MethodNameList = methodList.Select(m => m.controller.Name + "/" + m.methodData.Name).ToList();
+
+            if (PopupFieldInBox("Method :", ref _serverNode.MethodName, MethodNameList))
             {
-                node.Info = _serverNode.MethodName.Split('(').First().Replace("/", ".");
+                var method = methodList[MethodNameList.IndexOf(_serverNode.MethodName)];
+
+                if(string.IsNullOrEmpty(method.methodData.Info))
+                    node.Info = _serverNode.MethodName.Split('(').First().Replace("/", ".");
+                else
+                {
+                    node.Info = method.methodData.Info;
+                }
+
+                _serverNode.OutputSocketList.Clear();
+
+                if (method.methodData.Outputs.Count == 0)
+                {
+                    _serverNode.AddOutputSocket<InputSocket>("Success");
+                    _serverNode.AddOutputSocket<InputSocket>("Network Error");
+                    _serverNode.AddOutputSocket<InputSocket>("Http Error");
+                }
+                else
+                {
+                    foreach (var output in method.methodData.Outputs)
+                        _serverNode.AddOutputSocket<InputSocket>(output);
+                    _serverNode.AddOutputSocket<InputSocket>("Network Error");
+                    _serverNode.AddOutputSocket<InputSocket>("Http Error");
+                }
+
+                RefreshWindow();
             }
 
             var parts = _serverNode.MethodName.Split('(', ')', ',')

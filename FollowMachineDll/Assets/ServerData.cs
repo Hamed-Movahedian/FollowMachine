@@ -33,8 +33,16 @@ namespace FollowMachineDll.Assets
         [Serializable]
         public class Controller
         {
+            [Serializable]
+            public class MethodData
+            {
+                public string Name;
+                public string Info;
+                public List<string> Outputs;
+            }
+
             public string Name;
-            public List<string> Methods;
+            public List<MethodData> Methods;
         }
     }
 }

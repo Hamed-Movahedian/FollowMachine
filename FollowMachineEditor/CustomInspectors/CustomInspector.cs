@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FMachine.Editor;
 using FMachine.Shapes.Nodes;
 using FollowMachineDll.Shapes.Nodes;
 using FollowMachineDll.Utility;
@@ -242,6 +243,12 @@ namespace FollowMachineEditor.CustomInspectors
 
             GUILayout.EndHorizontal();
 
+        }
+
+        protected void RefreshWindow()
+        {
+            var fmWindow = EditorWindow.GetWindow<FMWindow>();
+            fmWindow.Repaint();
         }
     }
 }

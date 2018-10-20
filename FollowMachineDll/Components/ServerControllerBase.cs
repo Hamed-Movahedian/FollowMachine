@@ -21,8 +21,6 @@ namespace FollowMachineDll.Components
 
             }
         }
-        public abstract IEnumerator SendRequest(string methodName, List<string> paramNames, List<object> paramObjects);
-
 
         public static IEnumerator Send(ServerConnectionMethod method,string url, object outData, Action onSuccess, Action<UnityWebRequest> OnError)
         {

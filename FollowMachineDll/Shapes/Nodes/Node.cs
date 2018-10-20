@@ -69,7 +69,8 @@ namespace FMachine.Shapes.Nodes
 
         // ************************** Methods
         #region Add Sockets
-        protected void AddOutputSocket<T>(string label) where T : InputSocket
+
+        public void AddOutputSocket<T>(string label) where T : InputSocket
         {
             var socket = (T)Graph.Repository.CreateSocket(this, typeof(T));
             socket.Info = label;
