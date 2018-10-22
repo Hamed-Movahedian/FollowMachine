@@ -35,13 +35,16 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MgsCommonLib.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Charsoo\Assets\Scripts\JsonDotNet\Assemblies\Standalone\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEditor, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\MgsCommonLib\MgsCommonLib\MgsCommonLib\bin\Debug\UnityEditor.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Unity\Editor\Data\Managed\UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\UnityEngine.dll</HintPath>
@@ -73,6 +76,8 @@
     <Compile Include="Shapes\Group.cs" />
     <Compile Include="Shapes\Nodes\ActionNode.cs" />
     <Compile Include="Shapes\Nodes\AnimationNode.cs" />
+    <Compile Include="Utility\NodeExtensions.cs" />
+    <Compile Include="Utility\ProgressBarInfo.cs" />
     <Compile Include="Shapes\Nodes\ServerNode.cs" />
     <Compile Include="Utility\Bounder\BoundData.cs" />
     <Compile Include="Shapes\Nodes\DialogeNode.cs" />

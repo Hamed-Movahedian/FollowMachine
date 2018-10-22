@@ -399,5 +399,12 @@ namespace FMachine.Shapes.Nodes
         {
             
         }
+
+        public void SetGraph(Graph graph)
+        {
+            Graph = graph;
+            InputSocketList.ForEach(socket=>socket.Graph=graph);
+            OutputSocketList.ForEach(socket=>socket.Graph=graph);
+        }
     }
 }

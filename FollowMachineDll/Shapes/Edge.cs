@@ -117,5 +117,12 @@ namespace FMachine.Shapes
 
             DestroyImmediate(this);
         }
+
+        public void SetInputSocket(InputSocket socket)
+        {
+            if (InputSocket != null) InputSocket.EdgeList.Remove(this);
+            InputSocket = socket;
+            InputSocket.EdgeList.Add(this);
+        }
     }
 }

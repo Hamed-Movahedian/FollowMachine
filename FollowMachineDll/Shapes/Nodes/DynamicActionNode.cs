@@ -9,7 +9,6 @@ using FollowMachineDll.Utility;
 using FollowMachineDll.Utility.Bounder;
 using MgsCommonLib.MgsCommonLib.Utilities;
 using MgsCommonLib.Utilities;
-using UnityEditor;
 using UnityEngine;
 
 namespace FollowMachineDll.Shapes.Nodes
@@ -24,6 +23,7 @@ namespace FollowMachineDll.Shapes.Nodes
 
         protected override void GetParameters()
         {
+#if UNITY_EDITOR
             _parameterInfos = _methodInfo.GetParameters();
 
             if (_parameterInfos.Length == 0)
@@ -36,7 +36,7 @@ namespace FollowMachineDll.Shapes.Nodes
 
             GUILayout.BeginVertical((GUIStyle)"box");
 
-            GUILayout.Label("Parameters :",(GUIStyle)"BoldLabel");
+            GUILayout.Label("Parameters :", (GUIStyle)"BoldLabel");
 
             for (int i = 0; i < _parameterInfos.Length; i++)
             {
@@ -45,18 +45,18 @@ namespace FollowMachineDll.Shapes.Nodes
                     GUILayout.BeginHorizontal();
                     // parameter name
                     GUILayout.Label(
-                        _parameterInfos[i].Name.ToFristLetterUpperCase() + " (" +_parameterInfos[i].ParameterType.Name + ")",
+                        _parameterInfos[i].Name.ToFristLetterUpperCase() + " (" + _parameterInfos[i].ParameterType.Name + ")",
                         (GUIStyle)"BoldLabel");
 
                     if (GUILayout.Button("B", (GUIStyle)"Button", GUILayout.Width(20)))
                     {
-                        var menu = new GenericMenu();
-
+                        var menu = new UnityEditor.GenericMenu();
+                        
                         if (DynamicParameter[i])
                         {
                             menu.AddItem(new GUIContent("Edit"), false, (indexObj) =>
                             {
-                                var index = (int) indexObj;
+                                var index = (int)indexObj;
                                 EditorTools.Instance
                                     .EditBoundData(
                                         ParameterGameObjects[index],
@@ -71,7 +71,7 @@ namespace FollowMachineDll.Shapes.Nodes
 
                             menu.AddItem(new GUIContent("Unbound"), false, (indexObj) =>
                             {
-                                var index = (int) indexObj;
+                                var index = (int)indexObj;
                                 EditorTools.Instance.Undo_RecordObject(this, "Change Parameter");
                                 DynamicParameter[index] = false;
                                 ParameterValueStrings[index] = "";
@@ -81,7 +81,7 @@ namespace FollowMachineDll.Shapes.Nodes
                         {
                             menu.AddItem(new GUIContent("Bound"), false, (indexObj) =>
                             {
-                                var index = (int) indexObj;
+                                var index = (int)indexObj;
                                 ParameterValueStrings[index] = "";
                                 EditorTools.Instance
                                     .EditBoundData(
@@ -113,7 +113,8 @@ namespace FollowMachineDll.Shapes.Nodes
 
             }
 
-            GUILayout.EndVertical();
+            GUILayout.EndVertical(); 
+#endif
         }
 
         protected override void GetParametersObjects()

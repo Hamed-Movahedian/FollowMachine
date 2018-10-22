@@ -8,7 +8,7 @@ namespace FollowMachineDll.Utility.Bounder
     public class BoundMember
     {
         private MemberInfo _memberInfo;
-        private object[] _parameterObjects;
+        private List<string> _parameterTexts;
         private ParameterInfo[] _parameterInfos = new ParameterInfo[0];
 
         public BoundMember(MemberInfo memberInfo)
@@ -19,12 +19,11 @@ namespace FollowMachineDll.Utility.Bounder
             {
                 _parameterInfos = (_memberInfo as MethodInfo).GetParameters();
 
-                var objects=new List<object>();
+                _parameterTexts = new List<string>();
                 foreach (var parameterInfo in _parameterInfos)
                 {
-                    objects.Add(SupportedTypes.Get(parameterInfo.ParameterType).Default);
+                    _parameterTexts.Add(SupportedTypes.GetDefault(parameterInfo.ParameterType).ToString());
                 }
-                _parameterObjects = objects.ToArray();
             }
         }
 
@@ -49,7 +48,7 @@ namespace FollowMachineDll.Utility.Bounder
 
                 _parameterInfos = methodInfo.GetParameters();
 
-                var objects = new List<object>();
+                _parameterTexts = new List<string>();
 
                 for (int i = 0; i < _parameterInfos.Length; i++)
                 {
@@ -58,11 +57,8 @@ namespace FollowMachineDll.Utility.Bounder
                     if (!SupportedTypes.IsSupported(parameterTypeName))
                         throw new Exception($"Invalid parameter {parameterTypeName} in method {methodInfo.Name}");
 
-                    objects.Add(SupportedTypes.Get(parameterTypeName)
-                        .Convertor(parts[i + 1]));
+                    _parameterTexts.Add(parts[i + 1]);
                 }
-
-                _parameterObjects = objects.ToArray();
             }
             else
             {
@@ -74,7 +70,7 @@ namespace FollowMachineDll.Utility.Bounder
 
                 _parameterInfos = new ParameterInfo[0];
 
-                _parameterObjects = new object[0];
+                _parameterTexts = new List<string>();
 
                 if (_memberInfo == null)
                     throw new Exception($"Member info by name {name} not found!!");
@@ -108,14 +104,14 @@ namespace FollowMachineDll.Utility.Bounder
                 if (_memberInfo.MemberType == MemberTypes.Method)
                 {
                     text += "(";
-                    for (var i = 0; i < _parameterObjects.Length; i++)
+                    for (var i = 0; i < _parameterTexts.Count; i++)
                     {
                         if (i > 0)
                             text += " ,";
                         if (_parameterInfos[i].ParameterType == typeof(string))
-                            text += "\"" + _parameterObjects[i] + "\"";
+                            text += "\"" + _parameterTexts[i] + "\"";
                         else
-                            text += _parameterObjects[i].ToString();
+                            text += _parameterTexts[i].ToString();
                     }
 
                     text += ")";
@@ -139,13 +135,10 @@ namespace FollowMachineDll.Utility.Bounder
             {
                 var parameterInfo = _parameterInfos[i];
 
-                var typeUtils = SupportedTypes.Get(parameterInfo.ParameterType);
+                if (_parameterTexts[i] == null)
+                    _parameterTexts[i] = SupportedTypes.GetDefault(parameterInfo.ParameterType).ToString();
 
-                if (_parameterObjects[i] == null)
-                    _parameterObjects[i] = typeUtils.Default;
-
-                _parameterObjects[i] = typeUtils
-                    .GUI(parameterInfo.Name, _parameterObjects[i]);
+                _parameterTexts[i] = SupportedTypes.GUI(parameterInfo.Name, _parameterTexts[i], parameterInfo.ParameterType);
             }
 
             BounderUtilitys.BoldSeparator();
@@ -164,7 +157,20 @@ namespace FollowMachineDll.Utility.Bounder
                 case MemberTypes.Property:
                     return AsPropertyInfo.GetValue(inObject,null);
                 default:
-                    return AsMethodInfo.Invoke(inObject, _parameterObjects);
+                    return AsMethodInfo.Invoke(inObject, ParameterObjects);
+            }
+        }
+
+        public object[] ParameterObjects
+        {
+            get
+            {
+                var objects = new object[_parameterInfos.Length];
+
+                for (int i = 0; i < objects.Length; i++)
+                    objects[i] = SupportedTypes.Convert(_parameterTexts[i], _parameterInfos[i].ParameterType);
+
+                return objects;
             }
         }
 

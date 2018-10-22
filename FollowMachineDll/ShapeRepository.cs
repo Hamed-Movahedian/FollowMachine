@@ -21,18 +21,11 @@ namespace FMachine
         {
             if (go == null)
             {
-                Transform category = _graph.transform.Find("Repository");
+                Transform repository = GetRepository();
 
-                if (category == null)
-                {
-                    GameObject cgo = new GameObject("Repository");
-                    cgo.transform.parent = _graph.transform;
-                    category = cgo.transform;
-                }
+                go = new GameObject(string.Format("{1} - ({0})", type.Name, repository.childCount + 1));
 
-                go = new GameObject(string.Format("{1} - ({0})", type.Name, category.childCount + 1));
-
-                go.transform.parent = category;
+                go.transform.parent = repository;
 
             }
 
@@ -40,6 +33,20 @@ namespace FMachine
 
 
             return shape;
+        }
+
+        private Transform GetRepository()
+        {
+            Transform repository = _graph.transform.Find("Repository");
+
+            if (repository == null)
+            {
+                GameObject cgo = new GameObject("Repository");
+                cgo.transform.parent = _graph.transform;
+                repository = cgo.transform;
+            }
+
+            return repository;
         }
 
         public Node CreateNode(Type type, Vector2 position)
@@ -81,6 +88,19 @@ namespace FMachine
             var go = new GameObject(name);
             go.transform.parent = _graph.transform.parent;
             return go.AddComponent<FollowMachine>();
+        }
+
+        public void Add(Node node)
+        {
+            node.transform.parent = GetRepository();
+            _graph.NodeList.Add(node);
+            node.SetGraph(_graph);
+        }
+
+        public void Remove(Node node)
+        {
+            _graph.NodeList.Remove(node);
+            
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FollowMachineDll.Components;
 using UnityEngine;
 
 namespace FollowMachineDll.Assets
@@ -38,6 +39,7 @@ namespace FollowMachineDll.Assets
             {
                 public string Name;
                 public string Info;
+                public ServerConnectionMethod ConnectionMethod;
                 public List<string> Outputs;
             }
 

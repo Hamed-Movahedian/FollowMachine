@@ -55,11 +55,16 @@ namespace FMachine.Shapes.Sockets
                     foreach (OutputSocket socket in node.InputSocketList)
                         if (socket.Rect.Contains(mousePosition))
                         {
-                            CreateEdge(this, socket);
+                            CreateEdge(socket);
 
                             return;
                         } 
             }
+        }
+
+        public void CreateEdge(OutputSocket outputSocket)
+        {
+            CreateEdge(this,outputSocket);
         }
 
         public override void Draw()

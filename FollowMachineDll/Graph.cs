@@ -57,9 +57,9 @@ namespace FMachine
                         return @group;
                 return null;
             }
-        } 
+        }
         #endregion
-        
+
         #region RunningNode
         private Node _runningNode;
         public Node RunningNode
@@ -153,9 +153,9 @@ namespace FMachine
 
         public void DeleteSelection()
         {
-            var selectedNodes = GetSelectedNodes();
+            var selectedNodes = SelectedNodes;
 
-            if(selectedNodes.Count>0)
+            if (selectedNodes.Count > 0)
                 selectedNodes.ForEach(node => node.Delete());
             else
             {
@@ -191,7 +191,7 @@ namespace FMachine
 
         public void GroupSelection()
         {
-            var selectedNodes = GetSelectedNodes();
+            var selectedNodes = SelectedNodes;
             if (selectedNodes.Count > 0)
             {
                 DeselectAll();
@@ -200,15 +200,18 @@ namespace FMachine
             }
         }
 
-        public List<Node> GetSelectedNodes()
+        public List<Node> SelectedNodes
         {
-            var selectedNodes = new List<Node>();
+            get
+            {
+                var selectedNodes = new List<Node>();
 
-            foreach (var node in NodeList)
-                if (node.IsSelected)
-                    selectedNodes.Add(node);
+                foreach (var node in NodeList)
+                    if (node.IsSelected)
+                        selectedNodes.Add(node);
 
-            return selectedNodes;
+                return selectedNodes;
+            }
         }
 
         public void RemoveNode(Node node)
@@ -228,7 +231,7 @@ namespace FMachine
 
         public void RemoveSelectedNodesFromAllGroups()
         {
-            var selectedNodes = GetSelectedNodes();
+            var selectedNodes = SelectedNodes;
 
             foreach (var selectedNode in selectedNodes)
             {
@@ -238,7 +241,7 @@ namespace FMachine
 
         public void AddSelectedNodeToGroups(Vector2 position)
         {
-            var selectedNodes = GetSelectedNodes();
+            var selectedNodes = SelectedNodes;
 
             foreach (var @group in GroupList)
                 if (group.Rect.Contains(position))
@@ -246,6 +249,15 @@ namespace FMachine
                         group.AddNode(selectedNode);
         }
 
-       
+        public IEnumerable<Edge> Edges
+        {
+            get
+            {
+                foreach (var node in NodeList)
+                    foreach (var socket in node.OutputSocketList)
+                        foreach (var edge in socket.EdgeList)
+                            yield return edge;
+            }
+        }
     }
 }

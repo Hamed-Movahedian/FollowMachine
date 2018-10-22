@@ -9,6 +9,7 @@ using FollowMachineDll.Utility;
 using FollowMachineDll.Utility.Bounder;
 using FollowMachineEditor.Windows.Bounder;
 using FollowMachineEditor.Windows.FollowMachineInspector;
+using MgsCommonLib.UI;
 using UnityEditor;
 using UnityEngine;
 
@@ -188,18 +189,12 @@ namespace FollowMachineEditor.CustomInspectors
         {
             GUILayout.BeginHorizontal();
 
-            if (boundData.Type==null)
-                boundData.IsBound = true;
 
             if (boundData.IsBound)
                 GUILayout.Label(boundData.Value);
             else
-            {
-                var typeUtils = SupportedTypes.Types[boundData.Type.Name];
-
-                boundData.Value=
-                    typeUtils.GUI("", typeUtils.Convertor(boundData.Value)).ToString();
-            }
+                boundData.Value =
+                    SupportedTypes.GUI("", boundData.Value, boundData.TypeName);
 
             if (GUILayout.Button("B", GUILayout.Width(20)))
             {
@@ -249,6 +244,29 @@ namespace FollowMachineEditor.CustomInspectors
         {
             var fmWindow = EditorWindow.GetWindow<FMWindow>();
             fmWindow.Repaint();
+        }
+
+        protected void GetProgressBar(ProgressBarInfo pbInfo)
+        {
+            GUILayout.Label("Progressbar :", (GUIStyle)"BoldLabel");
+
+            pbInfo.ProgressbarWindow = (MgsProgressWindow)EditorGUILayout.ObjectField(
+                new GUIContent("ProgressbarWindow"),
+                pbInfo.ProgressbarWindow,
+                typeof(MgsProgressWindow), true);
+
+            if (pbInfo.ProgressbarWindow == null)
+                return;
+
+            EditorTools.Instance.LanguageField(TargetNode, "Progressbar Message", ref pbInfo.ProgressbarMessage);
+
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.Label("Display method:");
+                pbInfo.ProgressbarShow = GUILayout.Toggle(pbInfo.ProgressbarShow, "Show");
+                pbInfo.ProgressbarHide = GUILayout.Toggle(pbInfo.ProgressbarHide, "Hide");
+            }
+            GUILayout.EndHorizontal();
         }
     }
 }

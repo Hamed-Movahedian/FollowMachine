@@ -259,12 +259,8 @@ namespace FMachine.Editor
 
         private void DrawEdges()
         {
-            foreach (Node node in Graph.NodeList)
-            {
-                foreach (var socket in node.InputSocketList)
-                    foreach (var edge in socket.EdgeList)
-                        edge.Draw();
-            }
+            foreach (var edge in Graph.Edges)
+                edge.Draw();
         }
 
         public void Repaint()

@@ -35,6 +35,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MgsCommonLib.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Charsoo\Assets\Scripts\JsonDotNet\Assemblies\Standalone\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -50,12 +53,15 @@
     <Compile Include="CordianationSystem.cs" />
     <Compile Include="CreationMenu.cs" />
     <Compile Include="CustomInspectors\CustomInspector.cs" />
+    <Compile Include="Server\ServerDataCustomInspector.cs" />
     <Compile Include="CustomInspectors\ServerNodeEditor.cs" />
     <Compile Include="DropNode.cs" />
     <Compile Include="EdgeEditor.cs" />
     <Compile Include="FMCanvas.cs" />
     <Compile Include="FMWindow.cs" />
     <Compile Include="FMWindowBase.cs" />
+    <Compile Include="Server\ServerEditor.cs" />
+    <Compile Include="Utility\ColapseToFollowMachine.cs" />
     <Compile Include="Utility\LayoutGraph.cs" />
     <Compile Include="Windows\Bounder\BounderWindow.cs" />
     <Compile Include="Windows\EntryPoints\EntryPointsWindow.cs" />

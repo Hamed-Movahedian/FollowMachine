@@ -187,6 +187,23 @@ namespace FollowMachineDll.Utility.Bounder
 
             return Convert.ChangeType(obj, type);
         }
+        public object GetValue()
+        {
+            var obj = _baseObject;
+
+            if(obj==null)
+                throw new Exception($"Invalid bound data!!!");
+
+            for (var i = 0; i < _boundMembers.Count; i++)
+            {
+                if (obj == null)
+                    throw new Exception($"{_boundMembers[i-1].Name} return null!!!");
+
+                obj = _boundMembers[i].GetValue(obj);
+            }
+
+            return obj;
+        }
 
         public void LastMemberGUI()
         {

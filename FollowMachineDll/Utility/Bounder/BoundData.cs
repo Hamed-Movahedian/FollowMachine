@@ -8,7 +8,6 @@ namespace FollowMachineDll.Utility.Bounder
     {
         public string Name;
         public bool IsBound;
-        public Type Type;
         public string Value;
         public GameObject BoundGameObject;
         private Bounder _bounder;
@@ -17,12 +16,12 @@ namespace FollowMachineDll.Utility.Bounder
         public object GetValue() 
         {
             if (!IsBound)
-                return SupportedTypes.Types[Type.Name].Convertor(Value);
+                return SupportedTypes.Convert(Value,TypeName);
 
             if (_bounder == null)
                 _bounder = new Bounder(BoundGameObject, Value);
 
-            return _bounder.GetValue(Type);
+            return _bounder.GetValue();
         }
     }
 }
