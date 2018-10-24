@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace FollowMachineDll.Utility.Bounder
 {
     public static class SupportedTypes
     {
-        private static  Dictionary<string, TypeUtils> Types = new Dictionary<string, TypeUtils> ()
+        private static  Dictionary<string, TypeUtils> Types = new Dictionary<string, TypeUtils>
         {
 #if UNITY_EDITOR
 		            {
@@ -16,8 +19,8 @@ namespace FollowMachineDll.Utility.Bounder
                     Default = 0,
                     Convertor = s=> Int32.TryParse(s, out var i) ? i : 0,
                     GUI=(s, o) => s=="" ?
-                        UnityEditor.EditorGUILayout.IntField(s,(int)o) :
-                        UnityEditor.EditorGUILayout.IntField((int)o)
+                        EditorGUILayout.IntField(s,(int)o) :
+                        EditorGUILayout.IntField((int)o)
                 }
             } ,
             {
@@ -27,8 +30,8 @@ namespace FollowMachineDll.Utility.Bounder
                     Default = false,
                     Convertor = s=> Boolean.TryParse(s, out var f) && f,
                     GUI=(s, o) => s=="" ?
-                        UnityEditor.EditorGUILayout.Toggle(s,(bool)o) :
-                        UnityEditor.EditorGUILayout.Toggle((bool)o)
+                        EditorGUILayout.Toggle(s,(bool)o) :
+                        EditorGUILayout.Toggle((bool)o)
 
                 }
             } ,
@@ -39,8 +42,8 @@ namespace FollowMachineDll.Utility.Bounder
                     Default = 0f,
                     Convertor = s=>Single.TryParse(s,out var f) ? f:0f,
                     GUI=(s, o) => s=="" ?
-                        UnityEditor.EditorGUILayout.FloatField(s,(float)o):
-                        UnityEditor.EditorGUILayout.FloatField((float)o)
+                        EditorGUILayout.FloatField(s,(float)o):
+                        EditorGUILayout.FloatField((float)o)
                 }
             } ,
             {
@@ -50,8 +53,8 @@ namespace FollowMachineDll.Utility.Bounder
                     Default = "",
                     Convertor = s=>s,
                     GUI=(s, o) => s=="" ?
-                        UnityEditor.EditorGUILayout.TextField(s,(string)o):
-                        UnityEditor.EditorGUILayout.TextField((string)o)
+                        EditorGUILayout.TextField(s,(string)o):
+                        EditorGUILayout.TextField((string)o)
                 }
             } ,
             {
@@ -61,8 +64,8 @@ namespace FollowMachineDll.Utility.Bounder
                     Default = "",
                     Convertor = s=>s,
                     GUI=(s, o) => s=="" ?
-                        UnityEditor.EditorGUILayout.TextField(s,(String)o):
-                        UnityEditor.EditorGUILayout.TextField((String)o)
+                        EditorGUILayout.TextField(s,(String)o):
+                        EditorGUILayout.TextField((String)o)
                 }
             } ,
             {
@@ -72,8 +75,8 @@ namespace FollowMachineDll.Utility.Bounder
                     Default = DateTime.Now,
                     Convertor = s=>DateTime.TryParse(s,out var date) ? date: DateTime.Now,
                     GUI=(s, o) => s=="" ?
-                        UnityEditor.EditorGUILayout.TextField(s,o.ToString()):
-                        UnityEditor.EditorGUILayout.TextField((string)o)
+                        EditorGUILayout.TextField(s,o.ToString()):
+                        EditorGUILayout.TextField((string)o)
                 }
             } ,
 
