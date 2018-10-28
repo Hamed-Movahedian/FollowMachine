@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FollowMachineEditor.EditorObjectMapper;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -43,7 +44,7 @@ namespace FMachine.Editor
             if (graph == null)
                 return;
             GraphList.Add(graph.GetInstanceID());
-            graph.OnShow();
+            graph.Editor().OnShow();
         }
 
         public void OnGUI()
@@ -77,14 +78,14 @@ namespace FMachine.Editor
             var next = GraphList.IndexOf(graph.GetInstanceID()) + 1;
             while (GraphList.Count > next)
                 GraphList.RemoveAt(next);
-            graph.OnShow();
+            graph.Editor().OnShow();
         }
 
         public void Add(FollowMachine followmachine)
         {
             if (followmachine != null)
                 GraphList.Add(followmachine.GetInstanceID());
-            followmachine.OnShow();
+            followmachine.Editor().OnShow();
         }
 
         public void OnSelectinChange()

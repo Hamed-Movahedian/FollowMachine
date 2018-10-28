@@ -1,5 +1,6 @@
 ﻿using System;
 using FMachine.Shapes.Nodes;
+using FollowMachineEditor.EditorObjectMapper;
 using MgsCommonLib.UI;
 using UnityEditor;
 using UnityEngine;
@@ -90,7 +91,7 @@ namespace FMachine.Editor
             if (type == typeof(ActionNode))
             {
                 ActionNode actionNode =
-                    (ActionNode) _canvas.Graph.Repository.CreateNode(type, _lastMousePosition); ;
+                    (ActionNode) _canvas.Graph.Editor().Repository.CreateNode(type, _lastMousePosition); ;
 
                 actionNode.TargetGameObject = (GameObject)_dragGameObject;
             }
@@ -98,28 +99,28 @@ namespace FMachine.Editor
             if (type == typeof(FollowMachineNode))
             {
                 FollowMachineNode followMachineNode =
-                    (FollowMachineNode) _canvas.Graph.Repository.CreateNode(type, _lastMousePosition); ;
+                    (FollowMachineNode) _canvas.Graph.Editor().Repository.CreateNode(type, _lastMousePosition); ;
 
                 followMachineNode.FollowMachine = _dragGameObject.GetComponent<FollowMachine>();
-                followMachineNode.UpdateFollowMachine();
+                followMachineNode.Editor().UpdateFollowMachine();
             }
 
             if (type == typeof(WindowNode))
             {
                 WindowNode windowNode =
-                    (WindowNode) _canvas.Graph.Repository.CreateNode(type, _lastMousePosition); ;
+                    (WindowNode) _canvas.Graph.Editor().Repository.CreateNode(type, _lastMousePosition); ;
 
                 windowNode.Window = _dragGameObject.GetComponent<MgsUIWindow>();
-                windowNode.OnShow();
+                windowNode.Editor().OnShow();
             }
 
             if (type == typeof(DialogeNode))
             {
                 DialogeNode dialogeNode =
-                    (DialogeNode) _canvas.Graph.Repository.CreateNode(type, _lastMousePosition); ;
+                    (DialogeNode) _canvas.Graph.Editor().Repository.CreateNode(type, _lastMousePosition); ;
 
                 dialogeNode.Window = _dragGameObject.GetComponent<MgsDialougWindow>();
-                dialogeNode.OnShow();
+                dialogeNode.Editor().OnShow();
             }
 
 

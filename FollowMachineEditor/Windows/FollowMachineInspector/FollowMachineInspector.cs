@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using FMachine.Editor;
+﻿using FMachine.Editor;
 using FMachine.SettingScripts;
 using FMachine.Shapes.Nodes;
 using FollowMachineDll.SettingScripts;
 using FollowMachineEditor.CustomInspectors;
+using FollowMachineEditor.EditorObjectMapper;
 using UnityEditor;
 using UnityEngine;
 
@@ -50,7 +48,7 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
             if (!graph)
                 return;
 
-            selectedNode = graph.SelectedNode;
+            selectedNode = graph.Editor().SelectedNode;
 
             EditorGUILayout.Space();
             EditorGUILayout.Space();
@@ -58,13 +56,13 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
             if (selectedNode)
             {
-                CustomInspector.DrawInspector(selectedNode);
+                selectedNode.Editor().OnInspector();
             }
             else
             {
-                var selectedGroup = graph.SelectedGroup;
+                var selectedGroup = graph.Editor().SelectedGroup;
                 if (selectedGroup)
-                    selectedGroup.OnInspector();
+                    selectedGroup.Editor().OnInspector();
             }
 
             EditorGUILayout.EndScrollView();

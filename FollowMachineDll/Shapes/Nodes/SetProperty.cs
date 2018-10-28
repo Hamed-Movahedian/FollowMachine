@@ -3,14 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using FMachine;
 using FMachine.Shapes.Nodes;
-using FMachine.Shapes.Sockets;
 using FollowMachineDll.Attributes;
-using FollowMachineDll.Utility;
 using MgsCommonLib.Theme;
-using MgsCommonLib.Utilities;
 using UnityEngine;
 using Object = System.Object;
 
@@ -29,12 +25,6 @@ namespace FollowMachineDll.Shapes.Nodes
         public List<GameObject> ValueGameObjects = new List<GameObject>();
         public List<string> ValueString = new List<string>();
 
-        protected override void Initialize()
-        {
-            AddInputSocket<OutputSocket>("");
-
-            AddOutputSocket<InputSocket>("");
-        }
 
         protected override IEnumerator Run()
         {
@@ -194,82 +184,5 @@ namespace FollowMachineDll.Shapes.Nodes
             return OutputSocketList[0].GetNextNode();
         }
 
-        public override void OnInspector()
-        {
-            base.OnInspector();
-
-            // Set count
-            GUILayout.BeginHorizontal();
-            {
-                if (GUILayout.Button("-"))
-                    PropertyCount--;
-                if (GUILayout.Button("+"))
-                    PropertyCount++;
-
-                if (PropertyCount < 0)
-                    PropertyCount = 0;
-            }
-            GUILayout.EndHorizontal();
-
-            // set list sizes
-            PropertyGameObjects.Resize(PropertyCount);
-            PropertyString.Resize(PropertyCount);
-
-            ValueGameObjects.Resize(PropertyCount);
-            ValueString.Resize(PropertyCount);
-
-            DynamicValue.Resize(PropertyCount);
-
-            // Display each property
-            for (int i = 0; i < PropertyCount; i++)
-            {
-                GUILayout.Space(10);
-                //GUILayout.Label("--------------------");
-                GUILayout.Box("",GUILayout.ExpandWidth(true),GUILayout.Height(4));
-                GUILayout.Space(10);
-
-                // ************** Get property
-                var propertyGameObject = PropertyGameObjects[i];
-                var pText = PropertyString[i];
-
-                var propertyInfo = EditorTools.Instance.GetDynamicParameter(
-                    gameObject, ref propertyGameObject, ref pText, null);
-
-                PropertyGameObjects[i] = propertyGameObject;
-                PropertyString[i] = pText;
-
-                if (propertyInfo == null)
-                    continue;
-
-                // ************** Get value
-
-                // Dynamic Toggle
-                var toggle = GUILayout.Toggle(DynamicValue[i], "Dynamic");
-                if (toggle != DynamicValue[i])
-                {
-                    EditorTools.Instance.Undo_RecordObject(this, "Change Parameter");
-                    DynamicValue[i] = toggle;
-                    ValueString[i] = "";
-                }
-
-                if (toggle) // Dynamic Value
-                {
-                    propertyGameObject = ValueGameObjects[i];
-                    pText = ValueString[i];
-
-                    EditorTools.Instance.GetDynamicParameter(
-                        gameObject, ref propertyGameObject, ref pText, propertyInfo.PropertyType);
-
-                    ValueGameObjects[i] = propertyGameObject;
-                    ValueString[i] = pText;
-                }
-                else // Static Value
-                {
-                    ValueString[i] =
-                        EditorTools.Instance.GetParameter(this, "Value", propertyInfo.PropertyType, ValueString[i]);
-                }
-
-            }
-        }
     }
 }

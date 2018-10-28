@@ -38,6 +38,17 @@ namespace FMachine.SettingScripts
             return _dic[name];
         }
 
+        public T GetAsset<T>(string name) where T: ScriptableObject
+        {
+            if(_dic==null)
+                _dic = new Dictionary<string, ScriptableObject>();
+
+            if (!_dic.ContainsKey(name))
+                _dic.Add(name,Load(name,typeof(T)));
+
+            return (T)_dic[name];
+        }
+
         private ScriptableObject Load(string name, Type type) 
         {
             var assets = AssetDatabase

@@ -1,5 +1,5 @@
-﻿using FMachine.SettingScripts;
-using FollowMachineDll.Utility;
+﻿using FollowMachineDll.Utility;
+using FollowMachineEditor.EditorObjectMapper;
 using UnityEngine;
 
 namespace FMachine.Editor.ShapeBehaviours
@@ -24,7 +24,7 @@ namespace FMachine.Editor.ShapeBehaviours
         public void MouseDown(Vector2 mousePosition, Event currentEvent)
         {
             _startPos = mousePosition;
-            _canvas.Graph.DeselectAllGroups();
+            _canvas.Graph.Editor().DeselectAllGroups();
             MouseDrag(Vector2.zero,mousePosition,currentEvent);
         }
 
@@ -43,11 +43,11 @@ namespace FMachine.Editor.ShapeBehaviours
         {
             foreach (var shape in _canvas.Graph.NodeList)
             {
-                bool inBox = shape.IsInBox(rect);
+                bool inBox = shape.Editor().IsInBox(rect);
                 if (inBox)
-                    shape.Select();
+                    shape.Editor().Select();
                 else
-                    shape.Deselect();
+                    shape.Editor().Deselect();
             }
         }
 

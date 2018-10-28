@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FollowMachineDll.Components;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace FollowMachineDll.Assets
@@ -34,17 +35,28 @@ namespace FollowMachineDll.Assets
         [Serializable]
         public class Controller
         {
+            public string Name;
+            public string Prefix;
+            public List<MethodData> Methods;
+
             [Serializable]
             public class MethodData
             {
                 public string Name;
+                public string Prefix;
                 public string Info;
                 public ServerConnectionMethod ConnectionMethod;
                 public List<string> Outputs;
-            }
+                public List<ParameterData> Parameters;
 
-            public string Name;
-            public List<MethodData> Methods;
+                [Serializable]
+                public class ParameterData
+                {
+                    public string Name;
+                    public bool FormBody;
+                    public string TypeName;
+                }
+            }
         }
     }
 }

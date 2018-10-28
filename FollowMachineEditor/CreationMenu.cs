@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using FMachine.Shapes;
 using FMachine.Shapes.Nodes;
 using FollowMachineDll.Attributes;
 using FollowMachineDll.Utility;
+using FollowMachineEditor.EditorObjectMapper;
 using UnityEditor;
 using UnityEngine;
 
@@ -68,7 +68,7 @@ namespace FMachine.Editor
             Node node=null;
 
             if (_canvas.Graph != null)
-                node = _canvas.Graph.Repository.CreateNode((Type) item, _mousePosition);
+                node = _canvas.Graph.Editor().Repository.CreateNode((Type) item, _mousePosition);
 
             var followMachineNode = node as FollowMachineNode;
 
@@ -76,11 +76,11 @@ namespace FMachine.Editor
                 if (EditorTools.Instance.DisplayDialog("Create Follow Machine node", "Create new Follow Machine ?", "Ok",
                     "Cancel"))
                 {
-                    followMachineNode.FollowMachine = _canvas.Graph.Repository.CreateFollowMachine("Follow Machine");
-                    followMachineNode.FollowMachine.Repository.CreateNode(typeof(InputNode), _mousePosition);
-                    followMachineNode.FollowMachine.Repository.CreateNode(typeof(OutputNode), 
+                    followMachineNode.FollowMachine = _canvas.Graph.Editor().Repository.CreateFollowMachine("Follow Machine");
+                    followMachineNode.FollowMachine.Editor().Repository.CreateNode(typeof(InputNode), _mousePosition);
+                    followMachineNode.FollowMachine.Editor().Repository.CreateNode(typeof(OutputNode), 
                         _mousePosition+Vector2.right*followMachineNode.Rect.width*2);
-                    followMachineNode.OnShow();
+                    followMachineNode.Editor().OnShow();
                 }
 
         }

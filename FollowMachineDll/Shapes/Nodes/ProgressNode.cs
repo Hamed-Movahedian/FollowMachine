@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections;
 using FMachine.Shapes.Nodes;
-using FMachine.Shapes.Sockets;
 using FollowMachineDll.Attributes;
-using FollowMachineDll.Utility;
 using MgsCommonLib.UI;
-using UnityEngine;
 
 namespace FollowMachineDll.Shapes.Nodes
 {
@@ -25,28 +18,6 @@ namespace FollowMachineDll.Shapes.Nodes
         public string Message;
         public ProgressModeEnum ProgressMode;
 
-        public override void OnInspector()
-        {
-            base.OnInspector();
-            EditorTools.Instance.PropertyField(this, "Window");
-            if (Window == null)
-                return;
-            EditorTools.Instance.LanguageField(this, "Message", ref Message);
-            EditorTools.Instance.PropertyField(this, "ProgressMode");
-            if (GUILayout.Button("Fill Info"))
-            {
-                var camaSplit = Message.Split('/');
-
-                Info = camaSplit[camaSplit.Length - 1] + " => " + ProgressMode;
-            }
-        }
-
-        protected override void Initialize()
-        {
-            AddInputSocket<OutputSocket>("");
-
-            AddOutputSocket<InputSocket>("");
-        }
 
         protected override IEnumerator Run()
         {

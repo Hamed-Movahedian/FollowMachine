@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FMachine.SettingScripts;
+﻿using FMachine.SettingScripts;
 using FollowMachineDll.SettingScripts;
-using FollowMachineEditor.Windows.FollowMachineExplorer;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;

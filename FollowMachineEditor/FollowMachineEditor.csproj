@@ -52,15 +52,40 @@
   <ItemGroup>
     <Compile Include="CordianationSystem.cs" />
     <Compile Include="CreationMenu.cs" />
-    <Compile Include="CustomInspectors\CustomInspector.cs" />
+    <Compile Include="CustomInspectors\GUIUtil.cs" />
+    <Compile Include="EditorObjectMapper\EditorObjectMapper.cs" />
+    <Compile Include="EditorObjects\EditorGraph\EFollowMachine.cs" />
+    <Compile Include="EditorObjects\EditorGraph\EGraph.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorNodes\EActionNode.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorNodes\EAnimationNode.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorNodes\EDialogeNode.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorNodes\EDynamicActionNode.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorNodes\EEntryPointNode.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorNodes\EEventNode.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorNodes\EFollowMachineNode.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorNodes\EInputNode.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorNodes\ENullNode.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorNodes\EOutputNode.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorNodes\EProgressNode.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorNodes\EServerNode.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorNodes\ESetProperty.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorNodes\EWindowNode.cs" />
     <Compile Include="Server\ServerDataCustomInspector.cs" />
-    <Compile Include="CustomInspectors\ServerNodeEditor.cs" />
     <Compile Include="DropNode.cs" />
     <Compile Include="EdgeEditor.cs" />
     <Compile Include="FMCanvas.cs" />
     <Compile Include="FMWindow.cs" />
     <Compile Include="FMWindowBase.cs" />
     <Compile Include="Server\ServerEditor.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EBoxShape.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorNodes\ENode.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorSockets\EInputSocket.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorSockets\EOutputSocket.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EditorSockets\ESocket.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EEdge.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EditorBoxShapes\EGroup.cs" />
+    <Compile Include="EditorObjects\EditorShapes\EShape.cs" />
+    <Compile Include="ShapeRepository.cs" />
     <Compile Include="Utility\ColapseToFollowMachine.cs" />
     <Compile Include="Utility\LayoutGraph.cs" />
     <Compile Include="Windows\Bounder\BounderWindow.cs" />
@@ -85,6 +110,7 @@
       <Name>FollowMachine</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"$(SolutionDir)pdb2mdb.exe" "$(TargetPath)"

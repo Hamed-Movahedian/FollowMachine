@@ -22,40 +22,35 @@ namespace FollowMachineEditor.Server
             {
                 var controllers = ServerEditor.Get(@"Interface/GetControllers", "Download interface", "Download");
 
-                var controllersJArray = JArray.Parse(controllers);
-
-                _serverData.Controllers.Clear();
-
-                foreach (JToken controllerJObject in controllersJArray)
-                {
-                    var controller = new ServerData.Controller();
-
-                    controller.Name = (string)controllerJObject["Name"];
-
-
-
-                    controller.Methods = new List<ServerData.Controller.MethodData>();
-
-                    foreach (var methodJobject in controllerJObject["Methods"])
+                _serverData.Controllers = JArray
+                    .Parse(controllers)
+                    .Select(ctrl => new ServerData.Controller
                     {
-                        var outputs = (string)methodJobject["Outputs"];
-
-                        controller.Methods.Add(new ServerData.Controller.MethodData
-                        {
-                            Name = (string)methodJobject["Name"],
-                            Info = (string)methodJobject["Info"],
-                            ConnectionMethod = (ServerConnectionMethod) Enum.Parse(typeof(ServerConnectionMethod),methodJobject["ConnectionMethod"].ToString()),
-                            Outputs = outputs == null
-                                ? new List<string>()
-                                : outputs
-                                    .Split(',')
-                                    .Select(s => s.Trim())
-                                    .Where(s => !string.IsNullOrEmpty(s))
-                                    .ToList()
-                        });
-                    }
-                    _serverData.Controllers.Add(controller);
-                }
+                        Name = (string)ctrl["Name"],
+                        Prefix = (string)ctrl["Prefix"],
+                        Methods = ctrl["Methods"]
+                            .Select(method => new ServerData.Controller.MethodData
+                            {
+                                Name = (string)method["Name"],
+                                Prefix = (string)method["Prefix"],
+                                ConnectionMethod = (ServerConnectionMethod)
+                                    Enum.Parse(
+                                        typeof(ServerConnectionMethod),
+                                        (string)method["ConnectionMethod"]),
+                                Info = (string)method["Info"],
+                                Outputs = method["Outputs"].Select(s => s.ToString()).ToList(),
+                                Parameters = method["Parameters"]
+                                    .Select(param => new ServerData.Controller.MethodData.ParameterData()
+                                    {
+                                        Name = (string)param["Name"],
+                                        TypeName = (string)param["TypeName"],
+                                        FormBody = (bool)param["FormBody"]
+                                    })
+                                    .ToList(),
+                            })
+                            .ToList(),
+                    })
+                    .ToList();
             }
 
             DrawDefaultInspector();

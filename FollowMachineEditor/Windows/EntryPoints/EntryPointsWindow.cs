@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FMachine.Editor;
+﻿using FMachine.Editor;
 using FMachine.SettingScripts;
 using FMachine.Shapes.Nodes;
 using FollowMachineDll.SettingScripts;
+using FollowMachineEditor.EditorObjectMapper;
 using UnityEditor;
 using UnityEngine;
 
@@ -72,8 +69,8 @@ namespace FollowMachineEditor.Windows.EntryPoints
                 if (GUILayout.Button(new GUIContent(_setting.FindIcon), EditorStyles.miniButton))
                 {
                     Selection.activeGameObject = entryPointNode.Graph.gameObject;
-                    entryPointNode.Graph.DeselectAll();
-                    entryPointNode.Select();
+                    entryPointNode.Graph.Editor().DeselectAll();
+                    entryPointNode.Editor().Select();
                     var fmWindow = EditorWindow.GetWindow<FMWindow>();
                     if (fmWindow != null)
                     {
@@ -85,9 +82,9 @@ namespace FollowMachineEditor.Windows.EntryPoints
 
                 if (GUILayout.Button(new GUIContent(_setting.DeleteIcon),EditorStyles.miniButton))
                 {
-                    entryPointNode.Graph.DeselectAll();
-                    entryPointNode.Select();
-                    entryPointNode.Graph.DeleteSelection();
+                    entryPointNode.Graph.Editor().DeselectAll();
+                    entryPointNode.Editor().Select();
+                    entryPointNode.Graph.Editor().DeleteSelection();
                 }
 
                 EditorGUILayout.EndHorizontal();

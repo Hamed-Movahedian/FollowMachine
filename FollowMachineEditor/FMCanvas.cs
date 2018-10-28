@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FMachine.Editor.ShapeBehaviours;
-using FMachine.Shapes;
-using FMachine.Shapes.Nodes;
 using FMachine.Shapes.Sockets;
+using FollowMachineEditor.EditorObjectMapper;
 using UnityEditor;
 using UnityEngine;
 
@@ -208,7 +206,7 @@ namespace FMachine.Editor
                 if (Event.current.type == EventType.Repaint)
                 {
                     // Draw Groups
-                    Graph.GroupList.ForEach(@group=>@group.Draw());
+                    Graph.GroupList.ForEach(@group=>@group.Editor().Draw());
 
                     // Draw Box selection
                     BoxSelection.Draw();
@@ -217,7 +215,7 @@ namespace FMachine.Editor
                     DrawEdges();
 
                     // Draw Nodes
-                    Graph.NodeList.ForEach(node => node.Draw());
+                    Graph.NodeList.ForEach(node => node.Editor().Draw());
 
                     // Draw Sockets
                     DrawSockets();
@@ -232,7 +230,7 @@ namespace FMachine.Editor
         {
             var sockets = GetSockets();
             foreach (var socket in sockets)
-                socket.Draw();
+                socket.Editor().Draw();
         }
 
         public IEnumerable<Socket> GetSockets()
@@ -249,18 +247,10 @@ namespace FMachine.Editor
             }
         }
 
-        public IEnumerable<Edge> GetEdges()
-        {
-            foreach (var node in Graph.NodeList)
-                foreach (var socket in node.InputSocketList)
-                    foreach (var edge in socket.EdgeList)
-                        yield return edge;
-        }
-
         private void DrawEdges()
         {
-            foreach (var edge in Graph.Edges)
-                edge.Draw();
+            foreach (var edge in Graph.Editor().Edges)
+                edge.Editor().Draw();
         }
 
         public void Repaint()

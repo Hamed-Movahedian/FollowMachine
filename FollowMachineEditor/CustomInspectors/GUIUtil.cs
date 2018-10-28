@@ -1,54 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using FMachine.Editor;
 using FMachine.Shapes.Nodes;
 using FollowMachineDll.Shapes.Nodes;
 using FollowMachineDll.Utility;
 using FollowMachineDll.Utility.Bounder;
+using FollowMachineEditor.EditorObjectMapper;
 using FollowMachineEditor.Windows.Bounder;
-using FollowMachineEditor.Windows.FollowMachineInspector;
 using MgsCommonLib.UI;
 using UnityEditor;
 using UnityEngine;
 
 namespace FollowMachineEditor.CustomInspectors
 {
-    public abstract class CustomInspector
+    public static class GUIUtil
     {
-        private static readonly Dictionary<Type,CustomInspector> Dic = new Dictionary<Type, CustomInspector>
-        {
-            {typeof(ServerNode),new ServerNodeEditor() },
-        };
 
-        public static void DrawInspector(Node node)
-        {
-            var nodeType = node.GetType();
+        public static Node TargetNode { get; set; }
 
-            if (Dic.ContainsKey(nodeType))
-            {
-                var inspector = Dic[nodeType];
-                inspector.TargetNode = node;
-                inspector.OnInspector(node);
-            }
-            else
-                node.OnInspector();
-        }
-
-        public Node TargetNode { get; set; }
-
-        public virtual void OnInspector(Node node)
-        {
-            if (TextFieldInBox("Info :", ref node.Info))
-            {
-                node.name = node.Info + " (" + node.GetType().Name + ")";
-            }
-            
-            GUILayout.Space(5);
-        }
-
-        protected bool TextFieldInBox(string lable, ref string text)
+        public static bool TextFieldInBox(string lable, ref string text)
         {
             bool b = false;
             var s = text;
@@ -60,7 +30,7 @@ namespace FollowMachineEditor.CustomInspectors
             return b;
         }
 
-        protected bool TextField(string lable, ref string text)
+        public static bool TextField(string lable, ref string text)
         {
             string s;
 
@@ -77,7 +47,7 @@ namespace FollowMachineEditor.CustomInspectors
             return true;
 
         }
-        protected bool TextFieldVertical(string lable, ref string text)
+        public static bool TextFieldVertical(string lable, ref string text)
         {
             if (lable != "")
                 GUILayout.Label(lable);
@@ -93,7 +63,7 @@ namespace FollowMachineEditor.CustomInspectors
 
         }
 
-        protected void DrawInBox(string title, Action body)
+        public static void DrawInBox(string title, Action body)
         {
             StartBox();
             {
@@ -105,22 +75,22 @@ namespace FollowMachineEditor.CustomInspectors
             EndBox();
         }
 
-        protected static void BoldLable(string title)
+        public static void BoldLable(string title)
         {
             GUILayout.Label(title, (GUIStyle)"BoldLabel");
         }
 
-        protected static void EndBox()
+        public static void EndBox()
         {
             GUILayout.EndVertical();
         }
 
-        protected static void StartBox()
+        public static void StartBox()
         {
             GUILayout.BeginVertical((GUIStyle)"box");
         }
 
-        protected void DisplayError(string errorMsg)
+        public static void DisplayError(string errorMsg)
         {
             DrawInBox("Error :", () =>
             {
@@ -128,12 +98,12 @@ namespace FollowMachineEditor.CustomInspectors
             });
         }
 
-        protected void DrawInBox(Action action)
+        public static void DrawInBox(Action action)
         {
             DrawInBox("",action);
         }
 
-        protected static bool ButtonWithBoldLable(string lable, string buttonText)
+        public static  bool ButtonWithBoldLable(string lable, string buttonText)
         {
             GUILayout.BeginHorizontal();
 
@@ -146,7 +116,7 @@ namespace FollowMachineEditor.CustomInspectors
             GUILayout.EndHorizontal();
             return flag;
         }
-        protected static bool ButtonWithLable(string lable, string buttonText)
+        public static bool ButtonWithLable(string lable, string buttonText)
         {
             GUILayout.BeginHorizontal();
 
@@ -160,7 +130,7 @@ namespace FollowMachineEditor.CustomInspectors
             return flag;
         }
 
-        protected bool PopupField(ref string text, List<string> textList)
+        public static bool PopupField(ref string text, List<string> textList)
         {
             var indexOf = textList.IndexOf(text);
             if (indexOf == -1)
@@ -176,7 +146,7 @@ namespace FollowMachineEditor.CustomInspectors
             return false;
         }
 
-        protected bool PopupFieldInBox(string lable, ref string text, List<string> textList)
+        public static bool PopupFieldInBox(string lable, ref string text, List<string> textList)
         {
             var s = text;
             bool flag = false;
@@ -185,12 +155,12 @@ namespace FollowMachineEditor.CustomInspectors
             return flag;
         }
 
-        protected void BoundField(BoundData boundData)
+        public static void BoundField(BoundData boundData)
         {
             GUILayout.BeginHorizontal();
 
 
-            if (boundData.IsBound)
+            if (boundData.BoundMethod == BoundMethodEnum.GameObject)
                 GUILayout.Label(boundData.Value);
             else
                 boundData.Value =
@@ -200,7 +170,7 @@ namespace FollowMachineEditor.CustomInspectors
             {
                 var menu = new GenericMenu();
 
-                if (boundData.IsBound)
+                if (boundData.BoundMethod==BoundMethodEnum.GameObject)
                 {
                     menu.AddItem(new GUIContent("Edit"), false, () => BounderWindow.EditBound(
                         boundData.BoundGameObject,
@@ -215,7 +185,7 @@ namespace FollowMachineEditor.CustomInspectors
                     menu.AddItem(new GUIContent("Unbound"), false, () =>
                     {
                         Undo.RecordObject(TargetNode, "Change Bound");
-                        boundData.IsBound = false;
+                        boundData.BoundMethod = BoundMethodEnum.Constant;
                         boundData.Value = "";
                     });
                 }
@@ -229,7 +199,7 @@ namespace FollowMachineEditor.CustomInspectors
                         {
                             boundData.BoundGameObject = o;
                             boundData.Value = s;
-                            boundData.IsBound = true;
+                            boundData.BoundMethod = BoundMethodEnum.GameObject;
                         }));
                 }
 
@@ -240,14 +210,16 @@ namespace FollowMachineEditor.CustomInspectors
 
         }
 
-        protected void RefreshWindow()
+        public static void RefreshWindow()
         {
             var fmWindow = EditorWindow.GetWindow<FMWindow>();
             fmWindow.Repaint();
         }
 
-        protected void GetProgressBar(ProgressBarInfo pbInfo)
+        public static void GetProgressBar(ProgressBarInfo pbInfo)
         {
+            StartBox();
+
             GUILayout.Label("Progressbar :", (GUIStyle)"BoldLabel");
 
             pbInfo.ProgressbarWindow = (MgsProgressWindow)EditorGUILayout.ObjectField(
@@ -267,6 +239,7 @@ namespace FollowMachineEditor.CustomInspectors
                 pbInfo.ProgressbarHide = GUILayout.Toggle(pbInfo.ProgressbarHide, "Hide");
             }
             GUILayout.EndHorizontal();
+            EndBox();
         }
     }
 }

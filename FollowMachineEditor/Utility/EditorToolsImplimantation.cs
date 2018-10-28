@@ -9,6 +9,7 @@ using FMachine.Shapes;
 using FMachine.Shapes.Nodes;
 using FMachine.Shapes.Sockets;
 using FollowMachineDll.Utility;
+using FollowMachineEditor.EditorObjectMapper;
 using FollowMachineEditor.Windows.Bounder;
 using FollowMachineEditor.Windows.FollowMachineInspector;
 using MgsCommonLib.Theme;
@@ -551,7 +552,7 @@ namespace FollowMachineEditor.Utility
 
             menu.AddItem(new GUIContent("Delete"),
                 false,
-                edge.Delete);
+                edge.Editor().Delete);
 
             menu.ShowAsContext();
         }
@@ -577,17 +578,17 @@ namespace FollowMachineEditor.Utility
 
             menu.AddItem(new GUIContent("Move Up"),
                 false,
-                () => { socket.Node.MoveSocket(socket, -1); });
+                () => { socket.Node.Editor().MoveSocket(socket, -1); });
 
             menu.AddItem(new GUIContent("Move Down"),
                 false,
-                () => { socket.Node.MoveSocket(socket, 1); });
+                () => { socket.Node.Editor().MoveSocket(socket, 1); });
 
             menu.AddSeparator("");
 
             menu.AddItem(new GUIContent("Disconnect"),
                 false,
-                socket.Disconnect);
+                socket.Editor().Disconnect);
 
             menu.ShowAsContext();
         }
@@ -612,7 +613,7 @@ namespace FollowMachineEditor.Utility
 
             menu.AddItem(new GUIContent("Disconnect"),
                 false,
-                socket.Disconnect);
+                socket.Editor().Disconnect);
 
             menu.ShowAsContext();
         }
@@ -625,13 +626,13 @@ namespace FollowMachineEditor.Utility
                 false,
                 () =>
                 {
-                    node.InputSocketList.ForEach(socket => socket.Disconnect());
-                    node.OutputSocketList.ForEach(socket => socket.Disconnect());
+                    node.InputSocketList.ForEach(socket => socket.Editor().Disconnect());
+                    node.OutputSocketList.ForEach(socket => socket.Editor().Disconnect());
                 });
 
             menu.AddItem(new GUIContent("Delete"),
                 false,
-                node.Delete);
+                node.Editor().Delete);
 
             menu.ShowAsContext();
         }

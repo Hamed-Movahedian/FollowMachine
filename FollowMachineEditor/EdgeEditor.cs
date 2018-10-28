@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FMachine.Shapes;
-using FMachine.Shapes.Sockets;
+using FollowMachineEditor.EditorObjectMapper;
 using UnityEditor;
 using UnityEngine;
 
@@ -22,7 +22,7 @@ namespace FMachine.Editor
             Vector2 t1, t2;
             var p = new List<Vector2>();
             p.Add(edge.InputSocket.Rect.center);
-            p.AddRange(edge.EditPoints.Select(ep => edge.ToAbsPos(ep)));
+            p.AddRange(edge.EditPoints.Select(ep => edge.Editor().ToAbsPos(ep)));
             p.Add(edge.OutputSocket.Rect.center);
 
             for (int i = 0; i < p.Count - 1; i++)
@@ -58,7 +58,7 @@ namespace FMachine.Editor
             var points = Handles.MakeBezierPoints(p1, p2, t1, t2, (int) ((p1-p2).magnitude/10));
             foreach (Vector2 point in points)
                 if (Vector2.SqrMagnitude(point - mousePos) < 100)
-                    return edge;
+                    return edge.Editor();
 
             return null;
         }
@@ -70,8 +70,8 @@ namespace FMachine.Editor
             if (edge.IsHover)
                 foreach (var editPoint in edge.EditPoints)
 
-                    Handles.DrawSolidDisc(edge.ToAbsPos(editPoint), Vector3.forward,
-                        edge.InputSocket.SocketSetting.Thickness);
+                    Handles.DrawSolidDisc(edge.Editor().ToAbsPos(editPoint), Vector3.forward,
+                        edge.InputSocket.Editor().SocketSetting.Thickness);
         }
 
         private void DrawEdge(Edge edge)
@@ -79,7 +79,7 @@ namespace FMachine.Editor
             Vector2 t1, t2;
             var p = new List<Vector2>();
             p.Add(edge.InputSocket.Rect.center);
-            p.AddRange(edge.EditPoints.Select(ep=> edge.ToAbsPos(ep)));
+            p.AddRange(edge.EditPoints.Select(ep=> edge.Editor().ToAbsPos(ep)));
             p.Add(edge.OutputSocket.Rect.center);
 
             for (int i = 0; i < p.Count-1; i++)
@@ -106,18 +106,18 @@ namespace FMachine.Editor
 
         private void DrawBezierLine(Vector2 p1, Vector2 p2, Vector2 t1, Vector2 t2, Edge edge)
         {
-            bool isRunning = edge.IsRunning;
+            bool isRunning = edge.Editor().IsRunning;
 
             var bColor = 
                 edge.IsHover ?
                     Color.gray :
                     isRunning ? 
-                        edge.InputSocket.Node.NodeSetting.LineRunning :
+                        edge.InputSocket.Node.Editor().NodeSetting.LineRunning :
                         Color.black;
 
-            Handles.DrawBezier(p1, p2, t1, t2, bColor, null, edge.InputSocket.SocketSetting.Thickness + 4);
+            Handles.DrawBezier(p1, p2, t1, t2, bColor, null, edge.InputSocket.Editor().SocketSetting.Thickness + 4);
 
-            Handles.DrawBezier(p1, p2, t1, t2, edge.Color, null, edge.InputSocket.SocketSetting.Thickness);
+            Handles.DrawBezier(p1, p2, t1, t2, edge.Editor().Color, null, edge.InputSocket.Editor().SocketSetting.Thickness);
         }
 
         public void DrawBezierEdge(Vector2 p1, Vector2 p2, Color forgroundColor, Color backColor, float thickness)

@@ -6,22 +6,27 @@ namespace FollowMachineDll.Utility.Bounder
     [Serializable]
     public class BoundData
     {
-        public string Name;
-        public bool IsBound;
+        public string Lable;
+        public BoundMethodEnum BoundMethod;
         public string Value;
         public GameObject BoundGameObject;
         private Bounder _bounder;
         public string TypeName;
 
-        public object GetValue() 
+        public object GetValue()
         {
-            if (!IsBound)
-                return SupportedTypes.Convert(Value,TypeName);
+            if (BoundMethod == BoundMethodEnum.Constant)
+                return SupportedTypes.Convert(Value, TypeName);
 
             if (_bounder == null)
                 _bounder = new Bounder(BoundGameObject, Value);
 
             return _bounder.GetValue();
         }
+    }
+
+    public enum BoundMethodEnum
+    {
+        Constant, GameObject, Variable
     }
 }

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using FMachine.Shapes;
-using FMachine.Shapes.Nodes;
+﻿using FMachine.Shapes.Nodes;
+using FollowMachineEditor.EditorObjectMapper;
 using FollowMachineEditor.Utility;
 using UnityEditor;
 using UnityEngine;
@@ -40,16 +38,16 @@ namespace FMachine.Editor.ShapeBehaviours
                 case KeyCode.Delete:
                     if (currentEvent.type == EventType.KeyDown)
                         if (!EditorGUIUtility.editingTextField)
-                            _canvas.Graph.DeleteSelection();
+                            _canvas.Graph.Editor().DeleteSelection();
                     break;
                 case KeyCode.D:
                     if (currentEvent.control)
-                        _canvas.Graph.DuplicateSelection();
+                        _canvas.Graph.Editor().DuplicateSelection();
                     break;
                 case KeyCode.G:
                     if (currentEvent.type == EventType.KeyDown)
                         if (currentEvent.control)
-                            _canvas.Graph.GroupSelection();
+                            _canvas.Graph.Editor().GroupSelection();
                     break;
                 case KeyCode.M:
                     if (currentEvent.type == EventType.KeyDown)
@@ -65,7 +63,7 @@ namespace FMachine.Editor.ShapeBehaviours
                     break;
                 case KeyCode.F:
                     if (currentEvent.type == EventType.KeyDown)
-                        if (_canvas.Graph.SelectedNode == null)
+                        if (_canvas.Graph.Editor().SelectedNode == null)
                             _canvas.CordinationSystem.Focus(false, true);
                         else
                             _canvas.CordinationSystem.Focus(true, true);
@@ -90,17 +88,15 @@ namespace FMachine.Editor.ShapeBehaviours
                     _interactionSource = GetMouseInteractionSource(_mousePosition);
 
                     if (_interactionSource == null)
-                    {
                         if (currentEvent.button == 0)
                             _interactionSource = _canvas.BoxSelection;
                         else
                             _canvas.CreationMenu.Show(_mousePosition);
-                    }
 
                     if (currentEvent.clickCount < 2)
-                        _interactionSource.MouseDown(_mousePosition, currentEvent);
+                        _interactionSource?.MouseDown(_mousePosition, currentEvent);
                     else
-                        _interactionSource.DoubleClick(_mousePosition, currentEvent);
+                        _interactionSource?.DoubleClick(_mousePosition, currentEvent);
 
                     Event.current.Use();
                     break;
@@ -133,15 +129,12 @@ namespace FMachine.Editor.ShapeBehaviours
 
                     if (source != _interactionSource)
                     {
-                        if (source != null)
-                            source.MouseEnter(_mousePosition, currentEvent);
-                        if (_interactionSource != null)
-                            _interactionSource.MouseExit(_mousePosition, currentEvent);
+                        source?.MouseEnter(_mousePosition, currentEvent);
+                        _interactionSource?.MouseExit(_mousePosition, currentEvent);
                         _interactionSource = source;
                     }
 
-                    if (source != null)
-                        source.MouseMove(_mousePosition, currentEvent);
+                    source?.MouseMove(_mousePosition, currentEvent);
 
                     break;
 
@@ -163,27 +156,27 @@ namespace FMachine.Editor.ShapeBehaviours
 
             foreach (var socket in _canvas.GetSockets())
             {
-                source = socket.IsMouseOver(mousePosition);
+                source = socket.Editor().IsMouseOver(mousePosition);
                 if (source != null)
                     return source;
             }
             foreach (Node node in _canvas.Graph.NodeList)
             {
-                source = node.IsMouseOver(mousePosition);
+                source = node.Editor().IsMouseOver(mousePosition);
                 if (source != null)
                     return source;
             }
 
-            foreach (var edge in _canvas.GetEdges())
+            foreach (var edge in _canvas.Graph.Editor().Edges)
             {
-                source = edge.IsMouseOver(mousePosition);
+                source = edge.Editor().IsMouseOver(mousePosition);
                 if (source != null)
                     return source;
             }
 
             foreach (var @group in _canvas.Graph.GroupList)
             {
-                source = @group.IsMouseOver(mousePosition);
+                source = @group.Editor().IsMouseOver(mousePosition);
                 if (source != null)
                     return source;
             }

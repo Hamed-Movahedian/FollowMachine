@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using FMachine;
 using FMachine.Editor;
-using FollowMachineDll;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;

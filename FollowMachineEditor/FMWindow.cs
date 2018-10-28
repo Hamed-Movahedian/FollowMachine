@@ -1,5 +1,4 @@
-﻿using FMachine.Shapes.Nodes;
-using FollowMachineDll.Utility;
+﻿using FollowMachineDll.Utility;
 using FollowMachineEditor.Utility;
 using UnityEditor;
 using UnityEngine;

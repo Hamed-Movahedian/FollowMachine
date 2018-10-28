@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using FMachine;
 using FMachine.Shapes;
 using FMachine.Shapes.Nodes;
-using FollowMachineDll.Utility;
+using FollowMachineEditor.EditorObjectMapper;
 using UnityEditor;
 using UnityEngine;
 
@@ -28,12 +26,12 @@ namespace FollowMachineEditor.Utility
             var nodes = graph.NodeList;
             var edges = nodes
                 .SelectMany(n => n.InputSocketList.SelectMany(s => s.EdgeList))
-                .Where(e => !e.AutoHide && !e.ExcludeInLayout && e.InputNode.Group == e.OutputNode.Group)
+                .Where(e => !e.AutoHide && !e.ExcludeInLayout && e.Editor().InputNode.Editor().Group == e.Editor().OutputNode.Editor().Group)
                 .ToList();
 
 
             // Record undo for all nodes
-            nodes.ForEach(n => Undo.RecordObject(n, "Re-layout"));
+            nodes.ForEach(n => Undo.RegisterCompleteObjectUndo(n, "Re-layout"));
 
             // Rearrange X times
             for (int i = 0; i < RearangeIterations; i++)
@@ -76,16 +74,16 @@ namespace FollowMachineEditor.Utility
             {
                 if (c2.x > c1.x)
                     dx *= -1;
-                n1.Move(new Vector2(dx,0));
-                n2.Move(new Vector2(-dx,0));
+                n1.Editor().Move(new Vector2(dx,0));
+                n2.Editor().Move(new Vector2(-dx,0));
             }
             else
             {
                 if (c2.y > c1.y)
                     dy *= -1;
 
-                n1.Move(new Vector2(0,dy));
-                n2.Move(new Vector2(0,-dy));
+                n1.Editor().Move(new Vector2(0,dy));
+                n2.Editor().Move(new Vector2(0,-dy));
             }
         }
 
@@ -104,8 +102,8 @@ namespace FollowMachineEditor.Utility
             v1 = v1.normalized * Mathf.Min(v1.magnitude, MoveStep);
             v2 = v2.normalized * Mathf.Min(v2.magnitude, MoveStep);
 
-            edge.InputNode.Move(v1);
-            edge.OutputNode.Move(v2);
+            edge.Editor().InputNode.Editor().Move(v1);
+            edge.Editor().OutputNode.Editor().Move(v2);
         }
 
     }

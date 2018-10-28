@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using FMachine;
 using FMachine.Shapes;
 using FMachine.Shapes.Nodes;
 using FMachine.Shapes.Sockets;
-using FollowMachineDll.Shapes.Nodes;
 using UnityEngine;
 //using UnityEngine.UI;
 using Object = UnityEngine.Object;
