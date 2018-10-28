@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
 
 namespace FollowMachineDll.Utility.Bounder
 {
@@ -11,7 +9,6 @@ namespace FollowMachineDll.Utility.Bounder
     {
         private static  Dictionary<string, TypeUtils> Types = new Dictionary<string, TypeUtils>
         {
-#if UNITY_EDITOR
 		            {
                 "Int32",new TypeUtils
                 {
@@ -80,7 +77,6 @@ namespace FollowMachineDll.Utility.Bounder
                 }
             } ,
 
-#endif
         };
 
             #region Functions

@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using FMachine.Shapes.Nodes;
 using FMachine.Shapes.Sockets;
+using FollowMachineDll.Assets;
 using FollowMachineDll.Components;
 using FollowMachineDll.Shapes.Nodes;
 using FollowMachineDll.Utility;
 using FollowMachineDll.Utility.Bounder;
 using FollowMachineEditor.CustomInspectors;
 using FollowMachineEditor.EditorObjectMapper;
-using MgsCommonLib.Utilities;
+using Newtonsoft.Json.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorNodes
@@ -17,33 +18,6 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
     public class EServerNode : ENode
     {
         private readonly ServerNode _serverNode;
-
-        public string MethodName
-        {
-            get => _serverNode.MethodName;
-            set => _serverNode.MethodName = value;
-        }
-
-        public List<BoundData> Parameters
-        {
-            get => _serverNode.Parameters;
-            set => _serverNode.Parameters = value;
-        }
-
-
-        public int BodyParamIndex
-        {
-            get => _serverNode.BodyParamIndex;
-            set => _serverNode.BodyParamIndex = value;
-        }
-
-
-        public ServerConnectionMethod ConnectionMethod
-        {
-            get => _serverNode.ConnectionMethod;
-            set => _serverNode.ConnectionMethod = value;
-        }
-
 
         public EServerNode(ServerNode serverNode) : base(serverNode)
         {
@@ -54,88 +28,7 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
         {
             AddInputSocket<OutputSocket>("");
 
-            AddOutputSocket<InputSocket>("Success");
-            AddOutputSocket<InputSocket>("Network Error");
-            AddOutputSocket<InputSocket>("Http Error");
-        }
-
-        public void UpdateBaseOnMethodName()
-        {
-            var methodData = ServerControllerBase.Instance.GetMethodData(MethodName);
-
-            Info = string.IsNullOrEmpty(methodData.Info) ?
-                MethodName.Split('(').First().Replace("/", ".") :
-                methodData.Info;
-
-            ConnectionMethod = methodData.ConnectionMethod;
-
-            // reset node
-            OutputSocketList.Clear();
-            BodyParamIndex = -1;
-            Parameters.Clear();
-
-            // Set outputs
-            if (methodData.Outputs.Count == 0)
-            {
-                AddOutputSocket<InputSocket>("Success");
-                AddOutputSocket<InputSocket>("Network Error");
-                AddOutputSocket<InputSocket>("Http Error");
-            }
-            else
-            {
-                foreach (var output in methodData.Outputs)
-                    AddOutputSocket<InputSocket>(output);
-
-                AddOutputSocket<InputSocket>("Network Error");
-                AddOutputSocket<InputSocket>("Http Error");
-            }
-
-            var parts = MethodName.Split('(', ')', ',')
-                .Select(s => s.Trim())
-                .Where(s => s != "")
-                .ToList();
-
-            Parameters.Resize(parts.Count - 1);
-
-            BodyParamIndex = -1;
-
-            for (int i = 0; i < parts.Count - 1; i++)
-            {
-                if (Parameters[i] == null)
-                    Parameters[i] = new BoundData();
-
-                if (parts[i + 1].Contains("FromBody"))
-                {
-                    if (BodyParamIndex == -1)
-                        BodyParamIndex = i;
-                    else if (BodyParamIndex != i)
-                        throw new InvalidDataException(" More than one body parameters!!");
-                }
-
-                var paramParts = parts[i + 1]
-                    .Split(' ')
-                    .Select(s => s.Trim())
-                    .Where(s => s != "")
-                    .ToList();
-
-                if (paramParts.Count > 1)
-                {
-                    Parameters[i].Lable = paramParts[paramParts.Count - 1];
-
-                    var type = paramParts[paramParts.Count - 2];
-
-                    Parameters[i].TypeName = type;
-
-                    if (!SupportedTypes.IsSupported(type))
-                    {
-                        if (BodyParamIndex == -1)
-                            BodyParamIndex = i;
-                        else if (BodyParamIndex != i)
-                            throw new InvalidDataException(" More than one body parameters!!");
-                    }
-                }
-            }
-
+            SetOutputs(new List<string>(){"Success","Network Error","Http Error"});
         }
 
         public override void OnInspector()
@@ -143,7 +36,7 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
             base.OnInspector();
 
             var serverController = ServerControllerBase.Instance;
-            
+
             if (serverController.Data == null)
             {
                 GUIUtil.DisplayError(" Server Data not set!!");
@@ -156,43 +49,74 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
                 return;
             }
 
-            if (GUIUtil.PopupFieldInBox("Method :", ref _serverNode.MethodName, serverController.MethodNames))
-            {
-                try
-                {
-                    UpdateBaseOnMethodName();
-                }
-                catch (InvalidDataException e)
-                {
-                    GUIUtil.DisplayError(e.Message);
-                    return;
-                }
-
-                GUIUtil.RefreshWindow();
-            }
+            GetMethodGUI();
 
             // Parameters
-            GUIUtil.DrawInBox(GetParameters);
+            GUIUtil.DrawInBox(() =>
+            {
+                GUIUtil.BoldLable("Parameters :");
+
+                foreach (var parameter in _serverNode.Parameters)
+                {
+                    //GUIUtil.BoundField(parameter);
+                }
+            });
 
             // Progress bar
             GUIUtil.GetProgressBar(_serverNode.ProgressBarInfo);
         }
 
-
-        private void GetParameters()
+        private void GetMethodGUI()
         {
-            GUIUtil.BoldLable("Parameters :");
+            var methods = ServerControllerBase
+                .Instance
+                .Data
+                .Controllers
+                .SelectMany(controller =>
+                    controller
+                        .Methods
+                        .Select(method => new
+                        {
+                            controller,
+                            method
+                        }))
+                .ToList();
 
-            for (int i = 0; i < _serverNode.Parameters.Count; i++)
+            int currIndex = methods.FindIndex(m =>
+                m.controller.Prefix == _serverNode.RoutePrefix &&
+                m.method.Equals(_serverNode.MethodData));
+
+            int selIndex = EditorGUILayout.Popup(
+                new GUIContent("Method :"),
+                currIndex,
+                methods.Select(m => m.controller.Name + "/" + m.method.FullName).ToArray());
+
+            if (currIndex != selIndex)
             {
-                var boundData = _serverNode.Parameters[i];
+                var method = methods[selIndex];
 
-                GUILayout.Label($"{boundData.Lable} ({boundData.TypeName}) {(i == _serverNode.BodyParamIndex ? "  [FromBody]" : "")}");
+                Undo.RegisterCompleteObjectUndo(_serverNode, "");
 
-                GUIUtil.BoundField(boundData);
+                _serverNode.MethodData =
+                    JObject.FromObject(method.method).ToObject<ServerData.Controller.MethodData>();
+
+                _serverNode.RoutePrefix = method.controller.Prefix;
+
+                _serverNode.Parameters = method
+                    .method
+                    .Parameters
+                    .Select(p => new BoundData()
+                    {
+                        Lable = $"{p.Name} ({p.TypeName}) {(p.FormBody ? "[FromBody]" : "")}",
+                        BoundMethod = p.FormBody ? BoundMethodEnum.GameObject : BoundMethodEnum.Constant,
+                        Value = ""
+                    })
+                    .ToList();
+
+                SetOutputs(method.method.Outputs);
+
+                GUIUtil.RefreshWindow();
             }
-
         }
-
     }
 }

@@ -159,6 +159,7 @@ namespace FollowMachineEditor.CustomInspectors
         {
             GUILayout.BeginHorizontal();
 
+            GUILayout.Label(boundData.Lable);
 
             if (boundData.BoundMethod == BoundMethodEnum.GameObject)
                 GUILayout.Label(boundData.Value);

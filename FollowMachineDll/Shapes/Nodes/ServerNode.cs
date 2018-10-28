@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using FMachine.Shapes.Nodes;
+using FollowMachineDll.Assets;
 using FollowMachineDll.Attributes;
 using FollowMachineDll.Components;
 using FollowMachineDll.Utility;
@@ -11,19 +12,17 @@ namespace FollowMachineDll.Shapes.Nodes
     [Node(MenuTitle = "Action/Server connection")]
     public class ServerNode : Node
     {
-        public string MethodName;
+        public string RoutePrefix;
 
-        public List<BoundData> Parameters;
+        public ServerData.Controller.MethodData MethodData;
 
-        public int BodyParamIndex = -1;
-
-        public ServerConnectionMethod ConnectionMethod;
+        public List<BoundData> Parameters=new List<BoundData>();
 
         public ProgressBarInfo ProgressBarInfo;
 
         protected override IEnumerator Run()
         {
-            var url = MethodName;
+            var url = "MethodName";
 
             var firstParam = true;
 
@@ -33,7 +32,7 @@ namespace FollowMachineDll.Shapes.Nodes
             {
                 var parm = Parameters[i];
 
-                if (BodyParamIndex == i)
+                if (i == i)
                 {
                     outData = parm.GetValue();
                 }
@@ -47,7 +46,7 @@ namespace FollowMachineDll.Shapes.Nodes
 
             yield return ProgressBarInfo.Show();
 
-            yield return ServerControllerBase.Send(ConnectionMethod, url, outData);
+            yield return ServerControllerBase.Send(MethodData.ConnectionMethod, url, outData);
 
             yield return ProgressBarInfo.Hide();
 

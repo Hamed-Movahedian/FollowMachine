@@ -98,6 +98,13 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
             OutputSocketList.Add(socket);
         }
 
+        public void AddOutputSocket(string label) 
+        {
+            var socket = (InputSocket)Graph.Editor().Repository.CreateSocket(_node, typeof(InputSocket));
+            socket.Info = label;
+            OutputSocketList.Add(socket);
+        }
+
         protected void AddInputSocket<T>(string success) where T : OutputSocket
         {
             var socket = (T)Graph.Editor().Repository.CreateSocket(_node, typeof(T));
@@ -418,5 +425,23 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
             _node = node;
         }
 
+        protected void SetOutputs(List<string> outputLables)
+        {
+            // Add new socket
+            outputLables
+                .Where(ol => OutputSocketList.All(os => os.Info != ol))
+                .ToList()
+                .ForEach(AddOutputSocket);
+
+            // Remove sockets
+            OutputSocketList
+                .Where(os => outputLables.All(ol => ol != os.Info))
+                .ToList()
+                .ForEach(os =>
+                {
+                    OutputSocketList.Remove(os);
+                    os.Editor().Delete();
+                });
+        }
     }
 }

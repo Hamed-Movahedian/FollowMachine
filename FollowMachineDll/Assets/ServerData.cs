@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FollowMachineDll.Components;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -42,6 +43,22 @@ namespace FollowMachineDll.Assets
             [Serializable]
             public class MethodData
             {
+                public bool Equals(MethodData other)
+                {
+                    return
+                        string.Equals(Name, other.Name) &&
+                        string.Equals(Prefix, other.Prefix) &&
+                        string.Equals(Info, other.Info) &&
+                        ConnectionMethod == other.ConnectionMethod &&
+                        Outputs.Count==other.Outputs.Count &&
+                        Outputs.TrueForAll(o=>other.Outputs.Contains(o)) &&
+                        Parameters.Count == other.Parameters.Count &&
+                        Parameters.TrueForAll(p => other.Parameters.Any(po =>
+                              po.Name == p.Name &&
+                              po.TypeName == p.TypeName &&
+                              po.FormBody == p.FormBody));
+                }
+
                 public string Name;
                 public string Prefix;
                 public string Info;
@@ -56,6 +73,10 @@ namespace FollowMachineDll.Assets
                     public bool FormBody;
                     public string TypeName;
                 }
+
+                public string FullName => Name + "(" + Parameters.Aggregate("",
+                                              (c, p) =>
+                                                  $"{(c != "" ? ", " : "")} {p.TypeName} {p.Name}") + ")";
             }
         }
     }
