@@ -73,6 +73,7 @@ namespace FollowMachineEditor.CustomInspectors
                 body();
             }
             EndBox();
+            GUILayout.Space(5);
         }
 
         public static void BoldLable(string title)
@@ -228,18 +229,19 @@ namespace FollowMachineEditor.CustomInspectors
                 pbInfo.ProgressbarWindow,
                 typeof(MgsProgressWindow), true);
 
-            if (pbInfo.ProgressbarWindow == null)
-                return;
-
-            EditorTools.Instance.LanguageField(TargetNode, "Progressbar Message", ref pbInfo.ProgressbarMessage);
-
-            GUILayout.BeginHorizontal();
+            if (pbInfo.ProgressbarWindow != null)
             {
-                GUILayout.Label("Display method:");
-                pbInfo.ProgressbarShow = GUILayout.Toggle(pbInfo.ProgressbarShow, "Show");
-                pbInfo.ProgressbarHide = GUILayout.Toggle(pbInfo.ProgressbarHide, "Hide");
+                EditorTools.Instance.LanguageField(TargetNode, "Progressbar Message", ref pbInfo.ProgressbarMessage);
+
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Label("Display method:");
+                    pbInfo.ProgressbarShow = GUILayout.Toggle(pbInfo.ProgressbarShow, "Show");
+                    pbInfo.ProgressbarHide = GUILayout.Toggle(pbInfo.ProgressbarHide, "Hide");
+                }
+                GUILayout.EndHorizontal();
+
             }
-            GUILayout.EndHorizontal();
             EndBox();
         }
     }

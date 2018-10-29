@@ -22,23 +22,25 @@ namespace FollowMachineDll.Shapes.Nodes
 
         protected override IEnumerator Run()
         {
-            var url = "MethodName";
+            var url = $"{RoutePrefix}/{MethodData.Prefix}";
 
             var firstParam = true;
 
             object outData = null;
 
-            for (int i = 0; i < Parameters.Count; i++)
+            for (int i = 0; i < MethodData.Parameters.Count; i++)
             {
-                var parm = Parameters[i];
+                var paramValue = Parameters[i];
 
-                if (i == i)
+                var paramData = MethodData.Parameters[i];
+
+                if (paramData.FormBody)
                 {
-                    outData = parm.GetValue();
+                    outData = paramValue.GetValue();
                 }
                 else
                 {
-                    url += $"{(firstParam ? "?" : "&")}{parm.Lable}={parm.GetValue()}";
+                    url += $"{(firstParam ? "?" : "&")}{paramData.Name}={paramValue.GetValue()}";
 
                     firstParam = false;
                 }

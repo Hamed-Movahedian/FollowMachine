@@ -149,6 +149,7 @@ namespace FollowMachineDll.Components
         }
 
         public  JObject Output { get; set; }
+        public bool IsValid => Data != null && Data.Controllers.SelectMany(ctrl => ctrl.Methods).Any();
 
         private static UnityWebRequest GetRequest(string url, object bodyData)
         {

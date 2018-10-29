@@ -38,7 +38,15 @@ namespace FollowMachineEditor.Server
                                         typeof(ServerConnectionMethod),
                                         (string)method["ConnectionMethod"]),
                                 Info = (string)method["Info"],
-                                Outputs = method["Outputs"].Select(s => s.ToString()).ToList(),
+
+                                Outputs =(method["Outputs"].Any() ? new string[]{} : new[] { "Success" })
+                                    .Concat(
+                                        method["Outputs"]
+                                        .Select(s => s.ToString())
+                                        .Concat(
+                                                new string[]{"Network Error","Http Error"}))
+                                .ToList(),
+
                                 Parameters = method["Parameters"]
                                     .Select(param => new ServerData.Controller.MethodData.ParameterData()
                                     {

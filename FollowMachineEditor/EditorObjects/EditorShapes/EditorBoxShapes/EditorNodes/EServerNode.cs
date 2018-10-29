@@ -35,35 +35,30 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
         {
             base.OnInspector();
 
-            var serverController = ServerControllerBase.Instance;
-
-            if (serverController.Data == null)
+            if (!ServerControllerBase.Instance.IsValid)
             {
-                GUIUtil.DisplayError(" Server Data not set!!");
+                GUIUtil.DisplayError("Invalid Server Data!!");
                 return;
             }
 
-            if (serverController.MethodNames.Count == 0)
-            {
-                GUIUtil.DisplayError(" Server controller has no controller!!");
-                return;
-            }
-
-            GetMethodGUI();
+            // Get method
+            GUIUtil.DrawInBox("Method: ", GetMethodGUI);
 
             // Parameters
-            GUIUtil.DrawInBox(() =>
-            {
-                GUIUtil.BoldLable("Parameters :");
-
-                foreach (var parameter in _serverNode.Parameters)
-                {
-                    //GUIUtil.BoundField(parameter);
-                }
-            });
+            GUIUtil.DrawInBox(GetParameters);
 
             // Progress bar
             GUIUtil.GetProgressBar(_serverNode.ProgressBarInfo);
+        }
+
+        private void GetParameters()
+        {
+            GUIUtil.BoldLable("Parameters :");
+
+            foreach (var parameter in _serverNode.Parameters)
+            {
+                GUIUtil.BoundField(parameter);
+            }
         }
 
         private void GetMethodGUI()
@@ -83,11 +78,10 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
                 .ToList();
 
             int currIndex = methods.FindIndex(m =>
-                m.controller.Prefix == _serverNode.RoutePrefix &&
-                m.method.Equals(_serverNode.MethodData));
+                    m.controller.Prefix == _serverNode.RoutePrefix &&
+                    m.method.Equals(_serverNode.MethodData));
 
             int selIndex = EditorGUILayout.Popup(
-                new GUIContent("Method :"),
                 currIndex,
                 methods.Select(m => m.controller.Name + "/" + m.method.FullName).ToArray());
 
@@ -109,11 +103,15 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
                     {
                         Lable = $"{p.Name} ({p.TypeName}) {(p.FormBody ? "[FromBody]" : "")}",
                         BoundMethod = p.FormBody ? BoundMethodEnum.GameObject : BoundMethodEnum.Constant,
+                        TypeName = p.TypeName,
                         Value = ""
                     })
                     .ToList();
 
                 SetOutputs(method.method.Outputs);
+
+                if (method.method.Info != null)
+                    _serverNode.Info = method.method.Info;
 
                 GUIUtil.RefreshWindow();
             }

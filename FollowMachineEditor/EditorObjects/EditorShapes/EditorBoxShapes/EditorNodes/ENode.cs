@@ -406,7 +406,15 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
 
         public virtual void MoveSocket(InputSocket socket, int i)
         {
+            var from = OutputSocketList.IndexOf(socket);
 
+            var to = from + i;
+
+            if (to < 0 || to >= OutputSocketList.Count)
+                return;
+
+            OutputSocketList[from] = OutputSocketList[to];
+            OutputSocketList[to] = socket;
         }
 
         public void SetGraph(Graph graph)

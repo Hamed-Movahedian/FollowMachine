@@ -54,6 +54,7 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
             EditorGUILayout.Space();
 
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
+
             if (selectedNode)
             {
                 selectedNode.Editor().OnInspector();

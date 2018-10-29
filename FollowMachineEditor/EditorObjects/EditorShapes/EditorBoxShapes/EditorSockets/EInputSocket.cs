@@ -45,23 +45,41 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorS
 
         public override void MouseDown(Vector2 mousePosition, Event currentEvent)
         {
-            if (currentEvent.button == 0)
+            switch (currentEvent.button)
             {
-                while (EdgeList.Count > 0)
-                {
-                    EdgeList[0].Editor().Delete();
-                }
+                case 0 when currentEvent.control:
+                    return;
+                case 0:
+                    while (EdgeList.Count > 0)
+                    {
+                        EdgeList[0].Editor().Delete();
+                    }
+
+                    break;
+                case 1:
+                    EditorTools.Instance.ShowContexMenu(_inputSocket);
+                    break;
             }
-            else if (currentEvent.button == 1)
-                EditorTools.Instance.ShowContexMenu(_inputSocket);
         }
 
         public override void MouseDrag(Vector2 delta, Vector2 mousePosition, Event currentEvent)
         {
+
             if (currentEvent.button == 0)
             {
-                _showDragLine = true;
-                _dragPos = mousePosition;
+                if (currentEvent.control)
+                {
+                    if(mousePosition.y<Rect.yMin-Rect.height)
+                        Node.Editor().MoveSocket(_inputSocket,-1);
+
+                    if(mousePosition.y>Rect.yMax+Rect.height)
+                        Node.Editor().MoveSocket(_inputSocket,1);
+                }
+                else
+                {
+                    _showDragLine = true;
+                    _dragPos = mousePosition;
+                }
             }
         }
 
@@ -118,13 +136,13 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorS
         protected void CreateEdge(InputSocket inputSocket, OutputSocket outputSocket)
         {
             Edge edge = Graph.Editor().Repository.CreateEdge(inputSocket);
-            Undo.RegisterCompleteObjectUndo(edge,"");
+            Undo.RegisterCompleteObjectUndo(edge, "");
             edge.InputSocket = inputSocket;
             edge.OutputSocket = outputSocket;
             if (AutoEdgeHide)
                 edge.AutoHide = true;
-            Undo.RegisterCompleteObjectUndo(inputSocket,"");
-            Undo.RegisterCompleteObjectUndo(outputSocket,"");
+            Undo.RegisterCompleteObjectUndo(inputSocket, "");
+            Undo.RegisterCompleteObjectUndo(outputSocket, "");
             inputSocket.EdgeList.Add(edge);
             outputSocket.EdgeList.Add(edge);
         }

@@ -1,5 +1,6 @@
 ﻿using FMachine;
 using FMachine.Shapes;
+using FMachine.Shapes.Nodes;
 using FollowMachineEditor.CustomInspectors;
 using UnityEditor;
 using UnityEngine;
@@ -70,12 +71,14 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes
 
         public virtual void OnInspector()
         {
+            GUIUtil.TargetNode = (Node) _boxShape;
+
             if (GUIUtil.TextFieldInBox("Info :", ref _boxShape.Info))
             {
+                Undo.RecordObject(_boxShape,"");
                 _boxShape.name = _boxShape.Info + " (" + _boxShape.GetType().Name + ")";
             }
 
-            GUILayout.Space(5);
         }
     }
 }

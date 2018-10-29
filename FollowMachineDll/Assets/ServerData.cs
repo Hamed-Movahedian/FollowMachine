@@ -76,7 +76,7 @@ namespace FollowMachineDll.Assets
 
                 public string FullName => Name + "(" + Parameters.Aggregate("",
                                               (c, p) =>
-                                                  $"{(c != "" ? ", " : "")} {p.TypeName} {p.Name}") + ")";
+                                                  $"{c}{(c != "" ? ", " : "")}{p.TypeName} {p.Name}") + ")";
             }
         }
     }
