@@ -33,7 +33,10 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
         {
             if (_setting == null)
                 _setting = (FMInspectorSetting)SettingController.Instance.GetAsset("InspectorSetting", typeof(FMInspectorSetting));
-            titleContent = new GUIContent("Inspector", _setting.Icon);
+            
+            //titleContent = new GUIContent("Inspector", _setting.Icon);
+            titleContent = GUIContent.none;
+            
         }
         private void OnGUI()
         {
@@ -69,5 +72,34 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
             EditorGUILayout.EndScrollView();
         }
 
+        public static void ShowInMousePos()
+        {
+            var mousePosition = 
+                Event.current.mousePosition+
+                GetWindow<FMWindow>().position.position;
+
+            CloseAll();
+
+            var window = ScriptableObject.CreateInstance<FollowMachineInspector>();
+
+            var windowPosition = window.position;
+            windowPosition.position = mousePosition;
+            window.position = windowPosition;
+
+            window.ShowPopup();
+
+            
+        }
+
+
+        public static void CloseAll()
+        {
+            foreach (FollowMachineInspector inspector in Resources.FindObjectsOfTypeAll<FollowMachineInspector>())
+            {
+                inspector.Close();
+                Debug.Log("sd");
+            }
+
+        }
     }
 }

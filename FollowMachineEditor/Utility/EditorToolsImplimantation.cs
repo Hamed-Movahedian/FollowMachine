@@ -618,24 +618,6 @@ namespace FollowMachineEditor.Utility
             menu.ShowAsContext();
         }
 
-        public override void ShowContexMenu(Node node)
-        {
-            var menu = new GenericMenu();
-
-            menu.AddItem(new GUIContent("Disconnect"),
-                false,
-                () =>
-                {
-                    node.InputSocketList.ForEach(socket => socket.Editor().Disconnect());
-                    node.OutputSocketList.ForEach(socket => socket.Editor().Disconnect());
-                });
-
-            menu.AddItem(new GUIContent("Delete"),
-                false,
-                node.Editor().Delete);
-
-            menu.ShowAsContext();
-        }
 
         public override void EditBoundData(GameObject gameObject, string text, Type type, Action<GameObject, string> action)
         {

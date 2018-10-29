@@ -37,6 +37,7 @@ namespace FollowMachineEditor.Server
                                     Enum.Parse(
                                         typeof(ServerConnectionMethod),
                                         (string)method["ConnectionMethod"]),
+
                                 Info = (string)method["Info"],
 
                                 Outputs =(method["Outputs"].Any() ? new string[]{} : new[] { "Success" })

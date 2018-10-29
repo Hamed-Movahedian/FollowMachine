@@ -7,6 +7,7 @@ using FollowMachineDll.SettingScripts;
 using FollowMachineDll.Shapes;
 using FollowMachineDll.Utility;
 using FollowMachineEditor.EditorObjectMapper;
+using FollowMachineEditor.Windows.FollowMachineInspector;
 using UnityEditor;
 using UnityEngine;
 
@@ -135,8 +136,30 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
             }
             else if (currentEvent.button == 1)
             {
-                EditorTools.Instance.ShowContexMenu(_node);
+                Graph.Editor().DeselectAll();
+
+                Select();
+
+                FollowMachineInspector.ShowInMousePos();
             }
+        }
+        public void ShowContexMenu()
+        {
+            var menu = new GenericMenu();
+
+            menu.AddItem(new GUIContent("Disconnect"),
+                false,
+                () =>
+                {
+                    _node.InputSocketList.ForEach(socket => socket.Editor().Disconnect());
+                    _node.OutputSocketList.ForEach(socket => socket.Editor().Disconnect());
+                });
+
+            menu.AddItem(new GUIContent("Delete"),
+                false,
+                _node.Editor().Delete);
+
+            menu.ShowAsContext();
         }
 
         public override void MouseDrag(Vector2 delta, Vector2 mousePosition, Event currentEvent)

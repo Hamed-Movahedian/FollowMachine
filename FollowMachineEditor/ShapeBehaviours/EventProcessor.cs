@@ -1,6 +1,7 @@
 ﻿using FMachine.Shapes.Nodes;
 using FollowMachineEditor.EditorObjectMapper;
 using FollowMachineEditor.Utility;
+using FollowMachineEditor.Windows.FollowMachineInspector;
 using UnityEditor;
 using UnityEngine;
 
@@ -79,10 +80,12 @@ namespace FMachine.Editor.ShapeBehaviours
             if (!_isMouseInCanvas)
                 return;
 
+
             switch (currentEvent.type)
             {
                 // *********************************** Mouse Down
                 case EventType.MouseDown:
+                    FollowMachineInspector.CloseAll();
 
                     // get interaction source
                     _interactionSource = GetMouseInteractionSource(_mousePosition);

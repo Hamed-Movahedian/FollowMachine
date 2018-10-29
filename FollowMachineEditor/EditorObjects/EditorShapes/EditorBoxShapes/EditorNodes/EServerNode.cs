@@ -28,7 +28,7 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
         {
             AddInputSocket<OutputSocket>("");
 
-            SetOutputs(new List<string>(){"Success","Network Error","Http Error"});
+            SetOutputs(new List<string>{"Success","Network Error","Http Error"});
         }
 
         public override void OnInspector()
@@ -99,13 +99,12 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
                 _serverNode.Parameters = method
                     .method
                     .Parameters
-                    .Select(p => new BoundData()
-                    {
-                        Lable = $"{p.Name} ({p.TypeName}) {(p.FormBody ? "[FromBody]" : "")}",
-                        BoundMethod = p.FormBody ? BoundMethodEnum.GameObject : BoundMethodEnum.Constant,
-                        TypeName = p.TypeName,
-                        Value = ""
-                    })
+                    .Select(p => new BoundData(
+                        lable: $"{p.Name} ({p.TypeName}) {(p.FormBody ? "[FromBody]" : "")}",
+                        boundMethod: p.FormBody ? BoundMethodEnum.GameObject : BoundMethodEnum.Constant,
+                        value: "",
+                        typeName: p.TypeName
+                        ))
                     .ToList();
 
                 SetOutputs(method.method.Outputs);

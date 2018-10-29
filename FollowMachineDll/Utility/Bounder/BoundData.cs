@@ -13,6 +13,14 @@ namespace FollowMachineDll.Utility.Bounder
         private Bounder _bounder;
         public string TypeName;
 
+        public BoundData(string lable, BoundMethodEnum boundMethod, string value, string typeName)
+        {
+            Lable = lable;
+            BoundMethod = boundMethod;
+            Value = value;
+            TypeName = typeName;
+        }
+
         public object GetValue()
         {
             if (BoundMethod == BoundMethodEnum.Constant)
