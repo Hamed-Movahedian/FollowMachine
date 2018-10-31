@@ -1,5 +1,6 @@
 ﻿using FollowMachineDll.Utility;
 using FollowMachineEditor.Utility;
+using FollowMachineEditor.Windows.FollowMachineExplorer;
 using UnityEditor;
 using UnityEngine;
 
@@ -25,6 +26,8 @@ namespace FMachine.Editor
         [SerializeField]
         private GraphStack _graphStack;
 
+        private Rect _explorerButtonRect;
+
         public GraphStack GraphStack => _graphStack ?? (_graphStack = new GraphStack(this));
 
         #endregion
@@ -45,11 +48,26 @@ namespace FMachine.Editor
         protected override void PerformOnGUI()
         {
             EditorGUILayout.BeginVertical();
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    GraphStack.OnGUI();
+                    GUILayout.FlexibleSpace();
+                    if (GUILayout.Button(Settings.Icon, EditorStyles.miniButton))
+                    {
+                        var canvasRect = _canvas.WindowRect;
+                        PopupWindow.Show(_explorerButtonRect,new FollowMachineTreeViewWindow());
+                    }
 
-            GraphStack.OnGUI();
-
-            Canvas.OnGUI();
-
+                    if (Event.current.type == EventType.Repaint)
+                    {
+                        _explorerButtonRect = GUILayoutUtility.GetLastRect();
+                        _explorerButtonRect.x -= 300-_explorerButtonRect.width;
+                    }
+                }
+                GUILayout.EndHorizontal();
+                Canvas.OnGUI();
+            }
             EditorGUILayout.EndVertical();
 
         }

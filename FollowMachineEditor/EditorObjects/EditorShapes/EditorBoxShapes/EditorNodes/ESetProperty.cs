@@ -9,7 +9,7 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
 {
     public class ESetProperty : ENode
     {
-        private SetProperty _setProperty;
+        private readonly SetProperty _setProperty;
 
         public ESetProperty(SetProperty setProperty) : base(setProperty)
         {
@@ -63,6 +63,7 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
         {
             base.OnInspector();
 
+            return;
             // Set count
             GUILayout.BeginHorizontal();
             {

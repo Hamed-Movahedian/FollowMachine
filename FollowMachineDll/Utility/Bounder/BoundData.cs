@@ -21,6 +21,11 @@ namespace FollowMachineDll.Utility.Bounder
             TypeName = typeName;
         }
 
+        public BoundData(string lable, BoundMethodEnum boundMethod, string value, string typeName, GameObject gameObject) : this(lable,boundMethod,typeName,value)
+        {
+            BoundGameObject = gameObject;
+        }
+
         public object GetValue()
         {
             if (BoundMethod == BoundMethodEnum.Constant)

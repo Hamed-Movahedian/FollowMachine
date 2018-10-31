@@ -44,8 +44,7 @@ namespace FollowMachineEditor.Server
                                     .Concat(
                                         method["Outputs"]
                                         .Select(s => s.ToString())
-                                        .Concat(
-                                                new string[]{"Network Error","Http Error"}))
+                                        .Concat(new[]{"Network Error","Http Error"}))
                                 .ToList(),
 
                                 Parameters = method["Parameters"]

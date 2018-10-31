@@ -99,33 +99,13 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
                 InputSocketList[0].Info = "Wait only";
                 AddInputSocket<OutputSocket>("Show and Wait");
             }
+
             if (Window == null)
                 return;
 
             Info = Window.name;
 
-            #region Update outputsockets
-
-            var outputLables = Window.ActionList;
-
-            for (int i = 0; i < outputLables.Count; i++)
-            {
-                if (i < OutputSocketList.Count)
-                    OutputSocketList[i].Info = outputLables[i];
-                else
-                    AddOutputSocket<InputSocket>(outputLables[i]);
-
-                OutputSocketList[i].Icon = !HideList[i] ? NodeSetting.ShowIcon : null;
-            }
-
-            while (OutputSocketList.Count > outputLables.Count)
-            {
-                var socket = OutputSocketList[OutputSocketList.Count - 1];
-                OutputSocketList.Remove(socket);
-                socket.Editor().Delete();
-            }
-
-            #endregion
+            SetOutputs(Window.ActionList);
         }
 
         #endregion

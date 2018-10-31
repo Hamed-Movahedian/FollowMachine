@@ -6,6 +6,7 @@ using System.Reflection;
 using FMachine;
 using FMachine.Shapes.Nodes;
 using FollowMachineDll.Attributes;
+using FollowMachineDll.Utility.Bounder;
 using MgsCommonLib.Theme;
 using UnityEngine;
 using Object = System.Object;
@@ -24,7 +25,28 @@ namespace FollowMachineDll.Shapes.Nodes
 
         public List<GameObject> ValueGameObjects = new List<GameObject>();
         public List<string> ValueString = new List<string>();
+        public List<BoundData> ValueBoundData=new List<BoundData>();
 
+        public void OnValidate()
+        {
+            print($"Set property => {Info} in follow machine = >{Graph.name} \n old ({ValueString.Count}) new ({ValueBoundData.Count})");
+            for (int i = 0; i < ValueString.Count; i++)
+            {
+                PropertyInfo pInfo = GetPropetyInfo(PropertyGameObjects[i], PropertyString[i], out var pObject);
+
+                ValueBoundData.Add(new BoundData(
+                    "Value",
+                    DynamicValue[i] ? BoundMethodEnum.GameObject : BoundMethodEnum.Constant,
+                    ValueString[i],
+                    pInfo.PropertyType.Name,
+                    ValueGameObjects[i]));
+            }
+
+            DynamicValue.Clear();
+            ValueString.Clear();
+            ValueGameObjects.Clear();
+
+        }
 
         protected override IEnumerator Run()
         {
@@ -40,16 +62,7 @@ namespace FollowMachineDll.Shapes.Nodes
                     continue;
 
                 // Get Value
-                object value = null;
-
-                if (DynamicValue[i]) // Get Dynamic value
-                {
-                    value = GetDynamicValue(ValueGameObjects[i], ValueString[i]);
-                }
-                else // Get Static Value
-                {
-                    value = GetStaticValue(ValueString[i], pInfo.PropertyType);
-                }
+                object value = ValueBoundData[i].GetValue();
 
                 // Set value to property
                 pInfo.SetValue(pObject,value,null);

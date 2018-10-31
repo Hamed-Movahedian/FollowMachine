@@ -14,8 +14,6 @@ namespace FMachine.Shapes.Nodes
     {
         #region Public
 
-        public List<string> Lables = new List<string>();
-
         public GameObject TargetGameObject;
 
         public string ComponentTypeName;

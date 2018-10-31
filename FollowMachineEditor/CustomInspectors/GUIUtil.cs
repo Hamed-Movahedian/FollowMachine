@@ -93,10 +93,7 @@ namespace FollowMachineEditor.CustomInspectors
 
         public static void DisplayError(string errorMsg)
         {
-            DrawInBox("Error :", () =>
-            {
-                GUILayout.Box(errorMsg, (GUIStyle)"ErrorStyle");
-            });
+            DrawInBox("Error :", () => GUILayout.Box(errorMsg, (GUIStyle)"ErrorStyle"));
         }
 
         public static void DrawInBox(Action action)

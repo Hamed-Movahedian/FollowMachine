@@ -140,8 +140,12 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
                 Graph.Editor().DeselectAll();
 
                 Select();
-                var guiPoint = EditorWindow.GetWindow<FMWindow>().Canvas.CordinationSystem.ZoomCoordsToScreenCoords(Rect.position+Vector2.right*Rect.width);
-                var screenPoint = EditorGUIUtility.GUIToScreenPoint(guiPoint);
+                var guiPoint = EditorWindow
+                    .GetWindow<FMWindow>()
+                    .Canvas
+                    .CordinationSystem
+                    .ZoomCoordsToScreenCoords(Rect.position+Vector2.right* (Rect.width+NodeSetting.OutputSocketSetting.Size.x));
+                var screenPoint = GUIUtility.GUIToScreenPoint(guiPoint);
                 FollowMachineInspector.ShowInMousePos(screenPoint);
             }
         }

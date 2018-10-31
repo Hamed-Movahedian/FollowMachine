@@ -83,9 +83,6 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
 
         public static void ShowInMousePos(Vector2 screenPoint)
         {
-            var mousePosition =
-                Event.current.mousePosition +
-                GetWindow<FMWindow>().position.position;
 
             CloseAll();
 

@@ -8,6 +8,7 @@ namespace FollowMachineDll.Utility.Bounder
 {
     public class Bounder
     {
+        private 
         private GameObject gameObject;
 
         private object _baseObject;
@@ -48,10 +49,7 @@ namespace FollowMachineDll.Utility.Bounder
 
         public GameObject GameObject
         {
-            get
-            {
-                return gameObject;
-            }
+            get => gameObject;
             set
             {
                 if (value != gameObject)
@@ -210,5 +208,10 @@ namespace FollowMachineDll.Utility.Bounder
             if(_boundMembers.Count > 0)
                 _boundMembers[_boundMembers.Count - 1].OnGUI();
         }
+    }
+
+    public enum BoundTypeEnum
+    {
+        Get,Set
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace FollowMachineEditor.Windows.FollowMachineExplorer
 {
-    public class FollowMachineTreeViewWindow : EditorWindow
+    public class FollowMachineTreeViewWindow : PopupWindowContent
     {
         #region FollowMachineTreeView
 
@@ -30,26 +30,16 @@ namespace FollowMachineEditor.Windows.FollowMachineExplorer
         void OnEnable()
         {
             var setting = (FMExpelorerSetting) SettingController.Instance.GetAsset("ExpelorerSetting", typeof(FMExpelorerSetting));
-
-            titleContent = new GUIContent("Explorer", setting.Icon);
         }
 
-        void OnGUI()
+        public override Vector2 GetWindowSize()
         {
-            FollowMachineTreeView.OnGUI(new Rect(0,0,position.width,position.height));
-        }
-        void OnInspectorUpdate()
-        {
-            Repaint();
-        }
-        [MenuItem("Window/FollowMachine/Explorer")]
-        static void ShowWindow()
-        {
-            // Get existing open window or if none, make a new one:
-            var window = GetWindow<FollowMachineTreeViewWindow>();
-    
-            window.Show();
+            return new Vector2(300, 600);
         }
 
+        public override void OnGUI(Rect rect)
+        {
+            FollowMachineTreeView.OnGUI(rect);
+        }
     }
 }

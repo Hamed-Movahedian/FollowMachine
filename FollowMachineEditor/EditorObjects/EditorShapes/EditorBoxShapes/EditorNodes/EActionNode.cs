@@ -18,12 +18,6 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
     {
         #region Public
 
-        public List<string> Lables
-        {
-            get => _actionNode.Lables;
-            set => _actionNode.Lables = value;
-        }
-
         public GameObject TargetGameObject
         {
             get => _actionNode.TargetGameObject;
@@ -36,22 +30,19 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
             get => _actionNode.ComponentTypeName;
             set => _actionNode.ComponentTypeName = value;
         }
-
-
+        
         public string MethodName
         {
             get => _actionNode.MethodName;
             set => _actionNode.MethodName = value;
         }
-
-
+        
         public List<string> ParameterValueStrings
         {
             get => _actionNode.ParameterValueStrings;
             set => _actionNode.ParameterValueStrings = value;
         }
-
-
+        
         public MgsProgressWindow ProgressbarWindow
         {
             get => _actionNode.ProgressbarWindow;
@@ -153,8 +144,7 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
             {
                 var machineAttribute = attributes[0] as FollowMachineAttribute;
                 Info = machineAttribute.Info;
-                Lables = machineAttribute.Outputs.Split(',').ToList();
-                UpdateOutputSocketsWithLables();
+                SetOutputs(machineAttribute.Outputs.Split(',').ToList());
             }
             else
             {
@@ -215,24 +205,7 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
             GUILayout.EndVertical();
 
         }
-
-        private void UpdateOutputSocketsWithLables()
-        {
-            for (int i = 0; i < Lables.Count; i++)
-                if (i < OutputSocketList.Count)
-                    OutputSocketList[i].Info = Lables[i];
-                else
-                    AddOutputSocket<InputSocket>(Lables[i]);
-
-            while (OutputSocketList.Count > Lables.Count)
-            {
-                var socket = OutputSocketList[OutputSocketList.Count - 1];
-                OutputSocketList.Remove(socket);
-                socket.Editor().Delete();
-            }
-        }
-
-
+        
         public override void OnShow()
         {
             base.OnShow();
@@ -254,9 +227,8 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
             if (attributes.Length > 0)
             {
                 var machineAttribute = attributes[0] as FollowMachineAttribute;
-                Info = machineAttribute.Info;
-                Lables = machineAttribute.Outputs.Split(',').ToList();
-                UpdateOutputSocketsWithLables();
+                Info = machineAttribute?.Info;
+                SetOutputs(machineAttribute?.Outputs.Split(',').ToList());
             }
         }
 

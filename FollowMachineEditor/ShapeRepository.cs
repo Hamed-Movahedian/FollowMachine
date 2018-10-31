@@ -94,9 +94,10 @@ namespace FMachine
         public FollowMachine CreateFollowMachine(string name)
         {
             var go = new GameObject(name);
+
             Undo.RegisterCreatedObjectUndo(go,"");
 
-            Undo.SetTransformParent(go.transform, _graph.transform.parent, "");
+            Undo.SetTransformParent(go.transform, _graph.transform, "");
 
             return Undo.AddComponent<FollowMachine>(go);
         }
