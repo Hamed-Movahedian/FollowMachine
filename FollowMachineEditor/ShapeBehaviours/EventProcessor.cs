@@ -196,7 +196,7 @@ namespace FMachine.Editor.ShapeBehaviours
         {
             Vector2 mousePosition = Event.current.mousePosition;
             _isMouseInCanvas = _canvas.WindowRect.Contains(mousePosition);
-            _mousePosition = _canvas.CordinationSystem.ConvertScreenCoordsToZoomCoords(mousePosition);
+            _mousePosition = _canvas.CordinationSystem.ScreenCoordsToZoomCoords(mousePosition);
         }
     }
 }

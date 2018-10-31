@@ -189,6 +189,7 @@ namespace FMachine.Editor
                 Event.current.type != EventType.Repaint &&
                 Event.current.type != EventType.Layout)
             {
+                // 
                 // Zoom & pan
                 CordinationSystem.HandleZoomAndPan();
 

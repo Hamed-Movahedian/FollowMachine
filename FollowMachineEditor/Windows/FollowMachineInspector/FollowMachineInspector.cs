@@ -33,10 +33,10 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
         {
             if (_setting == null)
                 _setting = (FMInspectorSetting)SettingController.Instance.GetAsset("InspectorSetting", typeof(FMInspectorSetting));
-            
+            _setting.Style = (GUIStyle)"box";
             //titleContent = new GUIContent("Inspector", _setting.Icon);
             titleContent = GUIContent.none;
-            
+
         }
         private void OnGUI()
         {
@@ -50,13 +50,11 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
 
             if (!graph)
                 return;
-
             selectedNode = graph.Editor().SelectedNode;
-
+            GUILayout.BeginVertical(_setting.Style);
             EditorGUILayout.Space();
-            EditorGUILayout.Space();
 
-            _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
+            //_scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
 
             if (selectedNode)
             {
@@ -69,13 +67,24 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
                     selectedGroup.Editor().OnInspector();
             }
 
-            EditorGUILayout.EndScrollView();
+
+            // Set window size to fit content
+            if (Event.current.type == EventType.Repaint)
+            {
+                var lastRect = GUILayoutUtility.GetLastRect();
+
+                var height = lastRect.y + lastRect.height + 5;
+
+                minSize = maxSize = new Vector2(300, height);
+            }
+
+            GUILayout.EndVertical();
         }
 
-        public static void ShowInMousePos()
+        public static void ShowInMousePos(Vector2 screenPoint)
         {
-            var mousePosition = 
-                Event.current.mousePosition+
+            var mousePosition =
+                Event.current.mousePosition +
                 GetWindow<FMWindow>().position.position;
 
             CloseAll();
@@ -83,12 +92,9 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
             var window = ScriptableObject.CreateInstance<FollowMachineInspector>();
 
             var windowPosition = window.position;
-            windowPosition.position = mousePosition;
+            windowPosition.position = screenPoint;
             window.position = windowPosition;
-
             window.ShowPopup();
-
-            
         }
 
 
@@ -97,7 +103,6 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
             foreach (FollowMachineInspector inspector in Resources.FindObjectsOfTypeAll<FollowMachineInspector>())
             {
                 inspector.Close();
-                Debug.Log("sd");
             }
 
         }

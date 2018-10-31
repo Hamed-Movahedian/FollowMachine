@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FMachine;
+using FMachine.Editor;
 using FMachine.Shapes.Nodes;
 using FMachine.Shapes.Sockets;
 using FollowMachineDll.SettingScripts;
@@ -139,8 +140,9 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
                 Graph.Editor().DeselectAll();
 
                 Select();
-
-                FollowMachineInspector.ShowInMousePos();
+                var guiPoint = EditorWindow.GetWindow<FMWindow>().Canvas.CordinationSystem.ZoomCoordsToScreenCoords(Rect.position+Vector2.right*Rect.width);
+                var screenPoint = EditorGUIUtility.GUIToScreenPoint(guiPoint);
+                FollowMachineInspector.ShowInMousePos(screenPoint);
             }
         }
         public void ShowContexMenu()

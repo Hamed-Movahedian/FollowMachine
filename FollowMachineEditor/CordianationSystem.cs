@@ -18,11 +18,11 @@ namespace FMachine.Editor
 
         public void Zoom(float zoomDelta)
         {
-            Vector2 zoomCoordsMousePos = ConvertScreenCoordsToZoomCoords(Event.current.mousePosition);
+            Vector2 zoomCoordsMousePos = ScreenCoordsToZoomCoords(Event.current.mousePosition);
 
             _canvas.Zoom = Mathf.Clamp(_canvas.Zoom + zoomDelta, MinZoom, MaxZoom);
 
-            Vector2 newzoomCoordsMousePos = ConvertScreenCoordsToZoomCoords(Event.current.mousePosition);
+            Vector2 newzoomCoordsMousePos = ScreenCoordsToZoomCoords(Event.current.mousePosition);
 
 
             _canvas.Position += newzoomCoordsMousePos - zoomCoordsMousePos;
@@ -43,23 +43,16 @@ namespace FMachine.Editor
 
             _canvas.Position += delta;
 
-            /*
-                        var nextTranlationPosition = _canvas.Position + delta;
-
-                        if (nextTranlationPosition.x >= 0) nextTranlationPosition.x = 0;
-                        if (nextTranlationPosition.y >= 0) nextTranlationPosition.y = 0;
-
-                        _canvas.Position = nextTranlationPosition;
-            */
         }
 
-        public Vector2 ConvertScreenCoordsToZoomCoords(Vector2 screenCoords)
+        public Vector2 ScreenCoordsToZoomCoords(Vector2 screenCoords)
         {
-            //var offset = new Vector2(
-            //    screenCoords.x ,//- _canvas.WindowRect.min.x,
-            //    screenCoords.y //- GUI.skin.window.border.top
-            //    );
             return screenCoords / _canvas.Zoom - _canvas.Position;
+        }
+
+        public Vector2 ZoomCoordsToScreenCoords(Vector2 zoomCoords)
+        {
+            return (zoomCoords+ _canvas.Position) * _canvas.Zoom ;
         }
 
         public void HandleZoomAndPan()
