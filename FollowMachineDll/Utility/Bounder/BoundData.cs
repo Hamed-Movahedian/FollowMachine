@@ -7,28 +7,38 @@ namespace FollowMachineDll.Utility.Bounder
     public class BoundData
     {
         public string Lable;
-        public BoundMethodEnum BoundMethod;
+        public BoundSourceEnum BoundSource;
         public string Value;
         public GameObject BoundGameObject;
-        private Bounder _bounder;
         public string TypeName;
+        public BoundTypeEnum BoundType = BoundTypeEnum.Get;
 
-        public BoundData(string lable, BoundMethodEnum boundMethod, string value, string typeName)
+        private Bounder _bounder;
+
+        public BoundData(string lable, BoundSourceEnum boundSource, string value, string typeName)
         {
             Lable = lable;
-            BoundMethod = boundMethod;
+            BoundSource = boundSource;
             Value = value;
             TypeName = typeName;
         }
 
-        public BoundData(string lable, BoundMethodEnum boundMethod, string value, string typeName, GameObject gameObject) : this(lable,boundMethod,typeName,value)
+        public BoundData(
+            string lable, 
+            BoundSourceEnum boundSource, 
+            BoundTypeEnum boundType,
+            string value, 
+            string typeName, 
+            GameObject gameObject) : this(lable,boundSource,typeName,value)
         {
             BoundGameObject = gameObject;
+            BoundType = boundType;
         }
+
 
         public object GetValue()
         {
-            if (BoundMethod == BoundMethodEnum.Constant)
+            if (BoundSource == BoundSourceEnum.Constant)
                 return SupportedTypes.Convert(Value, TypeName);
 
             if (_bounder == null)
@@ -38,8 +48,12 @@ namespace FollowMachineDll.Utility.Bounder
         }
     }
 
-    public enum BoundMethodEnum
+    public enum BoundSourceEnum
     {
         Constant, GameObject, Variable
+    }
+    public enum BoundTypeEnum
+    {
+        Get, Set
     }
 }

@@ -159,7 +159,7 @@ namespace FollowMachineEditor.CustomInspectors
 
             GUILayout.Label(boundData.Lable);
 
-            if (boundData.BoundMethod == BoundMethodEnum.GameObject)
+            if (boundData.BoundSource == BoundSourceEnum.GameObject)
                 GUILayout.Label(boundData.Value);
             else
                 boundData.Value =
@@ -169,7 +169,7 @@ namespace FollowMachineEditor.CustomInspectors
             {
                 var menu = new GenericMenu();
 
-                if (boundData.BoundMethod==BoundMethodEnum.GameObject)
+                if (boundData.BoundSource==BoundSourceEnum.GameObject)
                 {
                     menu.AddItem(new GUIContent("Edit"), false, () => BounderWindow.EditBound(
                         boundData.BoundGameObject,
@@ -184,7 +184,7 @@ namespace FollowMachineEditor.CustomInspectors
                     menu.AddItem(new GUIContent("Unbound"), false, () =>
                     {
                         Undo.RecordObject(TargetNode, "Change Bound");
-                        boundData.BoundMethod = BoundMethodEnum.Constant;
+                        boundData.BoundSource = BoundSourceEnum.Constant;
                         boundData.Value = "";
                     });
                 }
@@ -198,7 +198,7 @@ namespace FollowMachineEditor.CustomInspectors
                         {
                             boundData.BoundGameObject = o;
                             boundData.Value = s;
-                            boundData.BoundMethod = BoundMethodEnum.GameObject;
+                            boundData.BoundSource = BoundSourceEnum.GameObject;
                         }));
                 }
 

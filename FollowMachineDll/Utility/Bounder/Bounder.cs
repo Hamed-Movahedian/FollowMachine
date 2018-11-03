@@ -8,7 +8,7 @@ namespace FollowMachineDll.Utility.Bounder
 {
     public class Bounder
     {
-        private 
+        private BoundTypeEnum _boundType = BoundTypeEnum.Get;
         private GameObject gameObject;
 
         private object _baseObject;
@@ -210,8 +210,5 @@ namespace FollowMachineDll.Utility.Bounder
         }
     }
 
-    public enum BoundTypeEnum
-    {
-        Get,Set
-    }
+
 }

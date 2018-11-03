@@ -25,6 +25,8 @@ namespace FollowMachineDll.Shapes.Nodes
 
         public List<GameObject> ValueGameObjects = new List<GameObject>();
         public List<string> ValueString = new List<string>();
+
+        public List<BoundData> PropertyBoundData=new List<BoundData>();
         public List<BoundData> ValueBoundData=new List<BoundData>();
 
         public void OnValidate()
@@ -36,7 +38,8 @@ namespace FollowMachineDll.Shapes.Nodes
 
                 ValueBoundData.Add(new BoundData(
                     "Value",
-                    DynamicValue[i] ? BoundMethodEnum.GameObject : BoundMethodEnum.Constant,
+                    DynamicValue[i] ? BoundSourceEnum.GameObject : BoundSourceEnum.Constant, 
+                    BoundTypeEnum.Get,
                     ValueString[i],
                     pInfo.PropertyType.Name,
                     ValueGameObjects[i]));
@@ -46,6 +49,16 @@ namespace FollowMachineDll.Shapes.Nodes
             ValueString.Clear();
             ValueGameObjects.Clear();
 
+            for (int i = 0; i < PropertyString.Count; i++)
+            {
+                PropertyBoundData.Add(new BoundData(
+                    "Property :",
+                    BoundSourceEnum.GameObject,
+                    BoundTypeEnum.Set,
+                    PropertyString[i],
+                    "",
+                    PropertyGameObjects[i]));
+            }
         }
 
         protected override IEnumerator Run()

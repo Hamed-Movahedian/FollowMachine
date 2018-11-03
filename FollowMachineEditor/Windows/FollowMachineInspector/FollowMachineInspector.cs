@@ -34,7 +34,6 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
             if (_setting == null)
                 _setting = (FMInspectorSetting)SettingController.Instance.GetAsset("InspectorSetting", typeof(FMInspectorSetting));
             _setting.Style = (GUIStyle)"box";
-            //titleContent = new GUIContent("Inspector", _setting.Icon);
             titleContent = GUIContent.none;
 
         }

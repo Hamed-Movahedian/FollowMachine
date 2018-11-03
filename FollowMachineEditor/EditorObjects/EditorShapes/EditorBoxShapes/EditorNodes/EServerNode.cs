@@ -101,7 +101,7 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
                     .Parameters
                     .Select(p => new BoundData(
                         lable: $"{p.Name} ({p.TypeName}) {(p.FormBody ? "[FromBody]" : "")}",
-                        boundMethod: p.FormBody ? BoundMethodEnum.GameObject : BoundMethodEnum.Constant,
+                        boundSource: p.FormBody ? BoundSourceEnum.GameObject : BoundSourceEnum.Constant,
                         value: "",
                         typeName: p.TypeName
                         ))
