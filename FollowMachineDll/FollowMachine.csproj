@@ -57,6 +57,14 @@
     <Compile Include="Attributes\NodeAttribute.cs" />
     <Compile Include="Attributes\RefrenceAttribute.cs" />
     <Compile Include="Base\EObject.cs" />
+    <Compile Include="Bind\Assinment.cs" />
+    <Compile Include="Bind\GetValue.cs" />
+    <Compile Include="Bind\Internal\BindGetValue.cs" />
+    <Compile Include="Bind\Internal\BindSetValue.cs" />
+    <Compile Include="Bind\Internal\BindValue.cs" />
+    <Compile Include="Bind\Internal\ConstValue.cs" />
+    <Compile Include="Bind\Internal\SMemberInfo.cs" />
+    <Compile Include="Bind\Internal\SType.cs" />
     <Compile Include="FollowMachine.cs" />
     <Compile Include="Attributes\FollowMachineAttribute.cs" />
     <Compile Include="Graph.cs" />
@@ -79,7 +87,6 @@
     <Compile Include="Utility\NodeExtensions.cs" />
     <Compile Include="Utility\ProgressBarInfo.cs" />
     <Compile Include="Shapes\Nodes\ServerNode.cs" />
-    <Compile Include="Utility\Bounder\BoundData.cs" />
     <Compile Include="Shapes\Nodes\DialogeNode.cs" />
     <Compile Include="Shapes\Nodes\DynamicActionNode.cs" />
     <Compile Include="Shapes\Nodes\EventNode.cs" />
@@ -99,10 +106,6 @@
     <Compile Include="Shapes\Sockets\InputSocket.cs" />
     <Compile Include="Shapes\Sockets\OutputSocket.cs" />
     <Compile Include="Shapes\Sockets\Socket.cs" />
-    <Compile Include="Utility\Bounder\Bounder.cs" />
-    <Compile Include="Utility\Bounder\BounderUtilitys.cs" />
-    <Compile Include="Utility\Bounder\BoundMember.cs" />
-    <Compile Include="Utility\Bounder\SupportedTypes.cs" />
     <Compile Include="Utility\EditorTools.cs" />
     <Compile Include="Utility\RectExtensions.cs" />
     <Compile Include="Utility\StyleExtention.cs" />

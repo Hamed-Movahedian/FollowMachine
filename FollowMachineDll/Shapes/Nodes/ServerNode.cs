@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Bind;
 using FMachine.Shapes.Nodes;
 using FollowMachineDll.Assets;
 using FollowMachineDll.Attributes;
 using FollowMachineDll.Components;
 using FollowMachineDll.Utility;
-using FollowMachineDll.Utility.Bounder;
 
 namespace FollowMachineDll.Shapes.Nodes
 {
@@ -16,7 +16,7 @@ namespace FollowMachineDll.Shapes.Nodes
 
         public ServerData.Controller.MethodData MethodData;
 
-        public List<BoundData> Parameters=new List<BoundData>();
+        public List<GetValue> Parameters=new List<GetValue>();
 
         public ProgressBarInfo ProgressBarInfo;
 
@@ -36,11 +36,11 @@ namespace FollowMachineDll.Shapes.Nodes
 
                 if (paramData.FormBody)
                 {
-                    outData = paramValue.GetValue();
+                    outData = paramValue.Value;
                 }
                 else
                 {
-                    url += $"{(firstParam ? "?" : "&")}{paramData.Name}={paramValue.GetValue()}";
+                    url += $"{(firstParam ? "?" : "&")}{paramData.Name}={paramValue.Value}";
 
                     firstParam = false;
                 }

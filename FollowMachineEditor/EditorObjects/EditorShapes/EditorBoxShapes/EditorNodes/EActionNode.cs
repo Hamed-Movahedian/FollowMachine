@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using BindEditor;
 using FMachine.Shapes.Nodes;
 using FMachine.Shapes.Sockets;
 using FollowMachineDll.Attributes;
 using FollowMachineDll.Utility;
-using FollowMachineEditor.EditorObjectMapper;
 using MgsCommonLib.UI;
 using MgsCommonLib.Utilities;
 using UnityEngine;
@@ -37,11 +37,6 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
             set => _actionNode.MethodName = value;
         }
         
-        public List<string> ParameterValueStrings
-        {
-            get => _actionNode.ParameterValueStrings;
-            set => _actionNode.ParameterValueStrings = value;
-        }
         
         public MgsProgressWindow ProgressbarWindow
         {
@@ -95,12 +90,8 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
                 actionNode.TargetGameObject != TargetGameObject ||
                 actionNode.ComponentTypeName != ComponentTypeName ||
                 actionNode.MethodName != MethodName ||
-                actionNode.ParameterValueStrings.Count != ParameterValueStrings.Count)
+                actionNode.ParameterGetValues.Count != _actionNode.ParameterGetValues.Count)
                 return false;
-
-            for (int i = 0; i < ParameterValueStrings.Count; i++)
-                if (actionNode.ParameterValueStrings[i] != ParameterValueStrings[i])
-                    return false;
 
             return true;
         }
@@ -168,18 +159,19 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
 
                 EditorTools.Instance.PropertyField(_actionNode, "ProgressbarWindow");
 
-                if (ProgressbarWindow == null)
-                    return;
-
-                EditorTools.Instance.LanguageField(_actionNode, "Progressbar Message", ref _actionNode.ProgressbarMessage);
-
-                GUILayout.BeginHorizontal();
+                if (ProgressbarWindow != null)
                 {
-                    GUILayout.Label("Display method:");
-                    ProgressbarShow = GUILayout.Toggle(ProgressbarShow, "Show");
-                    ProgressbarHide = GUILayout.Toggle(ProgressbarHide, "Hide");
+                    EditorTools.Instance.LanguageField(_actionNode, "Progressbar Message",
+                        ref _actionNode.ProgressbarMessage);
+
+                    GUILayout.BeginHorizontal();
+                    {
+                        GUILayout.Label("Display method:");
+                        ProgressbarShow = GUILayout.Toggle(ProgressbarShow, "Show");
+                        ProgressbarHide = GUILayout.Toggle(ProgressbarHide, "Hide");
+                    }
+                    GUILayout.EndHorizontal();
                 }
-                GUILayout.EndHorizontal();
             }
             GUILayout.EndVertical();
         }
@@ -188,18 +180,19 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
         {
             GUILayout.BeginVertical((GUIStyle)"box");
 
-            GUILayout.Label("Progressbar :", (GUIStyle)"BoldLabel");
+            GUILayout.Label("Parameters :", (GUIStyle)"BoldLabel");
 
             ParameterInfo[] parameters = _methodInfo.GetParameters();
 
             if (parameters.Length > 0)
             {
-                ParameterValueStrings.Resize(parameters.Length);
+                _actionNode.ParameterGetValues.Resize(parameters.Length);
 
                 for (int i = 0; i < parameters.Length; i++)
                 {
-                    ParameterValueStrings[i] =
-                        EditorTools.Instance.GetParameter(_actionNode, parameters[i].Name, parameters[i].ParameterType, ParameterValueStrings[i]);
+                    GUILayout.Label(parameters[i].Name);
+                    _actionNode.ParameterGetValues[i].GetValueGUI();
+
                 }
             }
             GUILayout.EndVertical();

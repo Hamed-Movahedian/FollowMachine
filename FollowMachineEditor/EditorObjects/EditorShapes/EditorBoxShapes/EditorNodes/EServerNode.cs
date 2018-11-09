@@ -1,17 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using FMachine.Shapes.Nodes;
+using Bind;
+using BindEditor;
 using FMachine.Shapes.Sockets;
 using FollowMachineDll.Assets;
 using FollowMachineDll.Components;
 using FollowMachineDll.Shapes.Nodes;
-using FollowMachineDll.Utility;
-using FollowMachineDll.Utility.Bounder;
 using FollowMachineEditor.CustomInspectors;
-using FollowMachineEditor.EditorObjectMapper;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
-using UnityEngine;
 
 namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorNodes
 {
@@ -56,9 +53,7 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
             GUIUtil.BoldLable("Parameters :");
 
             foreach (var parameter in _serverNode.Parameters)
-            {
-                GUIUtil.BoundField(parameter);
-            }
+                parameter.GetValueGUI();
         }
 
         private void GetMethodGUI()
@@ -99,12 +94,8 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
                 _serverNode.Parameters = method
                     .method
                     .Parameters
-                    .Select(p => new BoundData(
-                        lable: $"{p.Name} ({p.TypeName}) {(p.FormBody ? "[FromBody]" : "")}",
-                        boundSource: p.FormBody ? BoundSourceEnum.GameObject : BoundSourceEnum.Constant,
-                        value: "",
-                        typeName: p.TypeName
-                        ))
+                    .Select(p => new GetValue(
+                        $"{p.Name} ({p.TypeName}) {(p.FormBody ? "[FromBody]" : "")}",p.AssemblyQualifiedName))
                     .ToList();
 
                 SetOutputs(method.method.Outputs);

@@ -1,5 +1,4 @@
 ﻿using FMachine.Shapes.Nodes;
-using UnityEditor;
 using UnityEngine;
 
 namespace FMachine.Shapes.Sockets

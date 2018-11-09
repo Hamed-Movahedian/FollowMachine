@@ -2,7 +2,6 @@
 using FMachine.Shapes.Nodes;
 using FMachine.Shapes.Sockets;
 using FollowMachineDll.Utility;
-using FollowMachineEditor.EditorObjectMapper;
 using MgsCommonLib.UI;
 using UnityEngine;
 

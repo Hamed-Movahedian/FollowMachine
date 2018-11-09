@@ -50,6 +50,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BindEditor\BindEditorGateway.cs" />
+    <Compile Include="BindEditor\Internal\BindEditorUtility.cs" />
+    <Compile Include="BindEditor\Internal\BindWindow.cs" />
+    <Compile Include="BindEditor\Internal\ConstValueGUI.cs" />
     <Compile Include="CordianationSystem.cs" />
     <Compile Include="CreationMenu.cs" />
     <Compile Include="CustomInspectors\GUIUtil.cs" />
@@ -88,7 +92,6 @@
     <Compile Include="ShapeRepository.cs" />
     <Compile Include="Utility\ColapseToFollowMachine.cs" />
     <Compile Include="Utility\LayoutGraph.cs" />
-    <Compile Include="Windows\Bounder\BounderWindow.cs" />
     <Compile Include="Windows\EntryPoints\EntryPointsWindow.cs" />
     <Compile Include="Windows\FollowMachineExplorer\FollowMachineTreeView.cs" />
     <Compile Include="Windows\FollowMachineExplorer\FollowMachineTreeViewWindow.cs" />

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using FollowMachineDll.Assets;
 using FollowMachineDll.Components;
@@ -52,6 +51,8 @@ namespace FollowMachineEditor.Server
                                     {
                                         Name = (string)param["Name"],
                                         TypeName = (string)param["TypeName"],
+                                        AssemblyQualifiedName = (string)param["AssemblyQualifiedName"],
+
                                         FormBody = (bool)param["FormBody"]
                                     })
                                     .ToList(),
@@ -59,6 +60,8 @@ namespace FollowMachineEditor.Server
                             .ToList(),
                     })
                     .ToList();
+                AssetDatabase.SaveAssets();
+
             }
 
             DrawDefaultInspector();

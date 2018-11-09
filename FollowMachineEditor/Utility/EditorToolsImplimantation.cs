@@ -10,7 +10,6 @@ using FMachine.Shapes.Nodes;
 using FMachine.Shapes.Sockets;
 using FollowMachineDll.Utility;
 using FollowMachineEditor.EditorObjectMapper;
-using FollowMachineEditor.Windows.Bounder;
 using FollowMachineEditor.Windows.FollowMachineInspector;
 using MgsCommonLib.Theme;
 using UnityEditor;
@@ -618,11 +617,6 @@ namespace FollowMachineEditor.Utility
             menu.ShowAsContext();
         }
 
-
-        public override void EditBoundData(GameObject gameObject, string text, Type type, Action<GameObject, string> action)
-        {
-            BounderWindow.EditBound(gameObject,text,type,action);
-        }
 
         public override void AddFollowMachine(FollowMachine followmachine)
         {

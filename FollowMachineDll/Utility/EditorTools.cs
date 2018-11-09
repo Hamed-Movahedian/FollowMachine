@@ -47,6 +47,5 @@ namespace FollowMachineDll.Utility
         public abstract void ShowContexMenu(Edge edge);
         public abstract void ShowContexMenu(InputSocket edge);
         public abstract void ShowContexMenu(OutputSocket socket);
-        public abstract void EditBoundData(GameObject gameObject, string text, Type type, Action<GameObject, string> action);
     }
 }

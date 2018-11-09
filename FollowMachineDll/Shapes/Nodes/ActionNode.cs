@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Bind;
 using FollowMachineDll.Attributes;
 using MgsCommonLib.UI;
 using UnityEngine;
@@ -22,18 +23,59 @@ namespace FMachine.Shapes.Nodes
 
         public List<string> ParameterValueStrings = new List<string>();
 
+        public List<GetValue> ParameterGetValues = new List<GetValue>();
+
         public MgsProgressWindow ProgressbarWindow;
         public string ProgressbarMessage;
         public bool ProgressbarShow = true;
         public bool ProgressbarHide = true;
         #endregion
 
+        protected virtual void OnValidate()
+        {
+            if (ParameterValueStrings.Count > 0)
+            {
+
+                ParameterGetValues.Clear();
+
+                #region Get componentType
+
+                Type componentType = GetComponentType(ComponentTypeName, TargetGameObject);
+
+                if (componentType == null)
+                    throw new Exception("Error in Action node " + Info);
+
+                #endregion
+
+                #region Get methodInfo
+
+                _methodInfo = GetMethodInfo(componentType);
+
+                if (_methodInfo == null)
+                    throw new Exception("Error in Action node " + Info);
+
+                #endregion
+
+                var parameterInfos = _methodInfo.GetParameters();
+
+                for (int i = 0; i < parameterInfos.Length; i++)
+                    ParameterGetValues.Add(new GetValue(false, null, ParameterValueStrings[i],
+                        parameterInfos[i].ParameterType));
+
+                /*
+                ParameterValueStrings.Clear();
+                Debug.Log("ActionNode Transferd");
+*/
+
+            }
+
+
+        }
+
         #region Private
 
         protected MethodInfo _methodInfo;
         private object _object;
-        protected object[] _parameters;
-        protected ParameterInfo[] _parameterInfos;
 
         #endregion
 
@@ -75,75 +117,30 @@ namespace FMachine.Shapes.Nodes
 
             #endregion
 
-            GetParametersObjects();
-
             #region Invoke
 
+            var parameters = ParameterGetValues
+                .Select(gv => gv.Value)
+                .ToArray();
 
             if (_methodInfo.ReturnType.Name == "IEnumerator")
             {
                 if (ProgressbarWindow)
                     yield return ProgressbarWindow.Display(ProgressbarMessage, ProgressbarShow);
 
-                yield return (IEnumerator)_methodInfo.Invoke(_object, _parameters);
+                yield return (IEnumerator)_methodInfo.Invoke(_object, parameters);
 
                 if (ProgressbarWindow && ProgressbarHide)
                     yield return ProgressbarWindow.Hide();
             }
             else
             {
-                _methodInfo.Invoke(_object, _parameters);
+                _methodInfo.Invoke(_object, parameters);
                 yield return null;
             }
 
             #endregion
 
-        }
-
-        protected virtual void GetParametersObjects()
-        {
-            _parameterInfos = _methodInfo.GetParameters();
-
-            _parameters = new object[_parameterInfos.Length];
-
-            for (int i = 0; i < _parameters.Length; i++)
-                SetStaticParamerterObject(i);
-        }
-
-        protected void SetStaticParamerterObject(int i)
-        {
-            ParameterInfo parameterInfo = _parameterInfos[i];
-            string valueString = ParameterValueStrings[i];
-
-            if (parameterInfo.ParameterType == typeof(int)) //*** int
-            {
-                if (!int.TryParse(valueString, out var value))
-                    value = 0;
-
-                _parameters[i] = value;
-            }
-            else if (parameterInfo.ParameterType == typeof(float)) //*** float
-            {
-                if (!float.TryParse(valueString, out var value))
-                    value = 0;
-
-                _parameters[i] = value;
-            }
-            else if (parameterInfo.ParameterType == typeof(bool)) //*** bool
-            {
-                if (!bool.TryParse(valueString, out var value))
-                    value = false;
-
-                _parameters[i] = value;
-            }
-            else if (parameterInfo.ParameterType == typeof(string)) //*** string
-            {
-                _parameters[i] = valueString;
-            }
-            else //*** Others
-            {
-                _parameters[i] = null;
-            }
         }
 
         #endregion

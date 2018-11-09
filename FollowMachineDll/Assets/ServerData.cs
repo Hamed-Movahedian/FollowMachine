@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using FollowMachineDll.Components;
-using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace FollowMachineDll.Assets
@@ -56,6 +55,7 @@ namespace FollowMachineDll.Assets
                         Parameters.TrueForAll(p => other.Parameters.Any(po =>
                               po.Name == p.Name &&
                               po.TypeName == p.TypeName &&
+                              po.AssemblyQualifiedName == p.AssemblyQualifiedName &&
                               po.FormBody == p.FormBody));
                 }
 
@@ -72,6 +72,7 @@ namespace FollowMachineDll.Assets
                     public string Name;
                     public bool FormBody;
                     public string TypeName;
+                    public string AssemblyQualifiedName;
                 }
 
                 public string FullName => Name + "(" + Parameters.Aggregate("",

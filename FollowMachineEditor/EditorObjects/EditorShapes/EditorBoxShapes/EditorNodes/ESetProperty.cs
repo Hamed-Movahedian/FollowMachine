@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
+using Bind;
+using BindEditor;
 using FMachine.Shapes.Sockets;
 using FollowMachineDll.Shapes.Nodes;
 using FollowMachineDll.Utility;
+using FollowMachineEditor.CustomInspectors;
 using MgsCommonLib.Utilities;
+using UnityEditor;
 using UnityEngine;
 
 namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorNodes
@@ -63,79 +67,34 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
         {
             base.OnInspector();
 
-            return;
-            // Set count
-            GUILayout.BeginHorizontal();
+/*            for (int i = 0; i < PropertyCount; i++)
             {
-                if (GUILayout.Button("-"))
-                    PropertyCount--;
-                if (GUILayout.Button("+"))
-                    PropertyCount++;
+                GUILayout.Label("property");
+                PropertyGameObjects[i] = (GameObject)EditorGUILayout.ObjectField("", PropertyGameObjects[i], typeof(GameObject), true);
+                GUILayout.Label(PropertyGameObjects[i].name + "." + PropertyString[i]);
+                GUILayout.Label("Value");
+                if (DynamicValue[i])
+                    ValueGameObjects[i] = (GameObject)EditorGUILayout.ObjectField("", ValueGameObjects[i], typeof(GameObject), true);
+                GUILayout.Label(DynamicValue[i] ?
+                        $"Bound to {ValueGameObjects[i].name}.{ValueString[i]}" :
+                        $"Const {ValueString[i]}");
+                EditorGUILayout.Space();
+                EditorGUILayout.Space();
+            }*/
 
-                if (PropertyCount < 0)
-                    PropertyCount = 0;
-            }
-            GUILayout.EndHorizontal();
-
-            // set list sizes
-            PropertyGameObjects.Resize(PropertyCount);
-            PropertyString.Resize(PropertyCount);
-
-            ValueGameObjects.Resize(PropertyCount);
-            ValueString.Resize(PropertyCount);
-
-            DynamicValue.Resize(PropertyCount);
-
-            // Display each property
-            for (int i = 0; i < PropertyCount; i++)
+            foreach (var assinment in _setProperty.Assinments)
             {
-                GUILayout.Space(10);
-                //GUILayout.Label("--------------------");
-                GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(4));
-                GUILayout.Space(10);
-
-                // ************** Get property
-                var propertyGameObject = PropertyGameObjects[i];
-                var pText = PropertyString[i];
-
-                var propertyInfo = EditorTools.Instance.GetDynamicParameter(
-                    _setProperty.gameObject, ref propertyGameObject, ref pText, null);
-
-                PropertyGameObjects[i] = propertyGameObject;
-                PropertyString[i] = pText;
-
-                if (propertyInfo == null)
-                    continue;
-
-                // ************** Get value
-
-                // Dynamic Toggle
-                var toggle = GUILayout.Toggle(DynamicValue[i], "Dynamic");
-                if (toggle != DynamicValue[i])
+                assinment.AssinmentGUI();
+                if (GUILayout.Button("Remove"))
                 {
-                    EditorTools.Instance.Undo_RecordObject(_setProperty, "Change Parameter");
-                    DynamicValue[i] = toggle;
-                    ValueString[i] = "";
+                    _setProperty.Assinments.Remove(assinment);
+                    return;
                 }
-
-                if (toggle) // Dynamic Value
-                {
-                    propertyGameObject = ValueGameObjects[i];
-                    pText = ValueString[i];
-
-                    EditorTools.Instance.GetDynamicParameter(
-                        _setProperty.gameObject, ref propertyGameObject, ref pText, propertyInfo.PropertyType);
-
-                    ValueGameObjects[i] = propertyGameObject;
-                    ValueString[i] = pText;
-                }
-                else // Static Value
-                {
-                    ValueString[i] =
-                        EditorTools.Instance.GetParameter(_setProperty, "Value", propertyInfo.PropertyType, ValueString[i]);
-                }
-
+                EditorGUILayout.Space();
             }
+
+            if (GUILayout.Button("Add"))
+                _setProperty.Assinments.Add(new Assinment());
         }
 
     }

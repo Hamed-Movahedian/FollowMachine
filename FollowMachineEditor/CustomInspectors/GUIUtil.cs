@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using FMachine.Editor;
 using FMachine.Shapes.Nodes;
-using FollowMachineDll.Shapes.Nodes;
 using FollowMachineDll.Utility;
-using FollowMachineDll.Utility.Bounder;
-using FollowMachineEditor.EditorObjectMapper;
-using FollowMachineEditor.Windows.Bounder;
+using MgsCommonLib.Theme;
 using MgsCommonLib.UI;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace FollowMachineEditor.CustomInspectors
 {
@@ -29,7 +27,24 @@ namespace FollowMachineEditor.CustomInspectors
             text = s;
             return b;
         }
+        public static string LanguageField(string lable, string entryName)
+        {
+            var languagePack = ThemeManager.Instance.LanguagePack;
 
+            if (languagePack == null)
+                throw new Exception("Language pack not set!!");
+
+            var entryNameList = languagePack.GetEntryNameList();
+
+            var index = entryNameList.IndexOf(entryName);
+
+            if (index < 0)
+                index = 0;
+
+            var newIndex = EditorGUILayout.Popup(lable, index, entryNameList.ToArray());
+
+            return entryNameList[newIndex];
+        }
         public static bool TextField(string lable, ref string text)
         {
             string s;
@@ -98,10 +113,10 @@ namespace FollowMachineEditor.CustomInspectors
 
         public static void DrawInBox(Action action)
         {
-            DrawInBox("",action);
+            DrawInBox("", action);
         }
 
-        public static  bool ButtonWithBoldLable(string lable, string buttonText)
+        public static bool ButtonWithBoldLable(string lable, string buttonText)
         {
             GUILayout.BeginHorizontal();
 
@@ -133,10 +148,10 @@ namespace FollowMachineEditor.CustomInspectors
             var indexOf = textList.IndexOf(text);
             if (indexOf == -1)
                 indexOf = textList.Count - 1;
-            indexOf=EditorGUILayout.Popup(indexOf, textList.ToArray());
+            indexOf = EditorGUILayout.Popup(indexOf, textList.ToArray());
             if (textList[indexOf] != text)
             {
-                Undo.RecordObject(TargetNode,"Change in node");
+                Undo.RecordObject(TargetNode, "Change in node");
                 text = textList[indexOf];
                 return true;
             }
@@ -148,66 +163,11 @@ namespace FollowMachineEditor.CustomInspectors
         {
             var s = text;
             bool flag = false;
-            DrawInBox(lable, () => flag=PopupField(ref s, textList));
+            DrawInBox(lable, () => flag = PopupField(ref s, textList));
             text = s;
             return flag;
         }
 
-        public static void BoundField(BoundData boundData)
-        {
-            GUILayout.BeginHorizontal();
-
-            GUILayout.Label(boundData.Lable);
-
-            if (boundData.BoundSource == BoundSourceEnum.GameObject)
-                GUILayout.Label(boundData.Value);
-            else
-                boundData.Value =
-                    SupportedTypes.GUI("", boundData.Value, boundData.TypeName);
-
-            if (GUILayout.Button("B", GUILayout.Width(20)))
-            {
-                var menu = new GenericMenu();
-
-                if (boundData.BoundSource==BoundSourceEnum.GameObject)
-                {
-                    menu.AddItem(new GUIContent("Edit"), false, () => BounderWindow.EditBound(
-                        boundData.BoundGameObject,
-                        boundData.Value,
-                        typeof(string),
-                        (o, s) =>
-                        {
-                            boundData.BoundGameObject = o;
-                            boundData.Value = s;
-                        }));
-
-                    menu.AddItem(new GUIContent("Unbound"), false, () =>
-                    {
-                        Undo.RecordObject(TargetNode, "Change Bound");
-                        boundData.BoundSource = BoundSourceEnum.Constant;
-                        boundData.Value = "";
-                    });
-                }
-                else
-                {
-                    menu.AddItem(new GUIContent("Bound"), false, () => BounderWindow.EditBound(
-                        boundData.BoundGameObject,
-                        boundData.Value,
-                        typeof(string),
-                        (o, s) =>
-                        {
-                            boundData.BoundGameObject = o;
-                            boundData.Value = s;
-                            boundData.BoundSource = BoundSourceEnum.GameObject;
-                        }));
-                }
-
-                menu.ShowAsContext();
-            }
-
-            GUILayout.EndHorizontal();
-
-        }
 
         public static void RefreshWindow()
         {

@@ -2,7 +2,6 @@
 using FMachine.SettingScripts;
 using FMachine.Shapes.Nodes;
 using FollowMachineDll.SettingScripts;
-using FollowMachineEditor.CustomInspectors;
 using FollowMachineEditor.EditorObjectMapper;
 using UnityEditor;
 using UnityEngine;
@@ -33,13 +32,15 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
         {
             if (_setting == null)
                 _setting = (FMInspectorSetting)SettingController.Instance.GetAsset("InspectorSetting", typeof(FMInspectorSetting));
-            _setting.Style = (GUIStyle)"box";
-            titleContent = GUIContent.none;
+
+            var content = EditorGUIUtility.IconContent("d_console.infoicon.sml");
+
+            content.text = "Inspector";
+            titleContent = new GUIContent(content);
 
         }
         private void OnGUI()
         {
-
             if (_fmWindow == null)
                 _fmWindow = GetWindow<FMWindow>();
 
@@ -50,7 +51,9 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
             if (!graph)
                 return;
             selectedNode = graph.Editor().SelectedNode;
-            GUILayout.BeginVertical(_setting.Style);
+
+            GUILayout.BeginVertical();
+
             EditorGUILayout.Space();
 
             //_scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
@@ -66,31 +69,28 @@ namespace FollowMachineEditor.Windows.FollowMachineInspector
                     selectedGroup.Editor().OnInspector();
             }
 
-
             // Set window size to fit content
+            GUILayout.EndVertical();
+
             if (Event.current.type == EventType.Repaint)
             {
                 var lastRect = GUILayoutUtility.GetLastRect();
 
                 var height = lastRect.y + lastRect.height + 5;
 
-                minSize = maxSize = new Vector2(300, height);
+                maxSize = new Vector2(100000, height);
+                minSize = new Vector2(100, height);
             }
-
-            GUILayout.EndVertical();
         }
 
         public static void ShowInMousePos(Vector2 screenPoint)
         {
-
-            CloseAll();
-
-            var window = ScriptableObject.CreateInstance<FollowMachineInspector>();
+            var window = GetWindow<FollowMachineInspector>();
 
             var windowPosition = window.position;
             windowPosition.position = screenPoint;
             window.position = windowPosition;
-            window.ShowPopup();
+            window.Show();
         }
 
 

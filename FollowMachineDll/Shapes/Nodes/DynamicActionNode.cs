@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Bind;
 using FMachine.Shapes.Nodes;
 using FollowMachineDll.Attributes;
-using FollowMachineDll.Utility.Bounder;
-using MgsCommonLib.Utilities;
 using UnityEngine;
 
 namespace FollowMachineDll.Shapes.Nodes
@@ -13,39 +13,49 @@ namespace FollowMachineDll.Shapes.Nodes
 
         public List<bool> DynamicParameter = new List<bool>();
         public List<GameObject> ParameterGameObjects = new List<GameObject>();
-        private readonly List<Bounder> _parameterBoundDatas = new List<Bounder>();
 
-
-        protected override void GetParametersObjects()
+        protected override void OnValidate()
         {
-            _parameterInfos = _methodInfo.GetParameters();
+            if (ParameterValueStrings.Count > 0)
+            {
+                ParameterGetValues.Clear();
 
-            if (_parameterInfos.Length == 0)
-                return;
+                #region Get componentType
 
-            // Resize parameter lists
-            ParameterValueStrings.Resize(_parameterInfos.Length);
-            ParameterGameObjects.Resize(_parameterInfos.Length);
-            DynamicParameter.Resize(_parameterInfos.Length);
-            _parameterBoundDatas.Resize(_parameterInfos.Length);
+                Type componentType = GetComponentType(ComponentTypeName, TargetGameObject);
 
-            _parameters = new object[_parameterInfos.Length];
+                if (componentType == null)
+                    throw new Exception("Error in Action node " + Info);
 
-            for (int i = 0; i < _parameters.Length; i++)
-                if (DynamicParameter[i])
-                    _parameters[i] = SetDynamicParameterObject(i);
-                else
-                    SetStaticParamerterObject(i);
+                #endregion
 
+                #region Get methodInfo
+
+                _methodInfo = GetMethodInfo(componentType);
+
+                if (_methodInfo == null)
+                    throw new Exception("Error in Action node " + Info);
+
+                #endregion
+
+                var parameterInfos = _methodInfo.GetParameters();
+
+                for (int i = 0; i < parameterInfos.Length; i++)
+                {
+                    ParameterGetValues.Add(new GetValue(DynamicParameter[i], ParameterGameObjects[i], ParameterValueStrings[i],
+                        parameterInfos[i].ParameterType));
+
+                }
+
+/*
+                ParameterGameObjects.Clear();
+                ParameterValueStrings.Clear();
+                DynamicParameter.Clear();
+
+                Debug.Log("DynamicActionNode Transferd");
+*/
+
+            }
         }
-
-        private object SetDynamicParameterObject(int i)
-        {
-            if (_parameterBoundDatas[i] == null)
-                _parameterBoundDatas[i] = new Bounder(ParameterGameObjects[i], ParameterValueStrings[i]);
-
-            return _parameterBoundDatas[i].GetValue(_parameterInfos[i].ParameterType);
-        }
-
     }
 }
