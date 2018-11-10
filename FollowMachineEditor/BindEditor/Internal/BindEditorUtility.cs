@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Bind;
 using Bind.Internal;
+using FollowMachineEditor.CustomInspectors;
 using UnityEditor;
 using UnityEngine;
 
@@ -176,16 +177,22 @@ namespace BindEditor.Internal
 
         public static void AssinmentGUI(this Assinment bindUnit)
         {
+            GUILayout.BeginHorizontal();
             SetValueGUI(bindUnit.SetValue);
 
-            if (!bindUnit.SetValue.IsValid) return;
+            if (bindUnit.SetValue.IsValid)
+            {
+                if(bindUnit.GetValue==null)
+                    bindUnit.GetValue=new GetValue(bindUnit.SetValue.FinalType);
 
-            if (!ConstValueGUI.IsSupported(bindUnit.SetValue.FinalType))
-                bindUnit.GetValue.ValueType = GetValue.ValueTypes.Bind;
+                if (!ConstValueGUI.IsSupported(bindUnit.SetValue.FinalType))
+                    bindUnit.GetValue.ValueType = GetValue.ValueTypes.Bind;
 
-            bindUnit.GetValue.ChangeType(bindUnit.SetValue.FinalType);
-
-            GetValueGUI(bindUnit.GetValue);
+                bindUnit.GetValue.ChangeType(bindUnit.SetValue.FinalType);
+                GUILayout.Label(EditorGUIUtility.IconContent("Profiler.LastFrame"));
+                GetValueGUI(bindUnit.GetValue);
+            }
+            GUILayout.EndHorizontal();
 
         }
 

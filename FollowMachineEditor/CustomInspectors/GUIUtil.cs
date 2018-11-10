@@ -201,5 +201,58 @@ namespace FollowMachineEditor.CustomInspectors
             }
             EndBox();
         }
+        //a thin separator
+        public static void Separator()
+        {
+            GUI.backgroundColor = Color.black;
+            GUILayout.Box("", GUILayout.MaxWidth(Screen.width), GUILayout.Height(2));
+            GUI.backgroundColor = Color.white;
+        }
+
+        //A thick separator similar to ngui. Thanks
+        public static void BoldSeparator()
+        {
+            var lastRect = GUILayoutUtility.GetLastRect();
+            GUILayout.Space(14);
+            GUI.color = new Color(0, 0, 0, 0.25f);
+            GUI.DrawTexture(new Rect(0, lastRect.yMax + 6, Screen.width, 4), tex);
+            GUI.DrawTexture(new Rect(0, lastRect.yMax + 6, Screen.width, 1), tex);
+            GUI.DrawTexture(new Rect(0, lastRect.yMax + 9, Screen.width, 1), tex);
+            GUI.color = Color.white;
+        }
+        private static Texture2D _tex;
+        private static GUIStyle _centeredStyle;
+
+        private static Texture2D tex
+        {
+            get
+            {
+                if (_tex == null)
+                {
+                    _tex = new Texture2D(1, 1);
+                    _tex.hideFlags = HideFlags.HideAndDontSave;
+                }
+                return _tex;
+            }
+        }
+
+        public static GUIStyle CenteredStyle
+        {
+            get
+            {
+                if (_centeredStyle == null)
+                {
+                    _centeredStyle = GUI.skin.GetStyle("Label");
+                    _centeredStyle.alignment = TextAnchor.UpperCenter;
+                }
+                return _centeredStyle;
+            }
+            set => _centeredStyle = value;
+        }
+
+        public static void MiddleLable(string s)
+        {
+            GUILayout.Label( s, CenteredStyle);
+        }
     }
 }

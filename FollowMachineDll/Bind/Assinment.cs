@@ -12,6 +12,8 @@ namespace Bind
 
         public Assinment()
         {
+            SetValue=new BindSetValue();
+            
         }
 
         public Assinment(GameObject pGameObject, string pString, bool isBind, GameObject vGameObject, string vString)

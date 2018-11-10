@@ -186,12 +186,18 @@ namespace Bind
 
         public void ChangeType(Type type)
         {
-            if (ConstValue == null || ConstValue.Type.Value != type)
+            if (ConstValue == null)
                 ConstValue = new ConstValue(type);
 
-
-            if (BindValue == null || BindValue.ReturnType.Value != type)
+            if (BindValue == null)
                 BindValue = new BindGetValue(type);
+
+            if (ConstValue.Type.Value != type)
+                ConstValue = new ConstValue(type);
+
+            if (BindValue.ReturnType.Value != type)
+                BindValue = new BindGetValue(type);
+
 
         }
     }

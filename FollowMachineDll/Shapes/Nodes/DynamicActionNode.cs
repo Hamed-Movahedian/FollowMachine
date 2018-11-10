@@ -47,13 +47,11 @@ namespace FollowMachineDll.Shapes.Nodes
 
                 }
 
-/*
                 ParameterGameObjects.Clear();
                 ParameterValueStrings.Clear();
                 DynamicParameter.Clear();
 
                 Debug.Log("DynamicActionNode Transferd");
-*/
 
             }
         }

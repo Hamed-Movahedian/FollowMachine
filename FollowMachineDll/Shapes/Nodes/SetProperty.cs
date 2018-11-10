@@ -39,7 +39,6 @@ namespace FollowMachineDll.Shapes.Nodes
                         ValueString[i]));
                 }
 
-/*
                 PropertyCount = 0;
                 PropertyGameObjects.Clear();
                 PropertyString.Clear();
@@ -48,7 +47,6 @@ namespace FollowMachineDll.Shapes.Nodes
                 ValueString.Clear();
 
                 Debug.Log("SetProperty Transferd");
-*/
             }
         }
         protected override IEnumerator Run()

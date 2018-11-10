@@ -65,6 +65,7 @@
     <Compile Include="Bind\Internal\ConstValue.cs" />
     <Compile Include="Bind\Internal\SMemberInfo.cs" />
     <Compile Include="Bind\Internal\SType.cs" />
+    <Compile Include="DataTypes\LText.cs" />
     <Compile Include="FollowMachine.cs" />
     <Compile Include="Attributes\FollowMachineAttribute.cs" />
     <Compile Include="Graph.cs" />

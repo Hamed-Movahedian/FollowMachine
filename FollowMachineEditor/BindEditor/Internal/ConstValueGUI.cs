@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Bind.Internal;
+using FollowMachineDll.DataTypes;
 using FollowMachineEditor.CustomInspectors;
 using UnityEditor;
 using UnityEngine;
@@ -28,8 +29,24 @@ namespace BindEditor.Internal
             },
             { typeof(string), (string lable, object o) =>
                 {
+                    var lText = (LText) o;
 
-                    return GUIUtil.LanguageField(lable, (string) o);
+                    GUILayout.BeginHorizontal();
+
+                    if (lText.IsConst)
+                    {
+                        lText.Text = EditorGUILayout.TextField(lable, lText.ToString());
+                        if (GUILayout.Button("L", EditorStyles.miniButtonRight, GUILayout.Width(20)))
+                            lText.IsConst = false;
+                    }
+                    else
+                    {
+                        lText.Text = GUIUtil.LanguageField(lable, lText.Text);
+                        if (GUILayout.Button("C", EditorStyles.miniButtonRight, GUILayout.Width(20)))
+                            lText.IsConst = true;
+                    }
+                    GUILayout.EndHorizontal();
+                    return lText;
                 }
             },
             { typeof(Color), (string lable, object o) =>
@@ -48,6 +65,29 @@ namespace BindEditor.Internal
                     return v;
                 }
             },
+            { typeof(LText), (string lable, object o) =>
+                {
+                    var lText = (LText) o;
+
+                    GUILayout.BeginHorizontal();
+
+                    if (lText.IsConst)
+                    {
+                        lText.Text = EditorGUILayout.TextField(lable, lText.ToString());
+                        if (GUILayout.Button("L", EditorStyles.miniButtonRight, GUILayout.Width(20)))
+                            lText.IsConst = false;
+                    }
+                    else
+                    {
+                        lText.Text = GUIUtil.LanguageField(lable, lText.Text);
+                        if (GUILayout.Button("X", EditorStyles.miniButtonRight, GUILayout.Width(20)))
+                            lText.IsConst = true;
+                    }
+
+                    GUILayout.EndHorizontal();
+                    return lText;
+                }
+            },
         };
 
         public static void OnGUI(this ConstValue constValue, string lable)
@@ -61,7 +101,7 @@ namespace BindEditor.Internal
             }
             else if (_guiDictionary.ContainsKey(type))
             {
-                constValue.Value = _guiDictionary[type](lable, constValue.Value);
+                constValue.Value = _guiDictionary[type](lable, constValue.RawValue);
             }
             else
                 throw new Exception($"Type ({type.Name}) is not valid const type!");

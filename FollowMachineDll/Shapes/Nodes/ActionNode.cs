@@ -62,10 +62,8 @@ namespace FMachine.Shapes.Nodes
                     ParameterGetValues.Add(new GetValue(false, null, ParameterValueStrings[i],
                         parameterInfos[i].ParameterType));
 
-                /*
                 ParameterValueStrings.Clear();
                 Debug.Log("ActionNode Transferd");
-*/
 
             }
 
