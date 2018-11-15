@@ -1,4 +1,6 @@
-﻿using Bind;
+﻿using System;
+using Bind;
+using BindEditor.Internal;
 
 namespace BindEditor
 {
@@ -12,6 +14,18 @@ namespace BindEditor
         public static void GetValueGUI(this GetValue value)
         {
             Internal.BindEditorUtility.GetValueGUI(value);
+        }
+
+        public static GetValue CreateGetValue(Type parameterType)
+        {
+            var getValue = new GetValue(parameterType);
+
+            getValue.ValueType = 
+                ConstValueGUI.IsSupported(parameterType) ? 
+                    GetValue.ValueTypes.Const : 
+                    GetValue.ValueTypes.Bind;
+
+            return getValue;
         }
     }
 }

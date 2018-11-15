@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Bind;
 using BindEditor;
 using FMachine.Shapes.Nodes;
 using FMachine.Shapes.Sockets;
@@ -31,6 +32,7 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
             set => _actionNode.ComponentTypeName = value;
         }
         
+
         public string MethodName
         {
             get => _actionNode.MethodName;
@@ -105,22 +107,32 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
             {
                 EditorTools.Instance.BoldLabel("Method:");
                 // Get GameObject
-                EditorTools.Instance.PropertyField(_actionNode, "TargetGameObject");
+                if(EditorTools.Instance.PropertyField(_actionNode, "TargetGameObject"))
+                    _actionNode.ParameterGetValues.Clear();
 
-                if (TargetGameObject == null)
-                    return;
-
-                var componentTypeName = ComponentTypeName;
-                var methodName = MethodName;
-                _methodInfo = EditorTools.Instance.GetMethodInfo(
-                    TargetGameObject, ref componentTypeName, ref methodName);
-                 ComponentTypeName = componentTypeName;
-                 MethodName = methodName;
-
-                if (_methodInfo == null)
-                    return;
+                if (TargetGameObject != null)
+                {
+                    var componentTypeName = ComponentTypeName;
+                    var methodName = MethodName;
+                    _methodInfo = EditorTools.Instance.GetMethodInfo(
+                        TargetGameObject, ref componentTypeName, ref methodName);
+                    if (ComponentTypeName != componentTypeName || MethodName != methodName)
+                    {
+                        ComponentTypeName = componentTypeName;
+                        MethodName = methodName;
+                        _actionNode.ParameterGetValues.Clear();
+                    }
+                }
+                else
+                {
+                    _methodInfo = null;
+                }
+                
             }
             GUILayout.EndVertical();
+
+            if (_methodInfo == null)
+                return;
 
             GUILayout.Space(5);
 
@@ -191,6 +203,10 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
                 for (int i = 0; i < parameters.Length; i++)
                 {
                     GUILayout.Label(parameters[i].Name);
+
+                    if(_actionNode.ParameterGetValues[i]==null)
+                        _actionNode.ParameterGetValues[i]=BindEditorGateway.CreateGetValue(parameters[i].ParameterType);
+
                     _actionNode.ParameterGetValues[i].GetValueGUI();
 
                 }
