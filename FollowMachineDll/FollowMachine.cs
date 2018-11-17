@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using FMachine.Shapes.Nodes;
 using UnityEngine;
 
@@ -9,13 +10,13 @@ namespace FMachine
         private static string _outputLable;
 
         [HideInInspector]
-        public bool IsRunning => _threadCount>0;
+        [NonSerialized]
+        public bool IsRunning =false;
 
-        private int _threadCount=0;
 
         public IEnumerator RunNode(Node node)
         {
-            _threadCount++;
+            IsRunning = true;
 
             while (node != null)
             {
@@ -23,8 +24,6 @@ namespace FMachine
                 node = node.GetNextNode();
             }
 
-            if (_threadCount > 0)
-                _threadCount--;
         }
 
         public static void SetOutput(string outputLable)
