@@ -8,7 +8,6 @@ namespace FMachine.Shapes.Nodes
 
         public override Node GetNextNode()
         {
-            (Graph as FollowMachine).IsRunning = false;
             return null;
         }
     }

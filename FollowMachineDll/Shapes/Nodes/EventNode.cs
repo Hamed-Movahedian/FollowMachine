@@ -105,7 +105,13 @@ namespace FollowMachineDll.Shapes.Nodes
 
             #region Add Listener
 
-            _unityEvent.AddListener(() => { StartCoroutine((Graph as FollowMachine)?.RunNode(this));});
+            _unityEvent.AddListener(() =>
+            {
+                var followMachine = Graph as FollowMachine;
+
+                if (followMachine.IsRunning)
+                    StartCoroutine(followMachine?.RunNode(this));
+            });
             #endregion
         }
 

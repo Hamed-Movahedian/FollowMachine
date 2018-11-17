@@ -15,7 +15,6 @@ namespace FMachine.Shapes.Nodes
             if (FollowMachine == null)
                 yield break;
 
-            FollowMachine.IsRunning = true;
 
             StartCoroutine(FollowMachine.RunInputNode(EnteredSocket.Info));
 

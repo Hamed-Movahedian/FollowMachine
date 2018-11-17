@@ -7,16 +7,24 @@ namespace FMachine
     public class FollowMachine : Graph
     {
         private static string _outputLable;
+
         [HideInInspector]
-        public bool IsRunning;
+        public bool IsRunning => _threadCount>0;
+
+        private int _threadCount=0;
 
         public IEnumerator RunNode(Node node)
         {
+            _threadCount++;
+
             while (node != null)
             {
                 yield return node.RunBase();
                 node = node.GetNextNode();
             }
+
+            if (_threadCount > 0)
+                _threadCount--;
         }
 
         public static void SetOutput(string outputLable)
