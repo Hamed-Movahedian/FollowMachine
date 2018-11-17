@@ -31,15 +31,15 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
             get => _actionNode.ComponentTypeName;
             set => _actionNode.ComponentTypeName = value;
         }
-        
+
 
         public string MethodName
         {
             get => _actionNode.MethodName;
             set => _actionNode.MethodName = value;
         }
-        
-        
+
+
         public MgsProgressWindow ProgressbarWindow
         {
             get => _actionNode.ProgressbarWindow;
@@ -107,7 +107,7 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
             {
                 EditorTools.Instance.BoldLabel("Method:");
                 // Get GameObject
-                if(EditorTools.Instance.PropertyField(_actionNode, "TargetGameObject"))
+                if (EditorTools.Instance.PropertyField(_actionNode, "TargetGameObject"))
                     _actionNode.ParameterGetValues.Clear();
 
                 if (TargetGameObject != null)
@@ -127,7 +127,7 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
                 {
                     _methodInfo = null;
                 }
-                
+
             }
             GUILayout.EndVertical();
 
@@ -204,8 +204,8 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
                 {
                     GUILayout.Label(parameters[i].Name);
 
-                    if(_actionNode.ParameterGetValues[i]==null)
-                        _actionNode.ParameterGetValues[i]=BindEditorGateway.CreateGetValue(parameters[i].ParameterType);
+                    if (_actionNode.ParameterGetValues[i] == null)
+                        _actionNode.ParameterGetValues[i] = BindEditorGateway.CreateGetValue(parameters[i].ParameterType);
 
                     _actionNode.ParameterGetValues[i].GetValueGUI();
 
@@ -214,7 +214,7 @@ namespace FollowMachineEditor.EditorObjects.EditorShapes.EditorBoxShapes.EditorN
             GUILayout.EndVertical();
 
         }
-        
+
         public override void OnShow()
         {
             base.OnShow();

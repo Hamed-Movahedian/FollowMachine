@@ -94,7 +94,11 @@ namespace BindEditor.Internal
         {
             var type = constValue.Type.Value;
 
-            if (type.IsSubclassOf(typeof(UnityEngine.Object)))
+            if (type == typeof(LText))
+            {
+                LTextGUI(lable,constValue);
+            }
+            else if (type.IsSubclassOf(typeof(UnityEngine.Object)))
             {
                 constValue.Value= EditorGUILayout.ObjectField(lable, (UnityEngine.Object)constValue.Value, type, true);
 
@@ -105,6 +109,40 @@ namespace BindEditor.Internal
             }
             else
                 throw new Exception($"Type ({type.Name}) is not valid const type!");
+        }
+
+        private static void LTextGUI(string lable, ConstValue constValue)
+        {
+            var lText = (LText)constValue.RawValue;
+
+            GUILayout.BeginHorizontal();
+
+            string text;
+            bool isConst = lText.IsConst;
+
+            if (lText.IsConst)
+            {
+                text = EditorGUILayout.TextField(lable, lText.ToString());
+                if (GUILayout.Button("L", EditorStyles.miniButtonRight, GUILayout.Width(20)))
+                {
+                    isConst = false;
+                }
+            }
+            else
+            {
+                text = GUIUtil.LanguageField(lable, lText.Text);
+                if (GUILayout.Button("X", EditorStyles.miniButtonRight, GUILayout.Width(20)))
+                    isConst = true;
+            }
+
+            if (text != lText.Text || isConst != lText.IsConst)
+            {
+                lText.Text = text;
+                lText.IsConst = isConst;
+                constValue.Serialize();
+            }
+
+            GUILayout.EndHorizontal();
         }
 
         public static bool IsSupported(Type type)

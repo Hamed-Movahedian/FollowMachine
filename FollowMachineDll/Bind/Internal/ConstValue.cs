@@ -24,17 +24,7 @@ namespace Bind.Internal
                 Serialize = (obj)=> JsonConvert.SerializeObject((Vector4)((Color) obj)),
                 Deserialize = str => (Color) ((Vector4)JsonConvert.DeserializeObject(str, typeof(Vector4)))
             } },
-            {typeof(string),new ConstTypeUtil()
-            {
-                Serialize = (obj)=>
-                {
-                    if(obj is string)
-                        obj=new LText(true,(string) obj);
-
-                    return JsonConvert.SerializeObject((LText) obj);
-                },
-                Deserialize = str => (LText)JsonConvert.DeserializeObject(str, typeof(LText))
-            } }
+ 
         };
         #endregion
 
@@ -49,11 +39,16 @@ namespace Bind.Internal
 
         public ConstValue(Type type)
         {
+            if (type == typeof(string))
+            {
+                Type = new SType(typeof(LText));
+                Value = new LText(true, "");
+                return;
+            }
+
             Type = new SType(type);
 
-            if (type == typeof(string))
-                Value = new LText(false, "");
-            else if (type.IsValueType)
+            if (type.IsValueType)
                 Value = Activator.CreateInstance(type);
             else
             {
@@ -73,6 +68,12 @@ namespace Bind.Internal
 
         public ConstValue(string constValue, Type type)
         {
+            if (type == typeof(string))
+            {
+                Type = new SType(typeof(LText));
+                Value = new LText(true, constValue);
+                return;
+            }
             Type = new SType(type);
 
             if (type == typeof(string))
@@ -89,11 +90,14 @@ namespace Bind.Internal
 
         public Object Value
         {
-            get => Type.Value == typeof(string) ? RawValue.ToString() : RawValue;
+            get => Type.Value == typeof(LText) ? RawValue.ToString() : RawValue;
             set
             {
-                if (Type.Value == typeof(string) && value is string)
+                if (Type.Value == typeof(LText) && value is string)
+                {
                     ((LText)RawValue).Text = (string)value;
+                    Serialize();
+                }
                 else
                 {
                     RawValue = value;
@@ -131,17 +135,22 @@ namespace Bind.Internal
 
                 _value = value;
 
-                _unityObject = value as UnityEngine.Object;
-
-                if (_unityObject == null)
-                {
-                    if (_constTypeUtils.ContainsKey(Type))
-                        _valueString = _constTypeUtils[Type].Serialize(_value);
-                    else
-                        _valueString = JsonConvert.SerializeObject(_value);
-                }
+                Serialize();
+ 
             }
         }
 
+        public void Serialize()
+        {
+            _unityObject = _value as UnityEngine.Object;
+
+            if (_unityObject == null)
+            {
+                if (_constTypeUtils.ContainsKey(Type))
+                    _valueString = _constTypeUtils[Type].Serialize(_value);
+                else
+                    _valueString = JsonConvert.SerializeObject(_value);
+            }
+        }
     }
 }
